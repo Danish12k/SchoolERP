@@ -94,7 +94,6 @@ export class AuthService {
   }
 
   setUser(user: User) {
-    debugger;
     this.user$.next(user);
   }
 
@@ -121,15 +120,15 @@ export class AuthService {
     }
 
     // <-- only call /me if you want to fetch from API
-    return this.loginService.me().pipe(tap(user => this.user$.next(user)));
+    //return this.loginService.me().pipe(tap(user => this.user$.next(user)));
 
     // instead, return the static user if you set it
-   /*  return of({ name: 'Admin', email: 'admin@example.com' }).pipe(
+    return of({ name: 'Admin', email: 'admin@example.com' }).pipe(
       tap(user => this.user$.next(user))
-    ); */
+    );
     //return iif(() => this.check(), this.loginService.getUserDetails(), of([]));
-    return this.loginService.getUserDetails().pipe(tap(user => this.user$.next(user)));
-    debugger
+   /*  return this.loginService.getUserDetails().pipe(tap(user => this.user$.next(user)));
+    debugger */
    /*  const currentUser1 = this.user$.getValue();
     return of({ name: currentUser1.name, email: currentUser1.email, avatar: currentUser1.avatar }).pipe(
       tap(user => this.user$.next(user))

@@ -39,7 +39,6 @@ export class LoginService {
         ? this.mapApiToChildren(item.children) // go deeper
         : []
     }));
-    debugger;
     return clonedItems;
   }
 
@@ -85,7 +84,6 @@ private mapUserDetails(userDetails: any[] = []): User[] {
 
   private loginUrl = 'https://api.asterinfotech.com/api/User/ValidateUser';
   login(loginName: string, password: string, rememberMe = false) {
-    debugger;
     return this.http.post<LoginResponse>(this.loginUrl, { loginName, password });
     //return this.http.post<Token>('/auth/login', { username, password, rememberMe });
   }
@@ -105,15 +103,11 @@ private mapUserDetails(userDetails: any[] = []): User[] {
 
 
   menu(): Observable<Menu[]> {
-    debugger;
+
     return this.http.get<any>('https://api.asterinfotech.com/api/Menu/GetMenu').pipe(
-     /*  tap(res => {
-        console.log('✅ Menu API raw response:', res);
-      }), */
+    
       map(res => this.mapApiToMenu(res.data)), // convert API response → Menu[]
-      /* tap(mapped => {
-        console.log('✅ Mapped Menu[]:', mapped);
-      }), */
+     
       catchError(err => {
         console.error('❌ Menu API error:', err);
         return throwError(() => err);
