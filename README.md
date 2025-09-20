@@ -1,6 +1,6 @@
-# SchoolERP
-This is school ERP
+git hub URL: https://github.com/Danish12k/SchoolERP.git
 
 
-<br>
+
+
 Author : Danish Rizwan
