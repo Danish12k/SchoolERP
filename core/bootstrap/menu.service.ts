@@ -82,7 +82,6 @@ export class MenuService {
 
   /** Get all the menu data. */
   getAll() {
-    debugger;
     console.log(this.menu$.asObservable());
     return this.menu$.asObservable();
   }
