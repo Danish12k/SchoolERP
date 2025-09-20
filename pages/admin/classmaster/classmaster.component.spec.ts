@@ -1,0 +1,23 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ClassmasterComponent } from './classmaster.component';
+
+describe('ClassmasterComponent', () => {
+  let component: ClassmasterComponent;
+  let fixture: ComponentFixture<ClassmasterComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ClassmasterComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ClassmasterComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
