@@ -73,9 +73,9 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: () => {
           //this.router.navigateByUrl('/dashboard');
-         /*  this.loginService.getUserDetails().subscribe(user => {
+          this.loginService.getUserDetails().subscribe(user => {
             this.auth.setUser(user);
-          }); */
+          });
           // Navigate to the root route after setting the user
           this.router.navigateByUrl('/');
         },

@@ -1,0 +1,174 @@
+import {
+  CommonModule
+} from "./chunk-7NOA7DFH.js";
+import "./chunk-OUSM42MY.js";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  NgModule,
+  ViewEncapsulation,
+  booleanAttribute,
+  setClassMetadata,
+  ɵɵclassMap,
+  ɵɵclassProp,
+  ɵɵdefineComponent,
+  ɵɵdefineInjector,
+  ɵɵdefineNgModule,
+  ɵɵdomElementEnd,
+  ɵɵdomElementStart,
+  ɵɵprojection,
+  ɵɵprojectionDef,
+  ɵɵstyleProp
+} from "./chunk-TGP6U4PS.js";
+import "./chunk-MY7C4QNH.js";
+import "./chunk-H6VVMQMC.js";
+import "./chunk-KEQKGBJ6.js";
+import "./chunk-HOFLPY52.js";
+import "./chunk-PEHFQLBM.js";
+
+// node_modules/@ng-matero/extensions/fesm2022/mtxProgress.mjs
+var _c0 = ["*"];
+var _MtxProgress = class _MtxProgress {
+  constructor() {
+    this.type = "default";
+    this.value = 0;
+    this.striped = false;
+    this.animate = false;
+  }
+};
+_MtxProgress.ɵfac = function MtxProgress_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _MtxProgress)();
+};
+_MtxProgress.ɵcmp = ɵɵdefineComponent({
+  type: _MtxProgress,
+  selectors: [["mtx-progress"]],
+  hostAttrs: [1, "mtx-progress"],
+  hostVars: 4,
+  hostBindings: function MtxProgress_HostBindings(rf, ctx) {
+    if (rf & 2) {
+      ɵɵstyleProp("height", ctx.height)("background-color", ctx.background);
+    }
+  },
+  inputs: {
+    type: "type",
+    value: "value",
+    height: "height",
+    color: "color",
+    foreground: "foreground",
+    background: "background",
+    striped: [2, "striped", "striped", booleanAttribute],
+    animate: [2, "animate", "animate", booleanAttribute]
+  },
+  exportAs: ["mtxProgress"],
+  ngContentSelectors: _c0,
+  decls: 2,
+  vars: 12,
+  consts: [["role", "progress-fill", 1, "mtx-progress-fill"]],
+  template: function MtxProgress_Template(rf, ctx) {
+    if (rf & 1) {
+      ɵɵprojectionDef();
+      ɵɵdomElementStart(0, "div", 0);
+      ɵɵprojection(1);
+      ɵɵdomElementEnd();
+    }
+    if (rf & 2) {
+      ɵɵclassMap("mtx-progress-fill-" + ctx.type);
+      ɵɵstyleProp("width", ctx.value, "%")("background-color", ctx.foreground)("color", ctx.color);
+      ɵɵclassProp("mtx-progress-fill-striped", ctx.striped)("mtx-progress-fill-animated", ctx.animate);
+    }
+  },
+  styles: [".mtx-progress{display:flex;height:16px;margin:8px 0;overflow:hidden;font-size:var(--mtx-progress-text-size, var(--mat-sys-label-medium-size));border-radius:var(--mtx-progress-container-shape, var(--mat-sys-corner-extra-small));background-color:var(--mtx-progress-track-color, var(--mat-sys-surface-container))}.mtx-progress-fill{display:flex;flex-direction:column;justify-content:center;text-align:center;transition:width .6s ease;background-color:var(--mtx-progress-indicator-color, var(--mat-sys-outline-variant));color:var(--mtx-progress-text-color, var(--mat-sys-on-surface))}.mtx-progress-fill-info{background-color:var(--mtx-progress-info-indicator-color, #5a64ff);color:var(--mtx-progress-info-text-color, white)}.mtx-progress-fill-success{background-color:var(--mtx-progress-success-indicator-color, #038b00);color:var(--mtx-progress-success-text-color, white)}.mtx-progress-fill-warning{background-color:var(--mtx-progress-warning-indicator-color, #bc5d00);color:var(--mtx-progress-warning-text-color, white)}.mtx-progress-fill-danger{background-color:var(--mtx-progress-danger-indicator-color, #ef0000);color:var(--mtx-progress-danger-text-color, white)}.mtx-progress-fill-striped{background-image:linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);background-size:16px 16px}.mtx-progress-fill-animated{animation:mtx-progress-fill-stripes 1s linear infinite}@media (prefers-reduced-motion: reduce){.mtx-progress-fill-animated{animation:none}}@keyframes mtx-progress-fill-stripes{0%{background-position:16px 0}to{background-position:0 0}}\n"],
+  encapsulation: 2,
+  changeDetection: 0
+});
+var MtxProgress = _MtxProgress;
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MtxProgress, [{
+    type: Component,
+    args: [{
+      selector: "mtx-progress",
+      exportAs: "mtxProgress",
+      host: {
+        "class": "mtx-progress",
+        "[style.height]": "height",
+        "[style.backgroundColor]": "background"
+      },
+      encapsulation: ViewEncapsulation.None,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      template: `<div
+  class="mtx-progress-fill"
+  [class]="'mtx-progress-fill-' + type"
+  [class.mtx-progress-fill-striped]="striped"
+  [class.mtx-progress-fill-animated]="animate"
+  [style.width.%]="value"
+  [style.background-color]="foreground"
+  [style.color]="color"
+  role="progress-fill"
+>
+  <ng-content></ng-content>
+</div>
+`,
+      styles: [".mtx-progress{display:flex;height:16px;margin:8px 0;overflow:hidden;font-size:var(--mtx-progress-text-size, var(--mat-sys-label-medium-size));border-radius:var(--mtx-progress-container-shape, var(--mat-sys-corner-extra-small));background-color:var(--mtx-progress-track-color, var(--mat-sys-surface-container))}.mtx-progress-fill{display:flex;flex-direction:column;justify-content:center;text-align:center;transition:width .6s ease;background-color:var(--mtx-progress-indicator-color, var(--mat-sys-outline-variant));color:var(--mtx-progress-text-color, var(--mat-sys-on-surface))}.mtx-progress-fill-info{background-color:var(--mtx-progress-info-indicator-color, #5a64ff);color:var(--mtx-progress-info-text-color, white)}.mtx-progress-fill-success{background-color:var(--mtx-progress-success-indicator-color, #038b00);color:var(--mtx-progress-success-text-color, white)}.mtx-progress-fill-warning{background-color:var(--mtx-progress-warning-indicator-color, #bc5d00);color:var(--mtx-progress-warning-text-color, white)}.mtx-progress-fill-danger{background-color:var(--mtx-progress-danger-indicator-color, #ef0000);color:var(--mtx-progress-danger-text-color, white)}.mtx-progress-fill-striped{background-image:linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);background-size:16px 16px}.mtx-progress-fill-animated{animation:mtx-progress-fill-stripes 1s linear infinite}@media (prefers-reduced-motion: reduce){.mtx-progress-fill-animated{animation:none}}@keyframes mtx-progress-fill-stripes{0%{background-position:16px 0}to{background-position:0 0}}\n"]
+    }]
+  }], null, {
+    type: [{
+      type: Input
+    }],
+    value: [{
+      type: Input
+    }],
+    height: [{
+      type: Input
+    }],
+    color: [{
+      type: Input
+    }],
+    foreground: [{
+      type: Input
+    }],
+    background: [{
+      type: Input
+    }],
+    striped: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    animate: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }]
+  });
+})();
+var _MtxProgressModule = class _MtxProgressModule {
+};
+_MtxProgressModule.ɵfac = function MtxProgressModule_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _MtxProgressModule)();
+};
+_MtxProgressModule.ɵmod = ɵɵdefineNgModule({
+  type: _MtxProgressModule,
+  imports: [CommonModule, MtxProgress],
+  exports: [MtxProgress]
+});
+_MtxProgressModule.ɵinj = ɵɵdefineInjector({
+  imports: [CommonModule]
+});
+var MtxProgressModule = _MtxProgressModule;
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MtxProgressModule, [{
+    type: NgModule,
+    args: [{
+      imports: [CommonModule, MtxProgress],
+      exports: [MtxProgress]
+    }]
+  }], null, null);
+})();
+export {
+  MtxProgress,
+  MtxProgressModule
+};
+//# sourceMappingURL=@ng-matero_extensions_progress.js.map
