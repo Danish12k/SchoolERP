@@ -8,6 +8,11 @@ import { Error404Component } from './routes/sessions/404.component';
 import { Error500Component } from './routes/sessions/500.component';
 import { LoginComponent } from './routes/sessions/login/login.component';
 import { RegisterComponent } from './routes/sessions/register/register.component';
+import { CountryComponent } from './pages/admin/country/country.component';
+import { DesignationComponent } from './pages/admin/designation/designation.component';
+import { ClassmasterComponent } from './pages/admin/classmaster/classmaster.component';
+import { DesignationmasterComponent } from './pages/admin/designationmaster/designationmaster.component';
+//import { DesingnationMasterComponent } from './pages/admin/desingnation-master/desingnation-master.component';
 
 export const routes: Routes = [
   {
@@ -53,10 +58,14 @@ export const routes: Routes = [
         path: 'utilities',
         loadChildren: () => import('./routes/utilities/utilities.routes').then(m => m.routes),
       },
+     { path: 'country', component: CountryComponent },
+     { path: 'classmaster', component: ClassmasterComponent },
+     { path: 'designation', component: DesignationComponent },
+     { path: 'designationmaster', component: DesignationmasterComponent },
     ],
   },
   {
-    path: 'auth',
+    path: 'auth', 
     component: AuthLayoutComponent,
     children: [
       { path: 'login', component: LoginComponent },
