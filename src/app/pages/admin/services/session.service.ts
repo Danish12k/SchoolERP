@@ -13,7 +13,7 @@ export class SessionService {
   private endpoints = apiEndpoint; 
 
   //add session
-  addSession(session:ISession):Observable<SessionResponse>{
+  addSession(session: ISession):Observable<SessionResponse>{
     return this.http.post<SessionResponse>(this.endpoints.session.add, session);
   }
   updateSession(session:ISession):Observable<SessionResponse>{

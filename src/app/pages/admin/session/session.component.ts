@@ -2,7 +2,7 @@ import { Component, inject, Inject, OnInit, ViewChild } from '@angular/core';
 import { PageHeaderComponent } from "@shared";
 import { MatCard, MatCardModule } from "@angular/material/card";
 import { MaterialModule } from "../../../../../schematics/ng-add/files/module-files/app/material.module";
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,7 +17,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { debug } from 'console';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-session',
@@ -34,11 +34,14 @@ import { debug } from 'console';
     MatSelectModule,
     TranslateModule,
     PageHeaderComponent,
+
   ],
   templateUrl: './session.component.html',
-  styleUrl: './session.component.scss'
+  styleUrl: './session.component.scss',
+  providers: [DatePipe]
 })
 export class SessionComponent implements OnInit {
+  private datepipe: DatePipe = inject(DatePipe);
   private _sessionservice = inject(SessionService);
   dataSource = new MatTableDataSource<ISession>([]);
   displayedColumns: string[] = ['select', 'Name', 'Description', 'yearFrom', 'yearTo', 'actions'];
@@ -49,13 +52,47 @@ export class SessionComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('editDialog') editDialog: any;
 
+  sessionName: string = '';
+  description: string = '';
+  yearFrom: Date | null = null;
+  yearTo: Date | null = null;
+
   ngOnInit(): void {
     this.getsessionList();
   }
 
-  addSession() {
-    //console.log("Session added:", this.sessionName);
+  addSession(form: NgForm) {
+    debugger;
+    if (form.invalid) {
+      alert("Please fill all required fields");
+      return;
+    }
+    debugger;
+    const newSession: ISession = {
+      sessionId: 0, // Assuming 0 for new session, backend should assign the actual ID
+      sessionName: this.sessionName,
+      description: this.description,
+      yearFrom: this.datepipe.transform(this.yearFrom, "dd/MM/yyyy") || '',
+      yearTo: this.datepipe.transform(this.yearTo, "dd/MM/yyyy") || ''
+    };
+    debugger;
+    this._sessionservice.addSession(newSession).subscribe({
+      next: (res) => {
+        debugger;
+        if (res.success) {
+          alert('Session added successfully');
+          this.getsessionList(); // Refresh the list
+          form.resetForm(); // Reset the form after successful submission
+        }
+      },
+      error: (err) => {
+        console.error('Error adding session:', err);
+        alert('Failed to add session');
+      }
+    });
+
   }
+
 
   getsessionList() {
     this._sessionservice.getSessionList().subscribe(response => {

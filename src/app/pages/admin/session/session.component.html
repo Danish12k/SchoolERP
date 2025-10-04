@@ -6,46 +6,51 @@
 <div class="col-sm-12">
     <mat-card>
         <mat-card-header>
-            <mat-card-title>Session Master</mat-card-title>
+            <mat-card-title>Add Session</mat-card-title>
         </mat-card-header>
+        <form #sessionForm="ngForm" (ngSubmit)="addSession(sessionForm)">
+            <mat-card-content>
+                <div class="form-field-full">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <mat-form-field>
+                                <mat-label>Name</mat-label>
+                                <input matInput [(ngModel)]="sessionName" name="sessionName" placeholder="Session Name"
+                                    required>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3">
+                            <mat-form-field>
+                                <mat-label>Description</mat-label>
+                                <input matInput [(ngModel)]="description" name="description" placeholder="Description"
+                                    required>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3">
+                            <mat-form-field>
+                                <input matInput [(ngModel)]="yearFrom" [matDatepicker]="picker1" name="yearFrom"
+                                    placeholder="from year">
+                                <mat-datepicker-toggle matSuffix [for]="picker1" />
+                                <mat-datepicker #picker1 />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3">
+                            <mat-form-field>
+                                <input matInput [(ngModel)]="yearTo" name="yearTo" [matDatepicker]="picker2"
+                                    placeholder="to year">
+                                <mat-datepicker-toggle matSuffix [for]="picker2" />
+                                <mat-datepicker #picker2 />
+                            </mat-form-field>
+                        </div>
+                    </div>
 
-        <mat-card-content>
-            <div class="form-field-full">
-                <div class="row">
-                    <div class="col-sm-3">
-                        <mat-form-field>
-                            <mat-label>Name</mat-label>
-                            <input matInput placeholder="Session Name" required>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-sm-3">
-                        <mat-form-field>
-                            <mat-label>Description</mat-label>
-                            <input matInput placeholder="Description" required>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-sm-3">
-                        <mat-form-field>
-                            <input matInput [matDatepicker]="picker1" placeholder="From Year">
-                            <mat-datepicker-toggle matSuffix [for]="picker1" />
-                            <mat-datepicker #picker1 />
-                        </mat-form-field>
-                    </div>
-                    <div class="col-sm-3">
-                        <mat-form-field>
-                            <input matInput [matDatepicker]="picker2" placeholder="To Year">
-                            <mat-datepicker-toggle matSuffix [for]="picker2" />
-                            <mat-datepicker #picker2 />
-                        </mat-form-field>
+                    <div class="m-t-8">
+                        <button mat-flat-button>Save</button>
+                        <button mat-button class="m-x-8" type="button">Cancel</button>
                     </div>
                 </div>
-
-                <div class="m-t-8">
-                    <button mat-flat-button>Save</button>
-                    <button mat-button class="m-x-8" type="button">Cancel</button>
-                </div>
-            </div>
-        </mat-card-content>
+            </mat-card-content>
+        </form>
     </mat-card>
 </div>
 
@@ -110,33 +115,33 @@
 
 <!-- Edit Dialog -->
 <ng-template #editDialog let-data>
-  <h2 mat-dialog-title>Edit Session</h2>
-  <mat-dialog-content>
-    <mat-form-field appearance="fill" style="width:100%">
-      <mat-label>Session Name</mat-label>
-      <input matInput [(ngModel)]="data.sessionName" />
-    </mat-form-field>
+    <h2 mat-dialog-title>Edit Session</h2>
+    <mat-dialog-content>
+        <mat-form-field appearance="fill" style="width:100%">
+            <mat-label>Session Name</mat-label>
+            <input matInput [(ngModel)]="data.sessionName" />
+        </mat-form-field>
 
-    <mat-form-field appearance="fill" style="width:100%">
-      <mat-label>Description</mat-label>
-      <input matInput [(ngModel)]="data.description" />
-    </mat-form-field>
+        <mat-form-field appearance="fill" style="width:100%">
+            <mat-label>Description</mat-label>
+            <input matInput [(ngModel)]="data.description" />
+        </mat-form-field>
 
-    <mat-form-field appearance="fill" style="width:100%">
-      <mat-label>From Year</mat-label>
-      <input matInput [(ngModel)]="data.yearFrom" />
-    </mat-form-field>
+        <mat-form-field appearance="fill" style="width:100%">
+            <mat-label>From Year</mat-label>
+            <input matInput [(ngModel)]="data.yearFrom" />
+        </mat-form-field>
 
-    <mat-form-field appearance="fill" style="width:100%">
-      <mat-label>To Year</mat-label>
-      <input matInput [(ngModel)]="data.yearTo" />
-    </mat-form-field>
-  </mat-dialog-content>
+        <mat-form-field appearance="fill" style="width:100%">
+            <mat-label>To Year</mat-label>
+            <input matInput [(ngModel)]="data.yearTo" />
+        </mat-form-field>
+    </mat-dialog-content>
 
-  <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-raised-button color="primary" [mat-dialog-close]="data">
-      Update
-    </button>
-  </mat-dialog-actions>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="data">
+            Update
+        </button>
+    </mat-dialog-actions>
 </ng-template>
