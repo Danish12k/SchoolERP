@@ -12,6 +12,7 @@ import { CountryComponent } from './pages/admin/country/country.component';
 import { DesignationComponent } from './pages/admin/designation/designation.component';
 import { ClassmasterComponent } from './pages/admin/classmaster/classmaster.component';
 import { DesignationmasterComponent } from './pages/admin/designationmaster/designationmaster.component';
+import { SessionComponent } from './pages/admin/session/session.component';
 //import { DesingnationMasterComponent } from './pages/admin/desingnation-master/desingnation-master.component';
 
 export const routes: Routes = [
@@ -58,10 +59,11 @@ export const routes: Routes = [
         path: 'utilities',
         loadChildren: () => import('./routes/utilities/utilities.routes').then(m => m.routes),
       },
-     { path: 'country', component: CountryComponent },
-     { path: 'classmaster', component: ClassmasterComponent },
-     { path: 'designation', component: DesignationComponent },
-     { path: 'designationmaster', component: DesignationmasterComponent },
+
+      {
+        path: 'admin',
+        loadChildren: () => import('./pages/admin/admin.routes').then(m => m.routes),
+      },
     ],
   },
   {
