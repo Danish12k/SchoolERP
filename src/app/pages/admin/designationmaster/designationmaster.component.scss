@@ -1,0 +1,15 @@
+.full-width {
+  width: 100%;              /* input field puri card width lega */
+}
+
+.button-row {
+  margin-top: 16px;         /* thoda gap input aur button ke beech */
+  display: flex;            /* row me dikhane ke liye */
+  gap: 12px;                /* button ke beech spacing */
+}
+
+button {
+  min-width: 100px;         /* button chhota na lage */
+  height: 40px;             /* button ki proper height */
+  font-weight: 500;         /* thoda bold text */
+}
