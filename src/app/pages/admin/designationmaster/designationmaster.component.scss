@@ -3,10 +3,12 @@
 }
 
 .button-row {
-  margin-top: 16px;         /* thoda gap input aur button ke beech */
-  display: flex;            /* row me dikhane ke liye */
-  gap: 12px;                /* button ke beech spacing */
+  display: flex;
+  justify-content: flex-end; /* Buttons right side chale jayenge */
+  gap: 12px;                 /* Button ke beech space */
+  margin-top: 16px;
 }
+
 
 button {
   min-width: 100px;         /* button chhota na lage */
