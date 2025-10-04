@@ -5,7 +5,7 @@
       <mat-card-title>Designation Master</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-form-field>
+      <mat-form-field style="width: 100%;">
         <mat-label>Designation Name</mat-label>
         <input matInput [(ngModel)]="designationName" placeholder="Enter designation name" />
       </mat-form-field>
@@ -20,27 +20,25 @@
   <mat-card>
     <mat-card-content>
       <mat-form-field appearance="outline">
-  <mat-label>Search</mat-label>
-  <input matInput (keyup)="applyFilter($event)" placeholder="Filter designations">
-</mat-form-field>
+        <mat-label>Search</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter designations">
+      </mat-form-field>
       <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
         <!-- ID Column -->
-          <!-- Checkbox Column -->
-  <ng-container matColumnDef="select">
-    <th mat-header-cell *matHeaderCellDef>
-      <mat-checkbox (change)="$event ? masterToggle() : null"
-                    [checked]="isAllSelected()"
-                    [indeterminate]="isPartialSelected()">
-      </mat-checkbox>
-    </th>
-    <td mat-cell *matCellDef="let row">
-      <mat-checkbox (click)="$event.stopPropagation()"
-                    (change)="$event ? toggleSelection(row) : null"
-                    [checked]="selection.includes(row)">
-      </mat-checkbox>
-    </td>
-  </ng-container>
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="isAllSelected()"
+              [indeterminate]="isPartialSelected()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? toggleSelection(row) : null"
+              [checked]="selection.includes(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
 
         <!-- Designation Column -->
         <ng-container matColumnDef="designation">
@@ -49,28 +47,26 @@
         </ng-container>
 
         <!-- Actions Column -->
- <!-- Actions Column -->
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>Actions</th>
-    <td mat-cell *matCellDef="let row">
-      <button mat-icon-button color="primary" (click)="openEditDialog(row)">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button color="warn" (click)="onDelete(row)">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </td>
-  </ng-container>
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-icon-button color="primary" (click)="openEditDialog(row)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="onDelete(row)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-    <!-- Header & Rows -->
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <!-- Header & Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-</table>
-     <!-- Paginator -->
-<mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
-
-
+      </table>
+      <!-- Paginator -->
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
     </mat-card-content>
   </mat-card>
 </div>
