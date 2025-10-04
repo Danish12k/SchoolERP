@@ -23,43 +23,43 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
   templateUrl: './designationmaster.component.html',
   styleUrl: './designationmaster.component.scss'
 })
-export class DesignationmasterComponent implements  OnInit {
+export class DesignationmasterComponent implements OnInit {
   private designationService = inject(DesignationService);
   dataSource = new MatTableDataSource<IDesignation>([]);
   //displayedColumns: string[] = ['id', 'designation'];
   displayedColumns: string[] = ['select', 'designation', 'actions'];
   selection: IDesignation[] = [];
- constructor(private dialog: MatDialog) {} 
+  constructor(private dialog: MatDialog) { }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-   @ViewChild('editDialog') editDialog: any;
+  @ViewChild('editDialog') editDialog: any;
 
   designationName: string = '';
 
   ngOnInit() {
     this.getDesignationList();
   }
-/*   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  } */
+  /*   ngAfterViewInit() {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    } */
 
- /*  addDesignation() {
-    debugger;
-    this.desingnationService.addDesignation(this.designationName).subscribe(response => {
-      console.log('Designation added successfully:', response);
-      if (response.success){
-        alert('Designation added successfully');
-        this.getDesignationList();
-      }
-      // Optionally, clear the input field after successful addition
-      this.designationName = '';
-    }, error => {
-      console.error('Error adding designation:', error);
-    });
-  } */
-   addDesignation() {
+  /*  addDesignation() {
+     debugger;
+     this.desingnationService.addDesignation(this.designationName).subscribe(response => {
+       console.log('Designation added successfully:', response);
+       if (response.success){
+         alert('Designation added successfully');
+         this.getDesignationList();
+       }
+       // Optionally, clear the input field after successful addition
+       this.designationName = '';
+     }, error => {
+       console.error('Error adding designation:', error);
+     });
+   } */
+  addDesignation() {
     const name = this.designationName.trim();
     if (!name) return alert('Please enter designation');
 
@@ -142,7 +142,7 @@ export class DesignationmasterComponent implements  OnInit {
     }
   }
 
-   // 🔹 OPEN EDIT POPUP
+  // 🔹 OPEN EDIT POPUP
   openEditDialog(row: IDesignation) {
     debugger;
     const dialogRef = this.dialog.open(this.editDialog, {
@@ -156,7 +156,7 @@ export class DesignationmasterComponent implements  OnInit {
         console.log('Updated designation:', result);
         // yaha API call karke update karo
         this.designationService.updateDesignation(result).subscribe({
-          next:(res)=>{
+          next: (res) => {
             alert('Designation updated successfully');
             this.getDesignationList();
           }
