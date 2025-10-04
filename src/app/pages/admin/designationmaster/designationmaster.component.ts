@@ -128,7 +128,18 @@ export class DesignationmasterComponent implements AfterViewInit, OnInit {
   /** Actions */
   onDelete(row: IDesignation) {
     console.log('Delete clicked:', row);
-    // yaha aap delete API call kar sakte ho
+    if (confirm(`Are you sure you want to delete designation: ${row.designation}?`)) {
+      this.designationService.deleteDesignation(row.id).subscribe({
+        next: (res) => {
+          alert('Designation deleted successfully');
+          this.getDesignationList();
+        },
+        error: (err) => {
+          console.error('Error deleting designation:', err);
+          alert('Failed to delete designation');
+        }
+      });
+    }
   }
 
    // 🔹 OPEN EDIT POPUP
