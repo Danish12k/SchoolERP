@@ -23,7 +23,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
   templateUrl: './designationmaster.component.html',
   styleUrl: './designationmaster.component.scss'
 })
-export class DesignationmasterComponent implements AfterViewInit, OnInit {
+export class DesignationmasterComponent implements  OnInit {
   private designationService = inject(DesignationService);
   dataSource = new MatTableDataSource<IDesignation>([]);
   //displayedColumns: string[] = ['id', 'designation'];
@@ -40,10 +40,10 @@ export class DesignationmasterComponent implements AfterViewInit, OnInit {
   ngOnInit() {
     this.getDesignationList();
   }
-  ngAfterViewInit() {
+/*   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-  }
+  } */
 
  /*  addDesignation() {
     debugger;
