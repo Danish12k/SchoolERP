@@ -14,18 +14,18 @@ export class SessionService {
 
   //add session
   addSession(session:ISession):Observable<SessionResponse>{
-    return this.http.post<SessionResponse>(this.endpoints.ADD_SESSION, session);
+    return this.http.post<SessionResponse>(this.endpoints.session.add, session);
   }
   updateSession(session:ISession):Observable<SessionResponse>{
-    return this.http.post<SessionResponse>(this.endpoints.UPDATE_SESSION, session);
+    return this.http.post<SessionResponse>(this.endpoints.session.update, session);
   }
   deleteSession(id:number):Observable<SessionResponse>{
-    return this.http.delete<SessionResponse>(this.endpoints.DELETE_SESSION + `?id=${id}`);
+    return this.http.delete<SessionResponse>(this.endpoints.session.delete + `?id=${id}`);
   }
 
   //get session list
   getSessionList():Observable<SessionResponse>{
-    return this.http.get<SessionResponse>(this.endpoints.SESSION_LIST);
+    return this.http.get<SessionResponse>(this.endpoints.session.list);
   }
 
 
