@@ -26,7 +26,7 @@ import { IApiResponse } from '../interfaces/IDesignation';
     MatPaginatorModule,
     MatCheckbox,
     MatIcon,
-    MatDialogModule, BreadcrumbComponent],
+    MatDialogModule],
   templateUrl: './section.component.html',
   styleUrl: './section.component.scss'
 })
