@@ -33,8 +33,6 @@ import { DatePipe } from '@angular/common';
     MatOptionModule,
     MatSelectModule,
     TranslateModule,
-    PageHeaderComponent,
-
   ],
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss',

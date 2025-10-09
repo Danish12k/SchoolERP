@@ -1,1 +1,87 @@
-<p>section works!</p>
+<page-header />
+<div class="col-sm-12">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Section Master</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field style="width: 100%;">
+        <mat-label>Section Name</mat-label>
+        <input matInput [(ngModel)]="sectionName" placeholder="Enter section name" />
+      </mat-form-field>
+      <div class="m-t-8 button-row">
+        <button mat-flat-button (click)="addSection()">Save</button>
+        <button mat-button class="m-x-8" type="button">Cancel</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+
+<div class="col-sm-12">
+  <mat-card>
+    <mat-card-content>
+      <mat-form-field appearance="outline">
+        <mat-label>Search</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter designations">
+      </mat-form-field>
+      <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+        <!-- ID Column -->
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="isAllSelected()"
+              [indeterminate]="isPartialSelected()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? toggleSelection(row) : null"
+              [checked]="selection.includes(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <!-- sectionName Column -->
+        <ng-container matColumnDef="sectionName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Section Name</th>
+          <td mat-cell *matCellDef="let d">{{ d.sectionName }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-icon-button color="primary" (click)="openEditDialog(row)">
+              <mat-icon>drive_file_rename_outline</mat-icon>
+            </button>
+            
+          </td>
+        </ng-container>
+
+        <!-- Header & Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+      <!-- Paginator -->
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- ✨ EDIT POPUP (ng-template) -->
+<ng-template #editDialog let-data>
+  <h2 mat-dialog-title>Edit Section</h2>
+  <mat-dialog-content>
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>Section Name</mat-label>
+      <input matInput [(ngModel)]="data.sectionName">
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="primary" [mat-dialog-close]="data">Update</button>
+  </mat-dialog-actions>
+</ng-template>
