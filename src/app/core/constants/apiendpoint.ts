@@ -3,7 +3,7 @@ import { environment } from "@env/environment";
 const baseURL = environment.baseUrl;
 
 export const apiEndpoint = {
-    
+
     // Authentication
     LOGIN: baseURL + '/Auth/Login',
     REGISTER: baseURL + '/Auth/Register',
@@ -11,23 +11,31 @@ export const apiEndpoint = {
 
     //sess
     // Session Management
-    session:{
+    session: {
         add: baseURL + '/Session/AddSession',
         update: baseURL + '/Session/UpdateSession',
         delete: baseURL + '/Session/DeleteSession',
-        list: baseURL + '/Session/SessionList', 
+        list: baseURL + '/Session/SessionList',
     },
 
     // Designation Management
-    designation:{
+    designation: {
         add: baseURL + '/Designation/AddDesignation',
         update: baseURL + '/Designation/UpdateDesignation',
         delete: baseURL + '/Designation/DeleteDesignation',
         list: baseURL + '/Designation/DesignationList',
+    },
+
+    //section
+    section: {
+        add: baseURL + '/Section/AddSection',
+        update: baseURL + '/Section/UpdateSection',
+        get: baseURL + '/Section/GetSection?SectionId=',
+        delete: baseURL + '/Section/DeleteSection',
+        list: baseURL + '/Section/SectionList',
     }
 
-   
 
-    
-   
+
+
 };
