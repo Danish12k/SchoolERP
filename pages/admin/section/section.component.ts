@@ -20,7 +20,6 @@ import { IApiResponse } from '../interfaces/IDesignation';
   imports: [FormsModule,
     MatCardModule,
     MatInputModule,
-    PageHeaderComponent,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
