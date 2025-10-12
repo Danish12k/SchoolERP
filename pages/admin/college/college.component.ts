@@ -8,7 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { PageHeaderComponent } from '@shared';
 import { ICollege } from '../interfaces/ICollege';
 import { CollegeService } from '../services/college.service';
 
@@ -18,7 +17,6 @@ import { CollegeService } from '../services/college.service';
     FormsModule,
     MatCardModule,
     MatInputModule,
-    PageHeaderComponent,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,

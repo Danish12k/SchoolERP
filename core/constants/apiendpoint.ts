@@ -35,12 +35,14 @@ export const apiEndpoint = {
         list: baseURL + '/Section/SectionList',
     },
 
-    //colelge
+    //college
     college: {
-        add: baseURL + '',
-        update: baseURL + '/College/UpdateCollege',
+        add: baseURL + '/Course/AddClass',
+        update: baseURL + '/Course/UpdateClass',
         get: baseURL + '',
         list: baseURL + '/College/CollegeList',
+        ListBySessionAndCollege: baseURL + '/Course/ClassList',
+        delete: baseURL + '/College/DeleteCollege',
     }
 
 
