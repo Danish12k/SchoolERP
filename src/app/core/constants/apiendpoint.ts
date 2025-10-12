@@ -33,6 +33,14 @@ export const apiEndpoint = {
         get: baseURL + '/Section/GetSection?SectionId=',
         delete: baseURL + '/Section/DeleteSection',
         list: baseURL + '/Section/SectionList',
+    },
+
+    //colelge
+    college: {
+        add: baseURL + '',
+        update: baseURL + '/College/UpdateCollege',
+        get: baseURL + '',
+        list: baseURL + '/College/CollegeList',
     }
 
 
