@@ -14,7 +14,6 @@ export class CollegeService {
  private endPoints = apiEndpoint;
 
   getCollegeList():Observable<IApiResponse<ICollege>> {
-    debugger;
     return this.http.get<IApiResponse<ICollege>>(this.endPoints.college.list);
   }
   
