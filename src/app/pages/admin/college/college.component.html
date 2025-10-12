@@ -84,33 +84,33 @@
 
 <!-- Edit Dialog -->
 <ng-template #editDialog let-data>
-    <h2 mat-dialog-title>Edit Session</h2>
+    <h2 mat-dialog-title>Edit College</h2>
     <mat-dialog-content>
         <mat-form-field appearance="fill" style="width:100%">
-            <mat-label>Session Name</mat-label>
-            <input matInput [(ngModel)]="data.sessionName" />
+            <mat-label>College Name</mat-label>
+            <input matInput [(ngModel)]="data.collegeName" />
         </mat-form-field>
 
         <mat-form-field appearance="fill" style="width:100%">
-            <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="data.description" />
+            <mat-label>College Address</mat-label>
+            <input matInput [(ngModel)]="data.collegeAddress" />
         </mat-form-field>
 
         <mat-form-field appearance="fill" style="width:100%">
-            <mat-label>From Year</mat-label>
-            <input matInput [(ngModel)]="data.yearFrom" />
+            <mat-label>email</mat-label>
+            <input matInput [(ngModel)]="data.email" />
         </mat-form-field>
 
         <mat-form-field appearance="fill" style="width:100%">
-            <mat-label>To Year</mat-label>
-            <input matInput [(ngModel)]="data.yearTo" />
+            <mat-label>phone</mat-label>
+            <input matInput [(ngModel)]="data.phone" />
         </mat-form-field>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
         <button mat-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button color="primary" [mat-dialog-close]="data">
+       <!--  <button mat-raised-button color="primary" [mat-dialog-close]="data">
             Update
-        </button>
+        </button> -->
     </mat-dialog-actions>
 </ng-template>
