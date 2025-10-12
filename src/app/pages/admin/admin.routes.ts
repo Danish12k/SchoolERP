@@ -6,6 +6,7 @@ import { SessionComponent } from './session/session.component';
 import { CountryComponent } from './country/country.component';
 import { SectionComponent } from './section/section.component';
 import { CollegeComponent } from './college/college.component';
+import { CollegeSectionComponent } from './college-section/college-section.component';
 
 
 export const routes: Routes = [
@@ -16,4 +17,5 @@ export const routes: Routes = [
   { path: 'session', component: SessionComponent },
   { path: 'section', component: SectionComponent },
   { path: 'college', component: CollegeComponent },
+  { path: 'collegeSection', component: CollegeSectionComponent }
 ];
