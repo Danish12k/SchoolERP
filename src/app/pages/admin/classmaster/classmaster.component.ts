@@ -171,7 +171,7 @@ export class ClassmasterComponent implements OnInit {
         this.collegeService.updateClass(result).subscribe({
           next: (res) => {
             if (res.success) {
-              alert('Class updated successfully');
+              alert(res.message);
               this.getSchoolListById(); // Refresh the list
             }
           },
