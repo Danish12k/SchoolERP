@@ -17,5 +17,5 @@ export const routes: Routes = [
   { path: 'session', component: SessionComponent },
   { path: 'section', component: SectionComponent },
   { path: 'college', component: CollegeComponent },
-  { path: 'collegeSection', component: CollegeSectionComponent }
+  { path: 'classSection', component: CollegeSectionComponent }
 ];
