@@ -23,7 +23,7 @@
                         <div class="col-sm-3">
                             <mat-form-field appearance="outline" class="w-100">
                                 <mat-label>Select School</mat-label>
-                                <mat-select formControlName="collegeId">
+                                <mat-select formControlName="collegeId" (selectionChange)="getSchoolListById()">
                                     @for (college of colleges; track college.collegeId) {
                                     <mat-option [value]="college.collegeId">
                                         {{ college.collegeAbreviation}}
