@@ -9,7 +9,6 @@ import { Error500Component } from './routes/sessions/500.component';
 import { LoginComponent } from './routes/sessions/login/login.component';
 import { RegisterComponent } from './routes/sessions/register/register.component';
 import { CountryComponent } from './pages/admin/country/country.component';
-import { DesignationComponent } from './pages/admin/designation/designation.component';
 import { ClassmasterComponent } from './pages/admin/classmaster/classmaster.component';
 import { DesignationmasterComponent } from './pages/admin/designationmaster/designationmaster.component';
 import { SessionComponent } from './pages/admin/session/session.component';

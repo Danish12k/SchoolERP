@@ -4,6 +4,7 @@ import { IApiResponse } from '../interfaces/ICommon';
 import { ISection } from '../interfaces/ISectionTest';
 import { HttpClient } from '@angular/common/http';
 import { apiEndpoint } from '@core/constants/apiendpoint';
+import { IAssignSection, IAssignSectionList } from '../interfaces/IClassAndSection';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,11 @@ export class SectionService {
 
   updateSection(SectionBody:ISection):Observable<IApiResponse<ISection>>{
     return this.http.post<IApiResponse<ISection>>(this.endPoints.section.update,SectionBody);
-    //return this.http.put<IApiResponse<ISection>>(this.endPoints.section.update,SectionBody)
   }
+
+  assignSection(body:IAssignSection[] ):Observable<IApiResponse<IAssignSectionList>>{
+    return this.http.post<IApiResponse<IAssignSectionList>>(this.endPoints.section.assignSection,body)
+  }
+  
 
 }
