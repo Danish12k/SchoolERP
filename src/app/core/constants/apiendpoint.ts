@@ -33,6 +33,8 @@ export const apiEndpoint = {
         get: baseURL + '/Section/GetSection?SectionId=',
         delete: baseURL + '/Section/DeleteSection',
         list: baseURL + '/Section/SectionList',
+
+        assignSection: baseURL+'/Course/AssignSection',
     },
 
     //college
@@ -43,8 +45,11 @@ export const apiEndpoint = {
         list: baseURL + '/College/CollegeList',
         ListBySessionAndCollege: baseURL + '/Course/ClassList',
         delete: baseURL + '/College/DeleteCollege',
-    }
+    },
 
+    faculty :{
+        listByCollege :baseURL + '/Faculty/FacultyList?CollegeId='
+    }
 
 
 
