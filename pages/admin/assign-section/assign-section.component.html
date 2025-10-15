@@ -1,0 +1,71 @@
+<div class="col-sm-12">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Assign Section</mat-card-title>
+        </mat-card-header>
+
+
+
+    <form [formGroup]="assignSectionForm" (ngSubmit)="submitForm()">
+        <mat-card-content>
+            <div class="form-field-full">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                                <mat-label>Select Session</mat-label>
+                                <mat-select formControlName="sessionId" (selectionChange)="getSchoolListById()">
+                                    @for (session of sessions; track session.sessionId) {
+                                    <mat-option [value]="session.sessionId">
+                                        {{ session.sessionName }}
+                                    </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                    </div>
+                    <div class="col-sm-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                                <mat-label>Select School</mat-label>
+                                <mat-select formControlName="collegeId" (selectionChange)="getSchoolListById()">
+                                    @for (school of schools; track school.collegeId) {
+                                    <mat-option [value]="school.collegeId">
+                                        {{ school.collegeAbreviation }}
+                                    </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                    </div>
+                    <div class="col-sm-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                                <mat-label>Select Class</mat-label>
+                                <mat-select formControlName="courseId" >
+                                    @for (class of classs; track class.courseId) {
+                                    <mat-option [value]="class.courseId">
+                                        {{ class.courseName }}
+                                    </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                    </div>
+                      <div class="col-sm-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                                <mat-label>Select Sections</mat-label>
+                                <mat-select formControlName="sectionId" >
+                                    @for (section of sections; track section.sectionId) {
+                                    <mat-option [value]="section.sectionId">
+                                        {{ section.sectionName }}
+                                    </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                    </div>
+                </div>
+                 <div class="m-t-8">
+                        <button mat-flat-button color="primary" type="submit">Save</button>
+                        <button mat-button class="m-x-8" type="button" (click)="onCancel()">Cancel</button>
+                    </div>
+            </div>
+        </mat-card-content>
+
+    </form>
+        </mat-card>
+</div>
