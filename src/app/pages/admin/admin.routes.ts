@@ -9,6 +9,7 @@ import { CollegeSectionComponent } from './college-section/college-section.compo
 import { AssignSectionComponent } from './assign-section/assign-section.component';
 import { AssignClassTeacherComponent } from './assign-class-teacher/assign-class-teacher.component';
 import { SmsapiComponent } from './smsapi/smsapi.component';
+import { ExpenseComponent } from './expense/expense.component';
 
 
 export const routes: Routes = [
@@ -21,5 +22,6 @@ export const routes: Routes = [
   { path: 'classSection', component: CollegeSectionComponent },
   {path :'assignSection', component:AssignSectionComponent},
   { path: 'assignClassTeacher',component:AssignClassTeacherComponent },
-  {path:'SMS',component:SmsapiComponent}
+  {path:'SMS',component:SmsapiComponent},
+  {path:'Expense',component:ExpenseComponent}
 ];

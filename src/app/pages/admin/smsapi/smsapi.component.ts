@@ -121,65 +121,65 @@ export class SmsapiComponent implements OnInit {
 }
   }
 
-  // listing
+    // listing
 
-    openEditDialog(smsapi: ISMSApi) {
-      const dialogRef = this.dialog.open(this.editDialog, {
-        width: '400px',
-        data: { ...smsapi }
-      });
-      debugger;
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          debugger;
-          // Handle the result from the dialog (e.g., save changes)
-          console.log('Dialog result:', result);
-          result.apI_Status = result.apI_Status ?1:0;
-          this._smsAPIService.updateSMSAPI(result).subscribe({
-            next: (res) => {
-              if (res.success) {
-                alert(res.message);
-                this.getSMSApiList(); // Refresh the list
+      openEditDialog(smsapi: ISMSApi) {
+        const dialogRef = this.dialog.open(this.editDialog, {
+          width: '400px',
+          data: { ...smsapi }
+        });
+        debugger;
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            debugger;
+            // Handle the result from the dialog (e.g., save changes)
+            console.log('Dialog result:', result);
+            result.apI_Status = result.apI_Status ?1:0;
+            this._smsAPIService.updateSMSAPI(result).subscribe({
+              next: (res) => {
+                if (res.success) {
+                  alert(res.message);
+                  this.getSMSApiList(); // Refresh the list
+                }
+              },
+              error: (err) => {
+                console.error('Error updating session:', err);
+                alert('Failed to update session');
               }
-            },
-            error: (err) => {
-              console.error('Error updating session:', err);
-              alert('Failed to update session');
-            }
-          })
+            })
+          }
+        });
+      }
+    
+      applyFilter(event: Event) {
+        const filterValue = (event.target as HTMLInputElement).value;
+        this.dataSource.filter = filterValue.trim().toLowerCase();
+      }
+    
+      /** Checkbox Selection Logic */
+      toggleSelection(row: ISMSApi) {
+        if (this.smsapiList.includes(row)) {
+          this.smsapiList = this.smsapiList.filter(r => r !== row);
+        } else {
+          this.smsapiList.push(row);
         }
-      });
-    }
-  
-    applyFilter(event: Event) {
-      const filterValue = (event.target as HTMLInputElement).value;
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-    }
-  
-    /** Checkbox Selection Logic */
-    toggleSelection(row: ISMSApi) {
-      if (this.smsapiList.includes(row)) {
-        this.smsapiList = this.smsapiList.filter(r => r !== row);
-      } else {
-        this.smsapiList.push(row);
       }
-    }
-  
-    isAllSelected() {
-      return this.smsapiList.length === this.dataSource.data.length;
-    }
-  
-    isPartialSelected() {
-      return this.smsapiList.length > 0 && !this.isAllSelected();
-    }
-  
-    masterToggle() {
-      if (this.isAllSelected()) {
-        this.smsapiList = [];
-      } else {
-        this.smsapiList = [...this.dataSource.data];
+    
+      isAllSelected() {
+        return this.smsapiList.length === this.dataSource.data.length;
       }
-    }
+    
+      isPartialSelected() {
+        return this.smsapiList.length > 0 && !this.isAllSelected();
+      }
+    
+      masterToggle() {
+        if (this.isAllSelected()) {
+          this.smsapiList = [];
+        } else {
+          this.smsapiList = [...this.dataSource.data];
+        }
+      }
 
     SMSAPIDelete(smsAPI : ISMSApi){
       debugger;
