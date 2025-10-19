@@ -34,7 +34,7 @@ export const apiEndpoint = {
         delete: baseURL + '/Section/DeleteSection',
         list: baseURL + '/Section/SectionList',
 
-        assignSection: baseURL+'/Course/AssignSection',
+        assignSection: baseURL + '/Course/AssignSection',
     },
 
     //college
@@ -47,16 +47,23 @@ export const apiEndpoint = {
         delete: baseURL + '/College/DeleteCollege',
     },
 
-    faculty :{
-        listByCollege :baseURL + '/Faculty/FacultyList?CollegeId='
+    faculty: {
+        listByCollege: baseURL + '/Faculty/FacultyList?CollegeId='
     },
 
-    SMSAPI:{
-        listByCollegeId: baseURL+'/SmsApi/SmsApiList?CollegeId=',
-        add: baseURL+'/SmsApi/AddApi',
-        update:baseURL+'/SmsApi/UpdateAPI',
-        delete : baseURL+'/SmsApi/Delete'
+    SMSAPI: {
+        listByCollegeId: baseURL + '/SmsApi/SmsApiList?CollegeId=',
+        add: baseURL + '/SmsApi/AddApi',
+        update: baseURL + '/SmsApi/UpdateAPI',
+        delete: baseURL + '/SmsApi/Delete'
 
+    },
+
+    expensehead: {
+        add: baseURL + '/Expense/AddExpense',
+        update: baseURL + '/Expense/UpdateExpense',
+        delete: baseURL + '/Expense/DeleteExpense',
+        list: baseURL + '/Expense/ExpenseList',
     }
 
 
