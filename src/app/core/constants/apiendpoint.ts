@@ -49,6 +49,14 @@ export const apiEndpoint = {
 
     faculty :{
         listByCollege :baseURL + '/Faculty/FacultyList?CollegeId='
+    },
+
+    SMSAPI:{
+        listByCollegeId: baseURL+'/SmsApi/SmsApiList?CollegeId=',
+        add: baseURL+'/SmsApi/AddApi',
+        update:baseURL+'/SmsApi/UpdateAPI',
+        delete : baseURL+'/SmsApi/Delete'
+
     }
 
 

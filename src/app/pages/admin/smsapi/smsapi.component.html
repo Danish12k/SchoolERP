@@ -1,1 +1,201 @@
-<p>smsapi works!</p>
+<div class="col-sm-12">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Add SMS API</mat-card-title>
+        </mat-card-header>
+
+        <form [formGroup]="smsForm" (ngSubmit)="addSMSAPI()">
+            <mat-card-content>
+                <div class="form-field-full">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-label>Select School</mat-label>
+                                <mat-select formControlName="collegeId" (selectionChange)="getSMSApiList()">
+                                    @for (school of schoolList; track school.collegeId) {
+                                    <mat-option [value]="school.collegeId">
+                                        {{ school.collegeAbreviation}}
+                                    </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3">
+                            <mat-form-field class="w-100">
+                                <mat-label>Sender</mat-label>
+                                <input matInput formControlName="apI_SenderId" placeholder="Please Enter Sender" />
+                                @if (smsForm.get('apI_SenderId')?.hasError('required') && smsForm.get('apI_SenderId')?.touched) {
+                                <mat-error>Sender is required</mat-error>
+                                }
+                             <!--    @if(smsForm.get('apI_SenderId')?.hasError('maxLength') && smsForm.get('apI_SenderId')?.touched){
+                                    <mat-error>Sender max lenght is 6</mat-error>
+                                } -->
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3">
+                            <mat-form-field class="w-100">
+                                <mat-label>User Name</mat-label>
+                                <input matInput formControlName="api_UserName" placeholder="Enter User Name" />
+                                @if(smsForm.get('api_UserName')?.hasError('required')&&
+                                smsForm.get('api_UserName')?.touched){
+                                <mat-error> User Number is required</mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3">
+                            <mat-form-field class="w-100">
+                                <mat-label>Password</mat-label>
+                                <input matInput formControlName="api_Password" placeholder="Pleasse Enter Password" />
+                                @if (smsForm.get('api_Password')?.hasError('required') &&
+                                smsForm.get('api_Password')?.touched) {
+                                <mat-error>Password is required</mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <mat-form-field class="w-100">
+                                <mat-label>SMS API Provider</mat-label>
+                                <textarea matInput formControlName="apI_Provider"
+                                    placeholder="Please enter SMS API provider details"></textarea>
+                                @if (smsForm.get('apI_Provider')?.hasError('required') &&
+                                smsForm.get('apI_Provider')?.touched) {
+                                <mat-error>Provider is required</mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3 d-flex align-items-center">
+                            <mat-slide-toggle color="primary" formControlName="apI_Status">
+                                Active
+                            </mat-slide-toggle>
+                        </div>
+                    </div>
+
+                    <div class="m-t-8">
+                        <button mat-flat-button color="primary" type="submit">Save</button>
+                    </div>
+                </div>
+            </mat-card-content>
+        </form>
+    </mat-card>
+</div>
+
+<div class="col-sm-12">
+    <mat-card>
+        <mat-card-content>
+            <mat-form-field appearance="outline">
+                <mat-label>Search</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Filter class">
+            </mat-form-field>
+            <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="isAllSelected()"
+                            [indeterminate]="isPartialSelected()">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let row">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? toggleSelection(row) : null"
+                            [checked]="smsapiList.includes(row)">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="school">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>School Name</th>
+                    <td mat-cell *matCellDef="let element">{{ element.collegeId }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sender">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>sender</th>
+                    <td mat-cell *matCellDef="let element">{{ element.apI_SenderId }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="usename">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>User Name </th>
+                    <td mat-cell *matCellDef="let element">{{ element.api_UserName }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="password">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Password</th>
+                    <td mat-cell *matCellDef="let element">{{ element.api_Password }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="provider">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Provider</th>
+                    <td mat-cell *matCellDef="let element">{{ element.apI_Provider }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                    <td mat-cell *matCellDef="let element">{{ element.apI_Status }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let row">
+                        <button mat-icon-button color="primary" (click)="openEditDialog(row)">
+                            <mat-icon>drive_file_rename_outline</mat-icon>
+                        </button>
+                        <button mat-icon-button color="primary" (click)="SMSAPIDelete(row)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <!-- Header & Rows -->
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <!-- Paginator -->
+            <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<!-- Edit Class Popup Template -->
+<!-- ============================= -->
+<ng-template #editDialog let-data>
+    <h2 mat-dialog-title>Edit SMS API</h2>
+    <mat-dialog-content>
+        <form #editClassForm="ngForm" class="w-100">
+            <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>Select Session</mat-label>
+                <mat-select [(ngModel)]="data.collegeId" name="collegeId" required>
+                    @for (school of schoolList; track school.collegeId) {
+                    <mat-option [value]="school.collegeId">
+                        {{ school.collegeAbreviation }}
+                    </mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>apI_SenderId</mat-label>
+                <input matInput [(ngModel)]="data.apI_SenderId" name="apI_SenderId" required min="1" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>api_UserName Name</mat-label>
+                <input matInput [(ngModel)]="data.api_UserName" name="api_UserName" required minlength="3"
+                    maxlength="50" />
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>api_Password Name</mat-label>
+                <input matInput [(ngModel)]="data.api_Password" name="api_Password" required minlength="3"
+                    maxlength="50" />
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>apI_Provider Name</mat-label>
+                <input matInput [(ngModel)]="data.apI_Provider" name="apI_Provider" required minlength="3"
+                    maxlength="50" />
+            </mat-form-field>
+                <mat-slide-toggle [(ngModel)]="data.apI_Status"  name="apI_Status" [checked]="data.apI_Status === 1">API Status
+     </mat-slide-toggle>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="data">Update</button>
+    </mat-dialog-actions>
+</ng-template>
