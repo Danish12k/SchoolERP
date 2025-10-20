@@ -15,6 +15,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PageHeaderComponent } from "@shared";
 
 @Component({
   selector: 'app-expense',
@@ -49,11 +50,11 @@ export class ExpenseComponent implements OnInit {
   expenseList: IExpenseHead[] = [];
   expenseName: string = '';
   ngOnInit(): void {
-      this.expenseForm = this.fb.group({
-        id:[0],
-        expenseHead:[null,[Validators.required, Validators.minLength(2)]],
-        activeStatus:[false]
-      })
+    this.expenseForm = this.fb.group({
+      id: [0],
+      expenseHead: [null, [Validators.required, Validators.minLength(2)]],
+      activeStatus: [false]
+    })
 
     this.GetExpenseList();
   }
@@ -76,32 +77,35 @@ export class ExpenseComponent implements OnInit {
 
   addExpense() {
     debugger;
-    if(this.expenseForm.valid){
+    if (this.expenseForm.valid) {
       const formValue = this.expenseForm.value;
-      formValue.activeStatus = formValue.activeStatus ?1 :0;
+      formValue.activeStatus = formValue.activeStatus ? 1 : 0;
       this._expenseService.addExpense(formValue).subscribe({
-        next:(res)=>{
-          if(res.success){
+        next: (res) => {
+          if (res.success) {
             alert(res.message);
             this.GetExpenseList();
           }
+          else {
+            alert(res.message);
+          }
         },
-        error:(err)=>{
+        error: (err) => {
           console.log("add expense error", err);
           alert("Something went wrong.");
         }
       });
     }
-    
+
   }
 
 
 
   // listing
-  openEditDialog(smsapi: IExpenseHead) {
+  openEditDialog(expense: IExpenseHead) {
     const dialogRef = this.dialog.open(this.editDialog, {
       width: '400px',
-      data: { ...smsapi }
+      data: { ...expense }
     });
     debugger;
     dialogRef.afterClosed().subscribe(result => {
@@ -109,7 +113,7 @@ export class ExpenseComponent implements OnInit {
         debugger;
         // Handle the result from the dialog (e.g., save changes)
         console.log('Dialog result:', result);
-        result.apI_Status = result.apI_Status ? 1 : 0;
+        result.activeStatus = result.activeStatus ? 1 : 0;
         this._expenseService.updateExpense(result).subscribe({
           next: (res) => {
             if (res.success) {
@@ -156,5 +160,21 @@ export class ExpenseComponent implements OnInit {
     }
   }
 
+  DeleteExpense(expense: IExpenseHead) {
+    debugger;
+    const id = expense.id;
+    if (id > 0) {
+      this._expenseService.deleteExpense(id).subscribe({
+        next: (res) => {
+          if (res.success) {
+            alert(res.message);
+
+            this.GetExpenseList();
+          }
+        }
+      });
+    }
+
+  }
 
 }

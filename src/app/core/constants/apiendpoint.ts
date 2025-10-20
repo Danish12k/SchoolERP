@@ -62,7 +62,7 @@ export const apiEndpoint = {
     expensehead: {
         add: baseURL + '/Expense/AddExpense',
         update: baseURL + '/Expense/UpdateExpense',
-        delete: baseURL + '/Expense/DeleteExpense',
+        delete: baseURL + '/Expense/DeleteExpense?Id=',
         list: baseURL + '/Expense/ExpenseList',
     }
 

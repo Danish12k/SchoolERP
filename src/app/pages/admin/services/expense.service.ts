@@ -6,6 +6,7 @@ import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 import { Observable } from 'rxjs';
 import { IApiResponse } from '../interfaces/ICommon';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +21,7 @@ export class ExpenseService {
     return this.http.post<IApiResponse<IExpenseHead>>(this.endpoint.expensehead.update, body);
   }
    deleteExpense(Id:Number):Observable<IApiResponse<IExpenseHead>>{
-   return this.http.post<IApiResponse<IExpenseHead>>(this.endpoint.expensehead.update, Id);
+   return this.http.post<IApiResponse<IExpenseHead>>(this.endpoint.expensehead.delete + Id, null); 
   }
   listExpense():Observable<IApiResponse<IExpenseHead>>{
     return this.http.get<IApiResponse<IExpenseHead>>(this.endpoint.expensehead.list);

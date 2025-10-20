@@ -20,8 +20,8 @@ export const routes: Routes = [
   { path: 'section', component: SectionComponent },
   { path: 'college', component: CollegeComponent },
   { path: 'classSection', component: CollegeSectionComponent },
-  {path :'assignSection', component:AssignSectionComponent},
-  { path: 'assignClassTeacher',component:AssignClassTeacherComponent },
-  {path:'SMS',component:SmsapiComponent},
-  {path:'Expense',component:ExpenseComponent}
+  { path: 'assignSection', component: AssignSectionComponent },
+  { path: 'assignClassTeacher', component: AssignClassTeacherComponent },
+  { path: 'SMS', component: SmsapiComponent },
+  { path: 'Expense', component: ExpenseComponent }
 ];
