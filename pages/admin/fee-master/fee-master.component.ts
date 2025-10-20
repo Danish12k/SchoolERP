@@ -4,11 +4,16 @@ import { MatTabGroup, MatTab } from "@angular/material/tabs";
 import { FeeGroupComponent } from "../fee-group/fee-group.component";
 import { FeeHeadComponent } from "../fee-head/fee-head.component";
 import { FeeInstallmentComponent } from "../fee-installment/fee-installment.component";
-import { AllocateFeetoClassComponent } from "../allocate-feeto-class/allocate-feeto-class.component";
+import { AllocateFeeComponent } from "../allocate-fee/allocate-fee.component";
 
 @Component({
   selector: 'app-fee-master',
-  imports: [MatCard, MatCardTitle, MatCardHeader, MatTabGroup, MatCardContent, MatTab, FeeGroupComponent, FeeHeadComponent, FeeInstallmentComponent, AllocateFeetoClassComponent],
+  imports: [
+    MatCard, MatCardTitle, MatCardHeader, MatTabGroup,
+     MatCardContent, MatTab, 
+     FeeGroupComponent, FeeHeadComponent, 
+     FeeInstallmentComponent, AllocateFeeComponent
+    ],
   templateUrl: './fee-master.component.html',
   styleUrl: './fee-master.component.scss'
 })
