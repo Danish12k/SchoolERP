@@ -3,7 +3,6 @@
         <mat-card-header>
             <mat-card-title>Add Expense</mat-card-title>
         </mat-card-header>
-
         <form [formGroup]="expenseForm" (ngSubmit)="addExpense()">
             <mat-card-content>
                 <div class="form-field-full">
@@ -13,7 +12,8 @@
                             <mat-form-field class="w-100">
                                 <mat-label>Expense</mat-label>
                                 <input matInput formControlName="expenseHead" placeholder="Please Enter Expense head" />
-                                @if (expenseForm.get('expenseHead')?.hasError('required') && expenseForm.get('expenseHead')?.touched) {
+                                @if (expenseForm.get('expenseHead')?.hasError('required') &&
+                                expenseForm.get('expenseHead')?.touched) {
                                 <mat-error>Expense is required</mat-error>
                                 }
                             </mat-form-field>
@@ -48,9 +48,7 @@
                 <ng-container matColumnDef="status">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
                     <td mat-cell *matCellDef="let element">
-                       {{ element.activeStatus ==1?"Active":"Inactive"}}
-
-                      
+                        {{ element.activeStatus ==1?"Active":"Inactive"}}
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="actions">
@@ -60,7 +58,7 @@
                             <mat-icon>drive_file_rename_outline</mat-icon>
                         </button>
                         <button mat-icon-button color="primary">
-                            <mat-icon>delete</mat-icon>
+                            <mat-icon (click)="DeleteExpense(row)" >delete</mat-icon>
                         </button>
                     </td>
                 </ng-container>
@@ -74,3 +72,26 @@
         </mat-card-content>
     </mat-card>
 </div>
+
+
+<!-- Edit Expense Popup Template -->
+<!-- ============================= -->
+<ng-template #editDialog let-data>
+    <h2 mat-dialog-title>Edit Expense</h2>
+    <mat-dialog-content>
+        <form #editClassForm="ngForm" class="w-100">
+            <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>Expense</mat-label>
+                <input matInput [(ngModel)]="data.expenseHead" name="expenseHead" required min="1" />
+            </mat-form-field>
+            <mat-slide-toggle [(ngModel)]="data.activeStatus" name="activeStatus" [checked]="data.activeStatus === 1">
+                Status
+            </mat-slide-toggle>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="data">Update</button>
+    </mat-dialog-actions>
+</ng-template>
