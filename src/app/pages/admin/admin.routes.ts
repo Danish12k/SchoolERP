@@ -14,7 +14,7 @@ import { FeeMasterComponent } from './fee-master/fee-master.component';
 import { FeeGroupComponent } from './fee-group/fee-group.component';
 import { FeeHeadComponent } from './fee-head/fee-head.component';
 import { FeeInstallmentComponent } from './fee-installment/fee-installment.component';
-import { AllocateFeetoClassComponent } from './allocate-feeto-class/allocate-feeto-class.component';
+import { AllocateFeeComponent } from './allocate-fee/allocate-fee.component';
 
 
 export const routes: Routes = [
@@ -28,10 +28,10 @@ export const routes: Routes = [
   { path: 'assignSection', component: AssignSectionComponent },
   { path: 'assignClassTeacher', component: AssignClassTeacherComponent },
   { path: 'SMS', component: SmsapiComponent },
-  { path: 'Expense', component: ExpenseComponent },
-  { path: 'FeeMaster', component: FeeMasterComponent },
-  { path: 'FeeGroup', component: FeeGroupComponent },
-  { path: 'FeeHead', component: FeeHeadComponent },
-  { path: 'FeeInstallment', component: FeeInstallmentComponent },
-  { path: 'AllocateFee', component: AllocateFeetoClassComponent }
+  { path: 'expense', component: ExpenseComponent },
+  { path: 'feeMaster', component: FeeMasterComponent },
+  { path: 'feeGroup', component: FeeGroupComponent },
+  { path: 'feeHead', component: FeeHeadComponent },
+  { path: 'feeInstallment', component: FeeInstallmentComponent },
+  { path: 'allocateFee', component: AllocateFeeComponent },
 ];
