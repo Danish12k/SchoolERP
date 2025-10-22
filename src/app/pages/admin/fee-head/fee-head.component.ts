@@ -56,7 +56,7 @@ export class FeeHeadComponent implements OnInit{
       stream: [0]
     })
 
-    this.GetFeeGroupList();
+    this.GetFeeHeadList();
    this.getFeeGroupLlist();
   }
 
@@ -71,7 +71,7 @@ export class FeeHeadComponent implements OnInit{
   }
 
 
-  GetFeeGroupList() {
+  GetFeeHeadList() {
     this._feeHeadService.listFeeHead().subscribe({
       next: (res) => {
         if (res.success) {
@@ -95,7 +95,7 @@ export class FeeHeadComponent implements OnInit{
         next: (res) => {
           if (res.success) {
             alert(res.message);
-            this.GetFeeGroupList();
+            this.GetFeeHeadList();
           }
           else {
             alert(res.message);
@@ -122,10 +122,15 @@ export class FeeHeadComponent implements OnInit{
         debugger;
         // Handle the result from the dialog (e.g., save changes)
         console.log('Dialog result:', result);
-        this._feeHeadService.updateFeeHead(result).subscribe({
+    const feeHeadNew: IFeeHead = {
+  feeHeadId: result.feeHeadId,
+  feeHeadName: result.feeHeadName,
+  stream: result.streamId   // ensure property name matches your API
+};
+        this._feeHeadService.updateFeeHead(feeHeadNew ).subscribe({
           next: (res) => {
             if (res.success) {
-              this.GetFeeGroupList(); 
+              this.GetFeeHeadList(); 
               alert(res.message);
               // Refresh the list
             }

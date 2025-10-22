@@ -90,7 +90,7 @@
             </mat-form-field>
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Select Session</mat-label>
-                <mat-select [(ngModel)]="data.stream" name="stream" required>
+                <mat-select [(ngModel)]="data.streamId" name="stream" required>
                     @for (feeGrp of feeGroupList; track feeGrp.streamId) {
                     <mat-option [value]="feeGrp.streamId">
                         {{ feeGrp.streamName }}

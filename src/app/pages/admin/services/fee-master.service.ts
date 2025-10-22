@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { IFeeGroup, IFeeHead } from '../interfaces/IFeeMaster';
+import { IFeeGroup, IFeeHead, IFeeInstallment } from '../interfaces/IFeeMaster';
 import { Observable } from 'rxjs';
 import { IApiResponse } from '../interfaces/ICommon';
 import { apiEndpoint } from '@core/constants/apiendpoint';
@@ -36,7 +36,8 @@ export class FeeMasterService {
     return this.http.post<IApiResponse<IFeeHead>>(this.endpoint.feeHead.add, body);
   }
 
-  updateFeeHead(body: IFeeGroup): Observable<IApiResponse<IFeeHead>> {
+  updateFeeHead(body: IFeeHead): Observable<IApiResponse<IFeeHead>> {
+    debugger;
     return this.http.post<IApiResponse<IFeeHead>>(this.endpoint.feeHead.update, body);
   }
 
@@ -48,4 +49,22 @@ export class FeeMasterService {
     return this.http.get<IApiResponse<IFeeHead>>(this.endpoint.feeHead.list);
   }
   // Fee head. -- END --
+
+// fee installment start
+ listFeeInstallment(collegeId:number, sessionId:number): Observable<IApiResponse<IFeeInstallment>> {
+    return this.http.get<IApiResponse<IFeeInstallment>>
+    (this.endpoint.feeInstallment.listByCollegeAndSession + 'CollegeId='+{collegeId} +'SessionId='+{sessionId});
+  }
+   addFeeInstallment(body: IFeeInstallment): Observable<IApiResponse<IFeeInstallment>> {
+    return this.http.post<IApiResponse<IFeeInstallment>>(this.endpoint.feeInstallment.add, body);
+  }
+
+  updateFeeInstallment(body: IFeeInstallment): Observable<IApiResponse<IFeeInstallment>> {
+    debugger;
+    return this.http.post<IApiResponse<IFeeInstallment>>(this.endpoint.feeInstallment.update, body);
+  }
+
+///end -- fee installment 
+
+
 }
