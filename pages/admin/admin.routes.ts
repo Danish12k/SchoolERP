@@ -29,9 +29,9 @@ export const routes: Routes = [
   { path: 'assignClassTeacher', component: AssignClassTeacherComponent },
   { path: 'SMS', component: SmsapiComponent },
   { path: 'expense', component: ExpenseComponent },
-  { path: 'feeMaster', component: FeeMasterComponent },
-  { path: 'feeGroup', component: FeeGroupComponent },
-  { path: 'feeHead', component: FeeHeadComponent },
+  { path: 'FeeMaster', component: FeeMasterComponent },
+  { path: 'FeeGroup', component: FeeGroupComponent },
+  { path: 'FeeHead', component: FeeHeadComponent },
   { path: 'feeInstallment', component: FeeInstallmentComponent },
   { path: 'allocateFee', component: AllocateFeeComponent },
 ];

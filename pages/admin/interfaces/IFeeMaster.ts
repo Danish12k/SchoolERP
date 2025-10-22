@@ -11,15 +11,15 @@ export interface IFeeHead {
   stream: number;
 }
 
-export interface IInstallment {
+export interface IFeeInstallment {
   installmentId: number;
   sessionId: number;
   installmentName: string;
-  installMentDate: string;   // ISO date string
+  installMentDate: Date;   // ISO date string
   collegeId: number;
   instLateFee: number;
-  submitDate: string;
+  submitDate: Date;
   submitBy: string;
-  updateDate: string;
+  updateDate: Date;
   updatedBy: number;
 }
