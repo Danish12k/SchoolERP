@@ -9,3 +9,8 @@ export interface IHouse {
   houseId: number;
   houseName: string;
 }
+
+export interface ISalutation{
+  salutationId: number;
+  salutation: string;
+}
