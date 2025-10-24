@@ -69,14 +69,23 @@
                 <input matInput (keyup)="applyFilter($event)" placeholder="Filter fee head">
             </mat-form-field>
             <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-                <ng-container matColumnDef="headName">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fee Head</th>
-                    <td mat-cell *matCellDef="let element">{{ element.feeHeadName }}</td>
+                <ng-container matColumnDef="session">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Session</th>
+                    <td mat-cell *matCellDef="let element">{{ element.sessionId }}</td>
                 </ng-container>
 
-                <ng-container matColumnDef="feeFor">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fee For</th>
-                    <td mat-cell *matCellDef="let element">{{ element.streamName }}</td>
+                <ng-container matColumnDef="school">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>School</th>
+                    <td mat-cell *matCellDef="let element">{{ element.collegeId }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="installment">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment</th>
+                    <td mat-cell *matCellDef="let element">{{ element.installmentName }}</td>
+                </ng-container>
+                <ng-container matColumnDef="installmentDate">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment Date</th>
+                    <td mat-cell *matCellDef="let element">{{ element.installMentDate }}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="actions">
@@ -102,23 +111,40 @@
 <!-- Edit Expense Popup Template -->
 <!-- ============================= -->
 <ng-template #editDialog let-data>
-    <h2 mat-dialog-title>Edit Expense</h2>
+    <h2 mat-dialog-title>Edit Fee Installment</h2>
     <mat-dialog-content>
         <form #editClassForm="ngForm" class="w-100">
-            <mat-form-field appearance="fill" style="width:100%">
-                <mat-label>Fee Head Name</mat-label>
-                <input matInput [(ngModel)]="data.feeHeadName" name="feeHeadName" required minlength="1" />
-            </mat-form-field>
-            <!-- <mat-form-field appearance="fill" class="w-100">
+           
+            <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Select Session</mat-label>
-                <mat-select [(ngModel)]="data.streamId" name="stream" required>
-                    @for (feeGrp of sessions; track feeGrp.streamId) {
-                    <mat-option [value]="feeGrp.streamId">
-                        {{ feeGrp.streamName }}
+                <mat-select [(ngModel)]="data.sessionId" name="sessionId" required>
+                    @for (feeGrp of sessions; track feeGrp.sessionId) {
+                    <mat-option [value]="feeGrp.sessionId">
+                        {{ feeGrp.sessionName }}
                     </mat-option>
                     }
                 </mat-select>
-            </mat-form-field> -->
+            </mat-form-field>
+             <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Select Session</mat-label>
+                <mat-select [(ngModel)]="data.collegeId" name="collegeId" required>
+                    @for (feeGrp of schools; track feeGrp.collegeId) {
+                    <mat-option [value]="feeGrp.collegeId">
+                        {{ feeGrp.collegeAbreviation }}
+                    </mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+             <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>Fee installMent Name</mat-label>
+                <input matInput [(ngModel)]="data.installmentName" name="installmentName" required minlength="1" />
+            </mat-form-field>
+ <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>Fee installMent Date</mat-label>
+                <input matInput [(ngModel)]="data.installMentDate" name="installMentDate" required minlength="1" />
+            </mat-form-field>
+
         </form>
     </mat-dialog-content>
 
