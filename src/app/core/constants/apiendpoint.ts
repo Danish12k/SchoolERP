@@ -68,29 +68,34 @@ export const apiEndpoint = {
     },
 
     //Fee Group
-    feeGroup:{
-        add:baseURL+'/FeeGroup/AddFeeGroup',
-        update:baseURL+'/FeeGroup/UpdateFeeGroup',
-        delete:baseURL+'/FeeGroup/DeleteFeeGroup?Id=',
-        list:baseURL+'/FeeGroup/GetGroupList',
+    feeGroup: {
+        add: baseURL + '/FeeGroup/AddFeeGroup',
+        update: baseURL + '/FeeGroup/UpdateFeeGroup',
+        delete: baseURL + '/FeeGroup/DeleteFeeGroup?Id=',
+        list: baseURL + '/FeeGroup/GetGroupList',
     },
 
     //fee head
-    feeHead:{
-        add: baseURL+'/FeeHead/AddFeeHead',
-        update:baseURL+'/FeeHead/UpdateFeeHead',
-       // delete:baseURL+'',
-        list:baseURL+'/FeeHead/FeeHeadList',
+    feeHead: {
+        add: baseURL + '/FeeHead/AddFeeHead',
+        update: baseURL + '/FeeHead/UpdateFeeHead',
+        // delete:baseURL+'',
+        list: baseURL + '/FeeHead/FeeHeadList',
     },
 
     //fee installment
-    feeInstallment:{
-        add:baseURL+'/FeeInstallment/AddFeeHead',
-        update:baseURL+'/FeeInstallment/UpdateInstallment',
+    feeInstallment: {
+        add: baseURL + '/FeeInstallment/AddFeeHead',
+        update: baseURL + '/FeeInstallment/UpdateInstallment',
         // delete:baseURL+'',
-        listByCollegeAndSession:baseURL+'/FeeInstallment/FeeInstallmentList'
-    }
+        listByCollegeAndSession: baseURL + '/FeeInstallment/FeeInstallmentList'
+    },
 
-    
+    //house
+    house: {
+        add: baseURL + '/House/AddHouse',
+        update: baseURL + 'House/UpdateHouse',
+        list: baseURL + '/House/HouseList',
+    },
 
 };

@@ -3,3 +3,9 @@ export interface IExpenseHead {
   expenseHead: string;
   activeStatus: number; // 1 = Active, 0 = Inactive
 }
+
+
+export interface IHouse {
+  houseId: number;
+  houseName: string;
+}
