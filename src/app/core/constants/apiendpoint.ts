@@ -99,10 +99,17 @@ export const apiEndpoint = {
     },
 
     //salutation
-    salutation:{
+    salutation: {
         add: baseURL + '/Salutaion/AddSalutaion',
         update: baseURL + '/Salutaion/UpdateSalutaion',
         list: baseURL + '/Salutaion/SalutationList',
+    },
+
+    //admin category
+    category: {
+        add: baseURL + '/Category/AddCategory',
+        update: baseURL + '/Category/UpdateCategory',
+        list: baseURL + '/Category/CategoryList',
     }
 
 };

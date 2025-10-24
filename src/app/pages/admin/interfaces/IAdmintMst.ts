@@ -14,3 +14,8 @@ export interface ISalutation{
   salutationId: number;
   salutation: string;
 }
+
+export interface ICategory{
+  categoryId: number;
+  categoryName: string;
+}
