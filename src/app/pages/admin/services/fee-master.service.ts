@@ -52,8 +52,9 @@ export class FeeMasterService {
 
 // fee installment start
  listFeeInstallment(collegeId:number, sessionId:number): Observable<IApiResponse<IFeeInstallment>> {
+  debugger;
     return this.http.get<IApiResponse<IFeeInstallment>>
-    (this.endpoint.feeInstallment.listByCollegeAndSession + 'CollegeId='+{collegeId} +'SessionId='+{sessionId});
+    (this.endpoint.feeInstallment.listByCollegeAndSession + '?CollegeId='+collegeId +'&SessionId='+sessionId);
   }
    addFeeInstallment(body: IFeeInstallment): Observable<IApiResponse<IFeeInstallment>> {
     return this.http.post<IApiResponse<IFeeInstallment>>(this.endpoint.feeInstallment.add, body);

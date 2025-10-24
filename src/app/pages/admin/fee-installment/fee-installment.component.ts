@@ -42,7 +42,7 @@ import { CollegeService } from '../services/college.service';
 export class FeeInstallmentComponent implements OnInit {
 
   dataSource = new MatTableDataSource<IFeeInstallment>([]);
-  displayedColumns: string[] = ['headName', 'feeFor', 'actions'];
+  displayedColumns: string[] = ['session', 'school', 'installment', 'installmentDate','actions'];
 
   private _feeMstService = inject(FeeMasterService);
   private sessionService = inject(SessionService);
@@ -84,6 +84,7 @@ export class FeeInstallmentComponent implements OnInit {
 
 
   GetFeeInsallmentList() {
+    debugger;
     const CollegeId = this.feeInstallmentForm.get('collegeId')?.value;
     const sessionId = this.feeInstallmentForm.get('sessionId')?.value;
     if (CollegeId > 0 && sessionId > 0) {
