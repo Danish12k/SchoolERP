@@ -94,8 +94,15 @@ export const apiEndpoint = {
     //house
     house: {
         add: baseURL + '/House/AddHouse',
-        update: baseURL + 'House/UpdateHouse',
+        update: baseURL + '/House/UpdateHouse',
         list: baseURL + '/House/HouseList',
     },
+
+    //salutation
+    salutation:{
+        add: baseURL + '/Salutaion/AddSalutaion',
+        update: baseURL + '/Salutaion/UpdateSalutaion',
+        list: baseURL + '/Salutaion/SalutationList',
+    }
 
 };

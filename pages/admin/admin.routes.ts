@@ -16,6 +16,7 @@ import { FeeHeadComponent } from './fee-head/fee-head.component';
 import { FeeInstallmentComponent } from './fee-installment/fee-installment.component';
 import { AllocateFeeComponent } from './allocate-fee/allocate-fee.component';
 import { HouseComponent } from './house/house.component';
+import { SalutationComponent } from './salutation/salutation.component';
 
 
 export const routes: Routes = [
@@ -35,5 +36,6 @@ export const routes: Routes = [
   { path: 'FeeHead', component: FeeHeadComponent },
   { path: 'feeInstallment', component: FeeInstallmentComponent },
   { path: 'allocateFee', component: AllocateFeeComponent },
-  { path: 'house', component: HouseComponent }
+  { path: 'house', component: HouseComponent },
+  { path: 'salutation', component: SalutationComponent }
 ];
