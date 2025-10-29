@@ -18,6 +18,10 @@ import { AllocateFeeComponent } from './allocate-fee/allocate-fee.component';
 import { HouseComponent } from './house/house.component';
 import { SalutationComponent } from './salutation/salutation.component';
 import { CategoryComponent } from './category/category.component';
+import { AddSchoolComponent } from './add-school/add-school.component';
+import { AddsubjectComponent } from './addsubject/addsubject.component';
+import { AssignsubjectComponent } from './assignsubject/assignsubject.component';
+import { SubjectmasterComponent } from './subjectmaster/subjectmaster.component';
 
 
 export const routes: Routes = [
@@ -39,5 +43,9 @@ export const routes: Routes = [
   { path: 'allocateFee', component: AllocateFeeComponent },
   { path: 'house', component: HouseComponent },
   { path: 'salutation', component: SalutationComponent },
-  { path: 'category', component: CategoryComponent }
+  { path: 'category', component: CategoryComponent },
+  { path: 'addSchool', component: AddSchoolComponent },
+  { path: 'addSubject', component: AddsubjectComponent },
+  { path: 'assignSubject', component: AssignsubjectComponent },
+  { path: 'subjectMaster', component: SubjectmasterComponent },
 ];
