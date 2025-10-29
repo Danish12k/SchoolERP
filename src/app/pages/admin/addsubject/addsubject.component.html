@@ -1,0 +1,145 @@
+<div class="col-sm-12">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Add Subject</mat-card-title>
+        </mat-card-header>
+
+        <form [formGroup]="subjectForm" (ngSubmit)="addSubject()">
+            <mat-card-content>
+                <div class="form-field-full">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>Select Subject Type</mat-label>
+                                <mat-select formControlName="subjectType" (selectionChange)="getSubjectList()">
+                                    @for (subType of subjectTypeList; track subType.type) {
+                                    <mat-option [value]="subType.type">
+                                        {{ subType.detail }}
+                                    </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3">
+                            <mat-form-field class="w-100">
+                                <mat-label>Subject Code</mat-label>
+                                <input matInput formControlName="subjectCode" placeholder="Enter Subject Code" />
+
+                                @if (subjectForm.get('subjectCode')?.hasError('required') &&
+                                subjectForm.get('subjectCode')?.touched) {
+                                <mat-error>Class Name is required</mat-error>
+                                }
+                                @if (subjectForm.get('subjectCode')?.hasError('minlength') &&
+                                subjectForm.get('subjectCode')?.touched) {
+                                <mat-error>Class Name must be at least 3 characters long</mat-error>
+                                }
+                                @if (subjectForm.get('subjectCode')?.hasError('maxlength') &&
+                                subjectForm.get('subjectCode')?.touched) {
+                                <mat-error>Class Name cannot exceed 50 characters</mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3">
+                            <mat-form-field class="w-100">
+                                <mat-label>Subject Name</mat-label>
+                                <input matInput formControlName="subjectName" placeholder="Enter Subject Name" />
+                                @if (subjectForm.get('subjectName')?.hasError('required') &&
+                                subjectForm.get('subjectName')?.touched) {
+                                <mat-error>Class Name is required</mat-error>
+                                }
+                                @if (subjectForm.get('subjectName')?.hasError('minlength') &&
+                                subjectForm.get('subjectName')?.touched) {
+                                <mat-error>Class Name must be at least 3 characters long</mat-error>
+                                }
+                                @if (subjectForm.get('subjectName')?.hasError('maxlength') &&
+                                subjectForm.get('subjectName')?.touched) {
+                                <mat-error>Class Name cannot exceed 50 characters</mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-3">
+                            <mat-form-field class="w-100">
+                                <mat-label>Sequence No.</mat-label>
+                                <input matInput type="number" formControlName="subjectSeq"
+                                    placeholder="Enter Sequence No." />
+                                @if(subjectForm.get('subjectSeq')?.hasError('required')&&
+                                subjectForm.get('subjectSeq')?.touched){
+                                <mat-error> Sequence Number is required</mat-error>
+                                }
+                                @if(subjectForm.get('subjectSeq')?.hasError('min') &&
+                                subjectForm.get('subjectSeq')?.touched){
+                                <mat-error>Squence value should have greater than 0</mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="m-t-8">
+                        <button mat-flat-button color="primary" type="submit">Save</button>
+                        <button mat-button class="m-x-8" type="button" (click)="onCancel()">Cancel</button>
+                    </div>
+                </div>
+            </mat-card-content>
+        </form>
+    </mat-card>
+</div>
+
+
+
+<div class="col-sm-12 mt-3">
+  <mat-card>
+    <mat-card-content>
+
+      <mat-form-field appearance="fill" >
+        <mat-label>Search</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Search subjects" />
+      </mat-form-field>
+
+      @if (dataSource.data.length > 0) {
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 w-100">
+
+          <ng-container matColumnDef="subjectCode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Subject Code</th>
+            <td mat-cell *matCellDef="let element">{{ element.subjectCode }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="subjectName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Subject Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.subjectName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="subjectType">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+            <td mat-cell *matCellDef="let element">{{ element.subjectType }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="subjectSeq">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sequence</th>
+            <td mat-cell *matCellDef="let element">{{ element.subjectSeq }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let element">
+                <!-- <button mat-icon-button color="primary" (click)="editSubject(element)"> -->
+              <button mat-icon-button color="primary">
+                <mat-icon>drive_file_rename_outline</mat-icon>
+              </button>
+              <button mat-icon-button color="warn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+      } @else {
+        <p class="text-center text-muted mt-2">No subjects added yet.</p>
+      }
+
+    </mat-card-content>
+  </mat-card>
+</div>
