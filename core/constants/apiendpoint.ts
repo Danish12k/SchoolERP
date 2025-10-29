@@ -33,7 +33,6 @@ export const apiEndpoint = {
         get: baseURL + '/Section/GetSection?SectionId=',
         delete: baseURL + '/Section/DeleteSection',
         list: baseURL + '/Section/SectionList',
-
         assignSection: baseURL + '/Course/AssignSection',
     },
 
@@ -110,6 +109,29 @@ export const apiEndpoint = {
         add: baseURL + '/Category/AddCategory',
         update: baseURL + '/Category/UpdateCategory',
         list: baseURL + '/Category/CategoryList',
+    },
+
+    //add school
+    addSchool: {
+        add: baseURL + '/College/AddSchool',
+        update: baseURL + '/College/UpdateCollege',
+        list: baseURL + '/College/CollegeList'
+    },
+
+    //add subject 
+    subject:{
+        subjectType: baseURL+'/Subject/SubjectType',
+        add:baseURL+'/Subject/AddSubject',
+        update:baseURL+'/Subject/UpdateSubject',
+        list: baseURL+'/Subject/SubjectList?SubjectType=',
+    },
+
+    //assignSubject
+    assignSubject:{
+        add:baseURL+'/Subject/AssignSubject',
+        
     }
+
+
 
 };
