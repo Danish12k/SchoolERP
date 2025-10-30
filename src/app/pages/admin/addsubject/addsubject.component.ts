@@ -10,7 +10,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { ISubject, ISubjectType } from '../interfaces/ISubjectMst';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SubjectmasterService } from '../services/subjectmaster.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -37,6 +37,8 @@ import { MatSort } from '@angular/material/sort';
 })
 export class AddsubjectComponent implements OnInit {
   subjectForm!: FormGroup;
+    editForm!: FormGroup;
+      dialogRef!: MatDialogRef<any>;
 
   subjectTypeList!: ISubjectType[];
 
@@ -161,6 +163,52 @@ applyFilter(event: Event) {
       this.subjectList = [];
     } else {
       this.subjectList = [...this.dataSource.data];
+    }
+  }
+
+
+
+  openEditDialog(subject: ISubject) {
+    debugger;
+    this.editForm = this.fb.group({
+      subjectId: [subject.subjectId],
+      subjectName: [subject.subjectName, [Validators.required]],
+      subjectCode: [subject.subjectCode, [Validators.required]],
+      subjectType: [subject.subjectType, [Validators.required]],
+      subjectSeq: [subject.subjectSeq, [Validators.required, Validators.min(1)]],
+    });
+
+    this.dialogRef = this.dialog.open(this.editDialog, {
+      width: '500px',
+      disableClose: true
+    });
+  }
+  /** ✅ Close Popup */
+  closeDialog() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
+  }
+
+   updateSubject() {
+    if (this.editForm.valid) {
+      this._subjectService.updateSubject(this.editForm.value).subscribe({
+        next: (res) => {
+          if (res.success) {
+            alert('Subject updated successfully!');
+            this.dialogRef.close();
+            this.getSubjectList(); // refresh list
+          } else {
+            alert('Failed to update subject');
+          }
+        },
+        error: (err) => {
+          console.error('Error updating subject:', err);
+          alert('Error while updating');
+        }
+      });
+    } else {
+      this.editForm.markAllAsTouched();
     }
   }
 
