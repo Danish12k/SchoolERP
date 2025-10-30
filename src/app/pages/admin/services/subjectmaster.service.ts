@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { apiEndpoint } from '@core/constants/apiendpoint';
-import { ISubject, ISubjectType } from '../interfaces/ISubjectMst';
+import { IAssignSubject, IAssignSubjectList, ISubject, ISubjectType } from '../interfaces/ISubjectMst';
 import { IApiResponse } from '../interfaces/ICommon';
 import { Observable } from 'rxjs';
 
@@ -25,14 +25,20 @@ export class SubjectmasterService {
   updateSubject(body: ISubject): Observable<IApiResponse<ISubject>> {
     return this.http.post<IApiResponse<ISubject>>(this.endpoint.subject.update, body);
   }
-
-  // deleteFeeGroup(Id: Number): Observable<IApiResponse<ISubject>> {
-  //   debugger;
-  //   return this.http.post<IApiResponse<ISubject>>(this.endpoint.subject.delete + Id, null);
-  // }
-
   listSubject(subhecttype:string): Observable<IApiResponse<ISubject>> {
     return this.http.get<IApiResponse<ISubject>>(this.endpoint.subject.list+subhecttype);
+  }
+
+  //assign subject
+  assignSubject(body:IAssignSubject):Observable<IApiResponse<IAssignSubject>>{
+return this.http.post<IApiResponse<IAssignSubject>>(this.endpoint.assignSubject.add,body)
+  }
+   deleteAssignSubject(assingSubjectId:number): Observable<IApiResponse<IAssignSubjectList>> {
+    return this.http.get<IApiResponse<IAssignSubjectList>>(this.endpoint.assignSubject.delete+assingSubjectId);
+  }
+
+  listAssignSubject(sectionId:string): Observable<IApiResponse<IAssignSubjectList>> {
+    return this.http.get<IApiResponse<IAssignSubjectList>>(this.endpoint.assignSubject.list+sectionId);
   }
   
 }
