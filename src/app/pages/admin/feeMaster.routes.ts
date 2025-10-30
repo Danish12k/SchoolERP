@@ -5,8 +5,8 @@ import { FeeInstallmentComponent } from "./fee-installment/fee-installment.compo
 import { AllocateFeeComponent } from "./allocate-fee/allocate-fee.component";
 
 export const routes: Routes = [
-    { path: 'feeGroup', component: FeeGroupComponent },
-    { path: 'feeHead', component: FeeHeadComponent },
+    { path: 'FeeGroup', component: FeeGroupComponent },
+    { path: 'FeeHead', component: FeeHeadComponent },
     { path: 'feeInstallment', component: FeeInstallmentComponent },
     { path: 'allocateFee', component: AllocateFeeComponent },
 ]
