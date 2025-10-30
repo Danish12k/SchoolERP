@@ -129,7 +129,8 @@ export const apiEndpoint = {
     //assignSubject
     assignSubject:{
         add:baseURL+'/Subject/AssignSubject',
-        
+        delete: baseURL+'/Subject/DeleteAssignSubject?ClassSectionSubjectId=',
+        list: baseURL+'/Subject/AssignSubjectList?classSectionId='
     }
 
 
