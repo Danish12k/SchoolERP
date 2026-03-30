@@ -1,13 +1,13 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { SmsapiService } from '../services/smsapi.service';
-import { CollegeService } from '../services/college.service';
-import { ICollege } from '../interfaces/ICollege';
+import { SmsapiService } from '../../../services/smsapi.service';
+import { CollegeService } from '../../../services/college.service';
+import { ICollege } from '../../../interfaces/ICollege';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { ISMSApi } from '../interfaces/Ismsapi';
+import { ISMSApi } from '../../../interfaces/Ismsapi';
 import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
 import { MatCard, MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,7 +44,7 @@ export class SmsapiComponent implements OnInit {
   _colloegeService = inject(CollegeService);
 
   dataSource = new MatTableDataSource<ISMSApi>([]);
-  displayedColumns: string[] = ['select', 'school','sender','usename','password', 'provider','status', 'actions'];
+  displayedColumns: string[] = ['select', 'school','sender','usename','password','status', 'actions'];
   smsapiList: ISMSApi[] = [];
   schoolList: ICollege[] = [];
 

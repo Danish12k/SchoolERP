@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/form-field/form-field.component.scss"],
+  "sourcesContent": [".example-container {\r\n  margin-bottom: 16px;\r\n\r\n  .mat-mdc-form-field {\r\n    width: 100%;\r\n  }\r\n}\r\n"],
+  "mappings": ";AAAA,CAAA;AACE,iBAAA;;AAEA,CAHF,kBAGE,CAAA;AACE,SAAA;;",
+  "names": []
+}

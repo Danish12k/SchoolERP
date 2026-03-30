@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/admin/salutation/salutation.component.scss"],
+  "sourcesContent": ["/* Make the add-salutation input smaller (not full-width) */\r\n\r\n:host {\r\n  display: block;\r\n}\r\n\r\n.salutation-input {\r\n  width: 100%;\r\n  max-width: 320px;\r\n}\r\n\r\n@media (max-width: 600px) {\r\n  .salutation-input {\r\n    max-width: 100%;\r\n  }\r\n}\r\n"],
+  "mappings": ";AAEA;AACE,WAAA;;AAGF,CAAA;AACE,SAAA;AACA,aAAA;;AAGF,OAAA,CAAA,SAAA,EAAA;AACE,GANF;AAOI,eAAA;;;",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/sidenav/mobile-sidenav.scss"],
+  "sourcesContent": [".demo-sidenav-header-fixed {\r\n  position: fixed;\r\n  z-index: 2;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAA;AACE,YAAA;AACA,WAAA;;",
+  "names": []
+}

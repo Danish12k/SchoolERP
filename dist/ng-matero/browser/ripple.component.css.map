@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/ripple/ripple.component.scss"],
+  "sourcesContent": [".example-ripple-container {\r\n  width: 300px;\r\n  height: 300px;\r\n  line-height: 300px;\r\n  text-align: center;\r\n  cursor: pointer;\r\n  user-select: none;\r\n  -webkit-user-drag: none;\r\n  -webkit-tap-highlight-color: transparent;\r\n  border: 1px solid var(--mat-divider-color);\r\n}\r\n\r\n.example-ripple-form-field {\r\n  margin: 0 12px;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAA;AACE,SAAA;AACA,UAAA;AACA,eAAA;AACA,cAAA;AACA,UAAA;AACA,uBAAA;AAAA,eAAA;AACA,qBAAA;AACA,+BAAA;AACA,UAAA,IAAA,MAAA,IAAA;;AAGF,CAAA;AACE,UAAA,EAAA;;",
+  "names": []
+}

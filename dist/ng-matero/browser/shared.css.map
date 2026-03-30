@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/sidenav/shared.scss"],
+  "sourcesContent": [":host {\r\n  position: absolute;\r\n  inset: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n  height: calc(100vh - 64px);\r\n\r\n  .matero-navbar-top & {\r\n    height: calc(100vh - 64px - 52px);\r\n  }\r\n}\r\n\r\n.demo-sidenav-container {\r\n  flex: 1;\r\n}\r\n\r\n.demo-sidenav-container-fixed {\r\n  flex: none;\r\n}\r\n\r\n.demo-sidenav-app-name {\r\n  margin: 0 8px;\r\n}\r\n\r\n.demo-sidenav-close {\r\n  margin: 20px;\r\n}\r\n\r\n.demo-sidenav-filler {\r\n  margin: 100px 20px;\r\n}\r\n"],
+  "mappings": ";AAAA;AACE,YAAA;AACA,SAAA;AACA,WAAA;AACA,kBAAA;AACA,UAAA,KAAA,MAAA,EAAA;;AAEA,CAAA,kBAAA;AACE,UAAA,KAAA,MAAA,EAAA,KAAA,EAAA;;AAIJ,CAAA;AACE,QAAA;;AAGF,CAAA;AACE,QAAA;;AAGF,CAAA;AACE,UAAA,EAAA;;AAGF,CAAA;AACE,UAAA;;AAGF,CAAA;AACE,UAAA,MAAA;;",
+  "names": []
+}

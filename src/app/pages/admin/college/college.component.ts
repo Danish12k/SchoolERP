@@ -1,26 +1,28 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { ICollege } from '../interfaces/ICollege';
-import { CollegeService } from '../services/college.service';
+import { ICollege } from '../../../interfaces/ICollege';
+import { CollegeService } from '../../../services/college.service';
 
 @Component({
   selector: 'app-college',
   imports: [
     FormsModule,
     MatCardModule,
+    MatButtonModule,
+    MatFormFieldModule,
     MatInputModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatCheckbox,
     MatIcon,
     MatDialogModule
   ],
@@ -29,14 +31,22 @@ import { CollegeService } from '../services/college.service';
 })
 export class CollegeComponent implements OnInit {
   private collegeService = inject(CollegeService);
-  displayedColumns: string[] = ['select', 'collegeAbreviation', 'collegeName','collegeAddress','email','phone','webSite','affilicationNo','board','actions'];
+  displayedColumns: string[] = [
+    'collegeAbreviation',
+    'collegeName',
+    'collegeAddress',
+    'actions',
+  ];
   dataSource = new MatTableDataSource<ICollege>([])
-  selection: ICollege[] = [];
   constructor(private dialog: MatDialog) { }
  
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
+  @ViewChild('editDialog') editDialog!: TemplateRef<ICollege>;
+  @ViewChild('addDialog') addDialog!: TemplateRef<ICollege>;
+  @ViewChild('detailsDialog') detailsDialog!: TemplateRef<ICollege>;
+
+  newSchool: Partial<ICollege> = {};
 
  ngOnInit(): void {
     this.getCollegeList();
@@ -48,31 +58,63 @@ export class CollegeComponent implements OnInit {
      this.dataSource.filter = filterValue.trim().toLowerCase();
    }
  
-   /** Checkbox Selection Logic */
-   toggleSelection(row: ICollege) {
-     if (this.selection.includes(row)) {
-       this.selection = this.selection.filter(r => r !== row);
-     } else {
-       this.selection.push(row);
-     }
-   }
- 
-   isAllSelected() {
-     return this.selection.length === this.dataSource.data.length;
-   }
- 
-   isPartialSelected() {
-     return this.selection.length > 0 && !this.isAllSelected();
-   }
- 
-   masterToggle() {
-     if (this.isAllSelected()) {
-       this.selection = [];
-     } else {
-       this.selection = [...this.dataSource.data];
-     }
-   }
-   // end here
+  openAddDialog() {
+    this.newSchool = {
+      collegeId: 0,
+      collegeAbreviation: '',
+      collegeName: '',
+      collegeAddress: '',
+      email: '',
+      phone: '',
+      fax: '',
+      webSite: '',
+      affilicationNo: '',
+      board: '',
+      collegeLogo: '',
+      schoolCode: '',
+      dioceseCode: '',
+      portalURL: null,
+    };
+
+    this.dialog.open(this.addDialog, {
+      width: 'min(900px, 96vw)',
+      maxWidth: '96vw',
+    });
+  }
+
+  addSchool(): void {
+    const body = this.newSchool as ICollege;
+    if (!body.collegeName?.trim() || !body.collegeAbreviation?.trim()) {
+      alert('Please enter at least College Name and College Abbreviation.');
+      return;
+    }
+
+    // NOTE: backend endpoint is named "addSchool" in apiendpoint.ts but CollegeService currently exposes addClass().
+    this.collegeService.addClass(body).subscribe({
+      next: (res) => {
+        if (res.success) {
+          alert(res.message);
+          this.getCollegeList();
+          this.dialog.closeAll();
+        } else {
+          alert(res.message);
+        }
+      },
+      error: (err) => {
+        console.error('Error adding school', err);
+        alert('Failed to add school');
+      },
+    });
+  }
+
+  openDetails(college: ICollege): void {
+    this.dialog.open(this.detailsDialog, {
+      width: 'min(900px, 96vw)',
+      maxWidth: '96vw',
+      data: { ...college },
+    });
+  }
+
    openEditDialog(college: ICollege) {
      const dialogRef = this.dialog.open(this.editDialog, {
        width: '400px',

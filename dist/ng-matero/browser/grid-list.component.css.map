@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/grid-list/grid-list.component.scss"],
+  "sourcesContent": ["mat-grid-tile {\r\n  background: lightblue;\r\n}\r\n"],
+  "mappings": ";AAAA;AACE,cAAA;;",
+  "names": []
+}

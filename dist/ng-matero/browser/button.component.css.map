@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/button/button.component.scss"],
+  "sourcesContent": ["button,\r\na {\r\n  margin: 8px;\r\n  text-transform: uppercase;\r\n  vertical-align: middle;\r\n}\r\n"],
+  "mappings": ";AAAA;AAAA;AAEE,UAAA;AACA,kBAAA;AACA,kBAAA;;",
+  "names": []
+}

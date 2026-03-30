@@ -1,17 +1,83 @@
-.full-width {
-  width: 100%;              /* input field puri card width lega */
+.designation-page {
+  display: grid;
+  gap: 20px;
+  /* FULL VIEW: use the available page width */
+  max-width: 100%;
+  margin: 0;
+  padding: 0 12px 24px;
 }
 
-.button-row {
+.designation-page__card {
+  width: 100%;
+}
+
+/* Desktop: form left, list right (full width) */
+@media (min-width: 1000px) {
+  .designation-page {
+    grid-template-columns: minmax(340px, 420px) 1fr;
+    align-items: start;
+  }
+
+  .designation-page__card--form {
+    position: sticky;
+    top: 12px;
+  }
+}
+
+.designation-form {
   display: flex;
-  justify-content: flex-end; /* Buttons right side chale jayenge */
-  gap: 12px;                 /* Button ke beech space */
-  margin-top: 16px;
+  flex-direction: column;
+  gap: 12px;
 }
 
+.designation-form__field {
+  width: 100%;
+}
 
-button {
-  min-width: 100px;         /* button chhota na lage */
-  height: 40px;             /* button ki proper height */
-  font-weight: 500;         /* thoda bold text */
+.designation-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.designation-toolbar {
+  margin-bottom: 12px;
+}
+
+.designation-toolbar__search {
+  width: 100%;
+  max-width: 420px;
+}
+
+.designation-table__wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.12));
+}
+
+.designation-table {
+  width: 100%;
+  min-width: 480px;
+}
+
+.designation-table__actions-col {
+  width: 96px;
+  text-align: center;
+}
+
+.designation-table__empty {
+  text-align: center;
+  padding: 24px 16px !important;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+}
+
+.designation-dialog__content {
+  padding-top: 8px;
+  min-width: min(100%, 320px);
+}
+
+.designation-dialog__field {
+  width: 100%;
 }

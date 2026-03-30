@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/select/select.component.scss"],
+  "sourcesContent": [".demo-select-a11y-spacer {\r\n  margin-bottom: 10px;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAA;AACE,iBAAA;;",
+  "names": []
+}

@@ -9,19 +9,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { ISession } from '../interfaces/isession';
-import { ICollege } from '../interfaces/ICollege';
-import { SessionService } from '../services/session.service';
-import { CollegeService } from '../services/college.service';
+import { ISession } from '../../../interfaces/isession';
+import { ICollege } from '../../../interfaces/ICollege';
+import { SessionService } from '../../../services/session.service';
+import { CollegeService } from '../../../services/college.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { IAssignSubject, IAssignSubjectList, ISubject, ISubjectType } from '../interfaces/ISubjectMst';
+import { IAssignSubject, IAssignSubjectList, ISubject, ISubjectType } from '../../../interfaces/ISubjectMst';
 import { MatPaginator } from '@angular/material/paginator';
-import { IClass } from '../interfaces/IClassmaster';
-import { ISection } from '../interfaces/IClassAndSection';
-import { SectionService } from '../services/section.service';
-import { SubjectmasterService } from '../services/subjectmaster.service';
+import { IClass } from '../../../interfaces/IClassmaster';
+import { ISection } from '../../../interfaces/IClassAndSection';
+import { SectionService } from '../../../services/section.service';
+import { SubjectmasterService } from '../../../services/subjectmaster.service';
 
 @Component({
   selector: 'app-assignsubject',

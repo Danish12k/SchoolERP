@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/admin/classmaster/classmaster.component.scss"],
+  "sourcesContent": ["/* Local responsive layout (avoid relying on bootstrap presence) */\r\n\r\n:host {\r\n  display: block;\r\n}\r\n\r\n.classmaster-form {\r\n  display: grid;\r\n  gap: 12px;\r\n}\r\n\r\n.classmaster-form__grid {\r\n  display: grid;\r\n  gap: 12px;\r\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\r\n  align-items: start;\r\n}\r\n\r\n.classmaster-form__actions {\r\n  margin-top: 8px;\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  gap: 8px;\r\n}\r\n\r\n.w-100 {\r\n  width: 100%;\r\n}\r\n\r\n.classmaster-table {\r\n  width: 100%;\r\n}\r\n\r\n.classmaster-table__wrap {\r\n  width: 100%;\r\n  overflow-x: auto;\r\n}\r\n"],
+  "mappings": ";AAEA;AACE,WAAA;;AAGF,CAAA;AACE,WAAA;AACA,OAAA;;AAGF,CAAA;AACE,WAAA;AACA,OAAA;AACA,yBAAA,OAAA,QAAA,EAAA,OAAA,KAAA,EAAA;AACA,eAAA;;AAGF,CAAA;AACE,cAAA;AACA,WAAA;AACA,aAAA;AACA,OAAA;;AAGF,CAAA;AACE,SAAA;;AAGF,CAAA;AACE,SAAA;;AAGF,CAAA;AACE,SAAA;AACA,cAAA;;",
+  "names": []
+}

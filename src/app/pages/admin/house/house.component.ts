@@ -9,13 +9,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { IHouse } from '../interfaces/IAdmintMst';
+import { IHouse } from '../../../interfaces/IAdmintMst';
 import { MatTableDataSource } from '@angular/material/table';
-import { HouseService } from '../services/house.service';
+import { HouseService } from '../../../services/house.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { IApiResponse } from '../interfaces/ICommon';
+import { IApiResponse } from '../../../interfaces/ICommon';
 
 @Component({
   selector: 'app-house',

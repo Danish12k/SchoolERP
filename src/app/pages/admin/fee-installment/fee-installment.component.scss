@@ -1,0 +1,44 @@
+/* Local responsive layout (avoid relying on bootstrap presence) */
+
+:host {
+  display: block;
+}
+
+.fee-installment-form {
+  display: grid;
+  gap: 12px;
+}
+
+.fee-installment-form__grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
+}
+
+.fee-installment-form__actions {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.fee-installment-table__wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.fee-installment-table {
+  width: 100%;
+  min-width: 760px;
+}
+
+@media (max-width: 600px) {
+  .fee-installment-form__grid {
+    grid-template-columns: 1fr;
+  }
+}

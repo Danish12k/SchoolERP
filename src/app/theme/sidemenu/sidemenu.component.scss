@@ -5,10 +5,13 @@
   padding: 0;
   margin: 0;
   list-style: none;
+   --menu-font-size: 13px;
+  --menu-icon-size: 1rem;
+    font-size: var(--menu-font-size);
 
   .menu-item {
     overflow: hidden;
-    border-radius: 1.5rem;
+    border-radius: 1.00rem;
     will-change: transform; // fix expansion in Safari
 
     >.menu-heading {
@@ -60,29 +63,29 @@
   }
 
   .menu-icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.00rem;
+    height: 1.00rem;
     margin-right: 0.75rem;
-    font-size: 1.25rem;
-    line-height: 1.5rem;
+    font-size: 1.00rem;
+    line-height: 1.00rem;
     text-align: center;
 
     [dir='rtl'] & {
       margin-right: 0;
-      margin-left: 0.75rem;
+      margin-left: 0.50rem;
     }
 
     &.submenu-icon {
       position: absolute;
-      left: 0.75rem;
-      width: 1.5rem;
-      height: 1.5rem;
+      left: 0.50rem;
+      width: 1.00rem;
+      height: 1.00rem;
       font-size: 1rem;
-      line-height: 1.5rem;
+      line-height: 1.00rem;
       opacity: 0;
 
       [dir='rtl'] & {
-        right: 0.75rem;
+        right: 0.50rem;
         left: 0;
       }
     }
@@ -90,8 +93,8 @@
 
   .menu-caret {
     display: block;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.00rem;
+    height: 1.00rem;
     font-size: 1.5rem;
     line-height: 1.5rem;
     text-align: center;

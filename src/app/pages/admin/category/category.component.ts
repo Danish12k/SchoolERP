@@ -1,11 +1,11 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { ICategory } from '../interfaces/IAdmintMst';
-import { CategoryService } from '../services/category.service';
+import { ICategory } from '../../../interfaces/IAdmintMst';
+import { CategoryService } from '../../../services/category.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { IApiResponse } from '../interfaces/ICommon';
+import { IApiResponse } from '../../../interfaces/ICommon';
 import { MatCard, MatCardModule } from '@angular/material/card';
 import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
 import { FormsModule } from '@angular/forms';

@@ -1,0 +1,96 @@
+<section class="student-list-page">
+  <div class="student-list-page__filter">
+    <app-filterstudent></app-filterstudent>
+  </div>
+
+  <mat-card class="student-list-page__card">
+    <mat-card-header>
+      <mat-card-title>Student list</mat-card-title>
+      <mat-card-subtitle>Search and browse enrolled students</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="student-list-page__toolbar">
+        <mat-form-field appearance="outline" class="student-list-page__search">
+          <mat-label>Search</mat-label>
+          <input
+            matInput
+            (keyup)="applyFilter($event)"
+            placeholder="Filter by name, admission no., class…"
+          />
+        </mat-form-field>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="loadStudents()"
+          [disabled]="loading"
+        >
+          Refresh
+        </button>
+      </div>
+
+      @if (loading) {
+        <div class="student-list-page__loading">
+          <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+          <span>Loading students…</span>
+        </div>
+      }
+
+      @if (loadError && !loading) {
+        <p class="student-list-page__error" role="alert">{{ loadError }}</p>
+      }
+
+      <div class="student-list-page__table-wrap">
+        <table mat-table [dataSource]="dataSource" matSort class="student-list-table mat-elevation-z0">
+          <ng-container matColumnDef="admissionNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Admission no.</th>
+            <td mat-cell *matCellDef="let row">{{ row.admissionNo ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="studentName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+            <td mat-cell *matCellDef="let row">{{ displayStudentName(row) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="className">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Class</th>
+            <td mat-cell *matCellDef="let row">{{ row.className ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="sectionName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Section</th>
+            <td mat-cell *matCellDef="let row">{{ row.sectionName ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="rollNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Roll no.</th>
+            <td mat-cell *matCellDef="let row">{{ row.rollNo ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="phone">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone</th>
+            <td mat-cell *matCellDef="let row">{{ row.phone ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button type="button" [attr.aria-label]="'View ' + displayStudentName(row)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</section>

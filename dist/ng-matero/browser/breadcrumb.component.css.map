@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/shared/components/breadcrumb/breadcrumb.component.scss"],
+  "sourcesContent": [".matero-breadcrumb {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  padding: 0;\r\n  margin-bottom: 1rem;\r\n  font-size: .875rem;\r\n  list-style: none;\r\n}\r\n\r\n.matero-breadcrumb-item {\r\n  line-height: 1.125rem;\r\n  text-transform: capitalize;\r\n\r\n  > * {\r\n    vertical-align: middle;\r\n  }\r\n\r\n  > a.link {\r\n    color: currentColor;\r\n    text-decoration: none;\r\n\r\n    &:hover {\r\n      color: currentColor;\r\n      text-decoration: underline;\r\n    }\r\n  }\r\n\r\n  > .chevron {\r\n    width: 1.125rem;\r\n    height: 1.125rem;\r\n    font-size: 1.125rem;\r\n    user-select: none;\r\n  }\r\n}\r\n"],
+  "mappings": ";AAAA,CAAA;AACE,WAAA;AACA,aAAA;AACA,WAAA;AACA,iBAAA;AACA,aAAA;AACA,cAAA;;AAGF,CAAA;AACE,eAAA;AACA,kBAAA;;AAEA,CAJF,uBAIE,EAAA;AACE,kBAAA;;AAGF,CARF,uBAQE,EAAA,CAAA,CAAA;AACE,SAAA;AACA,mBAAA;;AAEA,CAZJ,uBAYI,EAAA,CAAA,CAJF,IAIE;AACE,SAAA;AACA,mBAAA;;AAIJ,CAlBF,uBAkBE,EAAA,CAAA;AACE,SAAA;AACA,UAAA;AACA,aAAA;AACA,uBAAA;AAAA,eAAA;;",
+  "names": []
+}

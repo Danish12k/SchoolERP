@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/theme/widgets/notification.component.ts"],
+  "sourcesContent": ["\n    :host ::ng-deep .mat-badge-content {\n      --mat-badge-background-color: #ef0000;\n      --mat-badge-text-color: #fff;\n    }\n  "],
+  "mappings": ";AACI,MAAA,UAAA,CAAA;AACE,gCAAA;AACA,0BAAA;;",
+  "names": []
+}

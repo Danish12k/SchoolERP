@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/tab/tab.component.scss"],
+  "sourcesContent": [".example-input-label,\r\n.example-add-tab-button,\r\n.example-delete-tab-button {\r\n  margin: 8px;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAA;AAAA,CAAA;AAAA,CAAA;AAGE,UAAA;;",
+  "names": []
+}

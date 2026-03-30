@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/expansion-panel/expansion-panel.component.scss"],
+  "sourcesContent": [".demo-expansion {\r\n  button,\r\n  a {\r\n    margin: 8px;\r\n    text-transform: uppercase;\r\n  }\r\n}\r\n"],
+  "mappings": ";AACE,CAAA,eAAA;AAAA,CAAA,eAAA;AAEE,UAAA;AACA,kBAAA;;",
+  "names": []
+}

@@ -1,0 +1,22 @@
+/* Local responsive layout (avoid relying on bootstrap presence) */
+
+:host {
+  display: block;
+}
+
+.section-form__actions {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.section-table__wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.section-table {
+  width: 100%;
+  min-width: 560px;
+}

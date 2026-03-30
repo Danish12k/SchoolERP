@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/shared/components/page-header/page-header.component.scss"],
+  "sourcesContent": [".matero-page-header {\r\n  display: block;\r\n  padding: 1rem;\r\n  margin-bottom: 1rem;\r\n  color: rgba(255, 255, 255, .87);\r\n  background-color: #0074e9;\r\n  border-radius: var(--mdc-elevated-card-container-shape);\r\n\r\n  .matero-breadcrumb {\r\n    margin-top: 0.5rem;\r\n    margin-bottom: 0;\r\n  }\r\n}\r\n\r\n.matero-page-title {\r\n  margin: 0;\r\n  font-size: 1.5rem;\r\n  font-weight: 400;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAA;AACE,WAAA;AACA,WAAA;AACA,iBAAA;AACA,SAAA,KAAA,GAAA,EAAA,GAAA,EAAA,GAAA,EAAA;AACA,oBAAA;AACA,iBAAA,IAAA;;AAEA,CARF,mBAQE,CAAA;AACE,cAAA;AACA,iBAAA;;AAIJ,CAAA;AACE,UAAA;AACA,aAAA;AACA,eAAA;;",
+  "names": []
+}

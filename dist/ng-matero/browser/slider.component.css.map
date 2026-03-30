@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/slider/slider.component.scss"],
+  "sourcesContent": [".demo-color-container {\r\n  display: flex;\r\n  align-items: center;\r\n}\r\n\r\n.demo-color-label {\r\n  display: inline-block;\r\n  width: 50px;\r\n}\r\n\r\n.demo-color-swatch {\r\n  width: 60px;\r\n  height: 60px;\r\n  margin-left: 60px;\r\n}\r\n\r\nmat-slider {\r\n  width: 300px;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAA;AACE,WAAA;AACA,eAAA;;AAGF,CAAA;AACE,WAAA;AACA,SAAA;;AAGF,CAAA;AACE,SAAA;AACA,UAAA;AACA,eAAA;;AAGF;AACE,SAAA;;",
+  "names": []
+}

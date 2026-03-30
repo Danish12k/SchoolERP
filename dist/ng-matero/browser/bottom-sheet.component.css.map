@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/routes/material/bottom-sheet/bottom-sheet.component.scss"],
+  "sourcesContent": [".demo-dialog-card {\r\n  margin: 16px 0;\r\n}\r\n\r\n.mat-mdc-raised-button {\r\n  margin-right: 8px;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAA;AACE,UAAA,KAAA;;AAGF,CAAA;AACE,gBAAA;;",
+  "names": []
+}

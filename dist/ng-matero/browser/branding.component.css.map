@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/theme/widgets/branding.component.ts"],
+  "sourcesContent": ["\n    .branding {\n      display: flex;\n      align-items: center;\n      margin: 0 0.5rem;\n      text-decoration: none;\n      white-space: nowrap;\n      color: inherit;\n      border-radius: 50rem;\n    }\n\n    .branding-logo {\n      width: 2rem;\n      height: 2rem;\n      border-radius: 50rem;\n    }\n\n    .branding-name {\n      margin: 0 0.5rem;\n      font-size: 1rem;\n      font-weight: 500;\n    }\n  "],
+  "mappings": ";AACI,CAAA;AACE,WAAA;AACA,eAAA;AACA,UAAA,EAAA;AACA,mBAAA;AACA,eAAA;AACA,SAAA;AACA,iBAAA;;AAGF,CAAA;AACE,SAAA;AACA,UAAA;AACA,iBAAA;;AAGF,CAAA;AACE,UAAA,EAAA;AACA,aAAA;AACA,eAAA;;",
+  "names": []
+}

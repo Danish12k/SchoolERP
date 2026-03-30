@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/admin/feeMaster.routes.ts"],
+  "sourcesContent": ["import { Routes } from \"@angular/router\";\r\nimport { FeeGroupComponent } from \"./fee-group/fee-group.component\";\r\nimport { FeeHeadComponent } from \"./fee-head/fee-head.component\";\r\nimport { FeeInstallmentComponent } from \"./fee-installment/fee-installment.component\";\r\nimport { AllocateFeeComponent } from \"./allocate-fee/allocate-fee.component\";\r\n\r\nexport const routes: Routes = [\r\n    { path: 'feeGroup', component: FeeGroupComponent },\r\n    { path: 'feeHead', component: FeeHeadComponent },\r\n    { path: 'feeInstallment', component: FeeInstallmentComponent },\r\n    { path: 'allocateFee', component: AllocateFeeComponent },\r\n]"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;AAMO,IAAM,SAAiB;EAC1B,EAAE,MAAM,YAAY,WAAW,kBAAiB;EAChD,EAAE,MAAM,WAAW,WAAW,iBAAgB;EAC9C,EAAE,MAAM,kBAAkB,WAAW,wBAAuB;EAC5D,EAAE,MAAM,eAAe,WAAW,qBAAoB;;",
+  "names": []
+}

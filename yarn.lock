@@ -439,9 +439,9 @@
     tslib "^2.3.0"
 
 "@angular/compiler-cli@^20.2.4":
-  version "20.2.4"
-  resolved "https://registry.npmjs.org/@angular/compiler-cli/-/compiler-cli-20.2.4.tgz"
-  integrity sha512-II2hEpfbo73dL12D42DoIHYGiTYAiO9cpwh29BIo8VD054ei4cm0oK+jCyryDQH5T3+wyCWlj0OFjcZ/GmO7HQ==
+  version "20.3.3"
+  resolved "https://registry.npmjs.org/@angular/compiler-cli/-/compiler-cli-20.3.3.tgz"
+  integrity sha512-kSIE6hkTiZGiJLyisp5Q6NXOHiDNOItp7N2HVNPrK1bqzM8foN6H6BE1a+LYO3Lwy3PkwQFzx03BnzxkM4sWng==
   dependencies:
     "@babel/core" "7.28.3"
     "@jridgewell/sourcemap-codec" "^1.4.14"
@@ -453,9 +453,9 @@
     yargs "^18.0.0"
 
 "@angular/compiler@^20.2.4":
-  version "20.2.4"
-  resolved "https://registry.npmjs.org/@angular/compiler/-/compiler-20.2.4.tgz"
-  integrity sha512-LQzf+Azb/Ms+BavpCFIat+f1C0gUJpby2RW4yebF3JkBFKfJ7M8d49TQpF8rSnGxMRTf49mln7laz4nBYTLDGA==
+  version "20.3.3"
+  resolved "https://registry.npmjs.org/@angular/compiler/-/compiler-20.3.3.tgz"
+  integrity sha512-7AUtF7PO8xo+jOgrhLRPXmt65M/KFuYIsVZGVLB1FTCUAPByFJEUYOSnUuHyvFQQqHesK4aYSP27slDpHH/PSA==
   dependencies:
     tslib "^2.3.0"
 
@@ -1514,10 +1514,10 @@
   resolved "https://registry.npmjs.org/@dual-bundle/import-meta-resolve/-/import-meta-resolve-4.1.0.tgz"
   integrity sha512-+nxncfwHM5SgAtrVzgpzJOI1ol0PkumhVo469KCf9lUi21IGcY90G98VuHm9VRrUypmAzawAHO9bs6hqeADaVg==
 
-"@esbuild/darwin-arm64@0.25.9":
+"@esbuild/win32-x64@0.25.9":
   version "0.25.9"
-  resolved "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.25.9.tgz"
-  integrity sha512-XIpIDMAjOELi/9PB30vEbVMs3GV1v2zkkPnuyRRURbhqjyzIINwj+nbQATh4H9GxUgH1kFsEyQMxwiLFKUS6Rg==
+  resolved "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.25.9.tgz"
+  integrity sha512-PPOl1mi6lpLNQxnGoyAfschAodRFYXJ+9fs6WHXz7CSWKbOqiMZsubC+BQsVKuul+3vKLuwTHsS2c2y9EoKwxQ==
 
 "@eslint-community/eslint-utils@^4.2.0", "@eslint-community/eslint-utils@^4.4.0", "@eslint-community/eslint-utils@^4.7.0":
   version "4.8.0"
@@ -1893,10 +1893,10 @@
   dependencies:
     "@inquirer/type" "^3.0.7"
 
-"@lmdb/lmdb-darwin-arm64@3.4.2":
+"@lmdb/lmdb-win32-x64@3.4.2":
   version "3.4.2"
-  resolved "https://registry.npmjs.org/@lmdb/lmdb-darwin-arm64/-/lmdb-darwin-arm64-3.4.2.tgz"
-  integrity sha512-NK80WwDoODyPaSazKbzd3NEJ3ygePrkERilZshxBViBARNz21rmediktGHExoj9n5t9+ChlgLlxecdFKLCuCKg==
+  resolved "https://registry.npmjs.org/@lmdb/lmdb-win32-x64/-/lmdb-win32-x64-3.4.2.tgz"
+  integrity sha512-IY+r3bxKW6Q6sIPiMC0L533DEfRJSXibjSI3Ft/w9Q8KQBNqEIvUFXt+09wV8S5BRk0a8uSF19YWxuRwEfI90g==
 
 "@modelcontextprotocol/sdk@1.17.3":
   version "1.17.3"
@@ -1916,15 +1916,15 @@
     zod "^3.23.8"
     zod-to-json-schema "^3.24.1"
 
-"@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.3":
+"@msgpackr-extract/msgpackr-extract-win32-x64@3.0.3":
   version "3.0.3"
-  resolved "https://registry.npmjs.org/@msgpackr-extract/msgpackr-extract-darwin-arm64/-/msgpackr-extract-darwin-arm64-3.0.3.tgz"
-  integrity sha512-QZHtlVgbAdy2zAqNA9Gu1UpIuI8Xvsd1v8ic6B2pZmeFnFcMWiPLfWXh7TVw4eGEZ/C9TH281KwhVoeQUKbyjw==
+  resolved "https://registry.npmjs.org/@msgpackr-extract/msgpackr-extract-win32-x64/-/msgpackr-extract-win32-x64-3.0.3.tgz"
+  integrity sha512-x0fWaQtYp4E6sktbsdAqnehxDgEc/VwM7uLsRCYWaiGu0ykYdZPiS8zCWdnjHwyiumousxfBm4SO31eXqwEZhQ==
 
-"@napi-rs/nice-darwin-arm64@1.1.1":
+"@napi-rs/nice-win32-x64-msvc@1.1.1":
   version "1.1.1"
-  resolved "https://registry.npmjs.org/@napi-rs/nice-darwin-arm64/-/nice-darwin-arm64-1.1.1.tgz"
-  integrity sha512-s/E7w45NaLqTGuOjC2p96pct4jRfo61xb9bU1unM/MJ/RFkKlJyJDx7OJI/O0ll/hrfpqKopuAFDV8yo0hfT7A==
+  resolved "https://registry.npmjs.org/@napi-rs/nice-win32-x64-msvc/-/nice-win32-x64-msvc-1.1.1.tgz"
+  integrity sha512-vB+4G/jBQCAh0jelMTY3+kgFy00Hlx2f2/1zjMoH821IbplbWZOkLiTYXQkygNTzQJTq5cvwBDgn2ppHD+bglQ==
 
 "@napi-rs/nice@^1.0.4":
   version "1.1.1"
@@ -2117,10 +2117,10 @@
   resolved "https://registry.npmjs.org/@oxc-project/types/-/types-0.81.0.tgz"
   integrity sha512-CnOqkybZK8z6Gx7Wb1qF7AEnSzbol1WwcIzxYOr8e91LytGOjo0wCpgoYWZo8sdbpqX+X+TJayIzo4Pv0R/KjA==
 
-"@parcel/watcher-darwin-arm64@2.5.1":
+"@parcel/watcher-win32-x64@2.5.1":
   version "2.5.1"
-  resolved "https://registry.npmjs.org/@parcel/watcher-darwin-arm64/-/watcher-darwin-arm64-2.5.1.tgz"
-  integrity sha512-eAzPv5osDmZyBhou8PoF4i6RQXAfeKL9tjb3QzYuccXFMQU0ruIc/POh30ePnaOyD1UXdlKguHBmsTs53tVoPw==
+  resolved "https://registry.npmjs.org/@parcel/watcher-win32-x64/-/watcher-win32-x64-2.5.1.tgz"
+  integrity sha512-9lHBdJITeNR++EvSQVUcaZoWupyHfXe1jZvGZ06O/5MflPcuPLtEphScIBL+AiCWBO46tDSHzWyD0uDmmZqsgA==
 
 "@parcel/watcher@^2.4.1":
   version "2.5.1"
@@ -2156,20 +2156,20 @@
   resolved "https://registry.npmjs.org/@polka/url/-/url-1.0.0-next.28.tgz"
   integrity sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==
 
-"@rolldown/binding-darwin-arm64@1.0.0-beta.32":
+"@rolldown/binding-win32-x64-msvc@1.0.0-beta.32":
   version "1.0.0-beta.32"
-  resolved "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.0.0-beta.32.tgz"
-  integrity sha512-W8oMqzGcI7wKPXUtS3WJNXzbghHfNiuM1UBAGpVb+XlUCgYRQJd2PRGP7D3WGql3rR3QEhUvSyAuCBAftPQw6Q==
+  resolved "https://registry.npmjs.org/@rolldown/binding-win32-x64-msvc/-/binding-win32-x64-msvc-1.0.0-beta.32.tgz"
+  integrity sha512-Ej0i4PZk8ltblZtzVK8ouaGUacUtxRmTm5S9794mdyU/tYxXjAJNseOfxrnHpMWKjMDrOKbqkPqJ52T9NR4LQQ==
 
 "@rolldown/pluginutils@1.0.0-beta.32":
   version "1.0.0-beta.32"
   resolved "https://registry.npmjs.org/@rolldown/pluginutils/-/pluginutils-1.0.0-beta.32.tgz"
   integrity sha512-QReCdvxiUZAPkvp1xpAg62IeNzykOFA6syH2CnClif4YmALN1XKpB39XneL80008UbtMShthSVDKmrx05N1q/g==
 
-"@rollup/rollup-darwin-arm64@4.50.0":
+"@rollup/rollup-win32-x64-msvc@4.50.0":
   version "4.50.0"
-  resolved "https://registry.npmjs.org/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.50.0.tgz"
-  integrity sha512-vwSXQN8T4sKf1RHr1F0s98Pf8UPz7pS6P3LG9NSmuw0TVh7EmaE+5Ny7hJOZ0M2yuTctEsHHRTMi2wuHkdS6Hg==
+  resolved "https://registry.npmjs.org/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.50.0.tgz"
+  integrity sha512-xMmiWRR8sp72Zqwjgtf3QbZfF1wdh8X2ABu3EaozvZcyHJeU0r+XAnXdKgs4cCAp6ORoYoCygipYP1mjmbjrsg==
 
 "@schematics/angular@20.2.2":
   version "20.2.2"
