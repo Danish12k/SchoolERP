@@ -9,16 +9,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { IFeeInstallment } from '../interfaces/IFeeMaster';
+import { IFeeInstallment } from '../../../interfaces/IFeeMaster';
 import { MatTableDataSource } from '@angular/material/table';
-import { FeeMasterService } from '../services/fee-master.service';
+import { FeeMasterService } from '../../../services/fee-master.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
-import { ISession } from '../interfaces/isession';
-import { ICollege } from '../interfaces/ICollege';
-import { SessionService } from '../services/session.service';
-import { CollegeService } from '../services/college.service';
+import { ISession } from '../../../interfaces/isession';
+import { ICollege } from '../../../interfaces/ICollege';
+import { SessionService } from '../../../services/session.service';
+import { CollegeService } from '../../../services/college.service';
 
 @Component({
   selector: 'app-fee-installment',

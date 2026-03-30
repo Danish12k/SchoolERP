@@ -1,58 +1,61 @@
 <div class="col-sm-12">
     <mat-card>
         <mat-card-header>
-            <mat-card-title>Add Fee Head</mat-card-title>
+            <mat-card-title>Add Fee Installment</mat-card-title>
         </mat-card-header>
         <form [formGroup]="feeInstallmentForm" (ngSubmit)="addFeeInstallment()">
             <mat-card-content>
-                <div class="form-field-full">
-                    <div class="row">
-                        <div class="col-sm-3">
+                <div class="fee-installment-form">
+                    <div class="fee-installment-form__grid">
                         <mat-form-field appearance="fill" class="w-100">
-                                <mat-label>Select Session</mat-label>
-                                <mat-select formControlName="sessionId" (selectionChange)="GetFeeInsallmentList()">
-                                    @for (session of sessions; track session.sessionId) {
-                                    <mat-option [value]="session.sessionId">
-                                        {{ session.sessionName }}
-                                    </mat-option>
-                                    }
-                                </mat-select>
-                            </mat-form-field>
-                    </div>
-                         <div class="col-sm-3">
+                            <mat-label>Select Session</mat-label>
+                            <mat-select formControlName="sessionId" (selectionChange)="GetFeeInsallmentList()">
+                                @for (session of sessions; track session.sessionId) {
+                                <mat-option [value]="session.sessionId">
+                                    {{ session.sessionName }}
+                                </mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+
                         <mat-form-field appearance="fill" class="w-100">
-                                <mat-label>Select School</mat-label>
-                                <mat-select formControlName="collegeId" (selectionChange)="GetFeeInsallmentList()">
-                                    @for (school of schools; track school.collegeId) {
-                                    <mat-option [value]="school.collegeId">
-                                        {{ school.collegeAbreviation }}
-                                    </mat-option>
-                                    }
-                                </mat-select>
-                            </mat-form-field>
+                            <mat-label>Select School</mat-label>
+                            <mat-select formControlName="collegeId" (selectionChange)="GetFeeInsallmentList()">
+                                @for (school of schools; track school.collegeId) {
+                                <mat-option [value]="school.collegeId">
+                                    {{ school.collegeAbreviation }}
+                                </mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field class="w-100">
+                            <mat-label>Installment</mat-label>
+                            <input matInput formControlName="installmentName" placeholder="Please enter installment name" />
+                            @if (feeInstallmentForm.get('installmentName')?.hasError('required') &&
+                            feeInstallmentForm.get('installmentName')?.touched) {
+                            <mat-error>Installment name is required</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field class="w-100">
+                            <mat-label>Installment Date</mat-label>
+                            <input
+                                matInput
+                                formControlName="installMentDate"
+                                placeholder="Please enter installment date"
+                                [matDatepicker]="picker2"
+                            />
+                            <mat-datepicker-toggle matSuffix [for]="picker2" />
+                            <mat-datepicker #picker2 />
+                            @if (feeInstallmentForm.get('installMentDate')?.hasError('required') &&
+                            feeInstallmentForm.get('installMentDate')?.touched) {
+                            <mat-error>Installment date is required</mat-error>
+                            }
+                        </mat-form-field>
                     </div>
-                      <div class="col-sm-3">
-                            <mat-form-field class="w-100">
-                                <mat-label>Installment</mat-label>
-                                <input matInput formControlName="Installment Name"  placeholder="Please enter installment Name" />
-                                @if (feeInstallmentForm.get('installmentName')?.hasError('required') && feeInstallmentForm.get('installmentName')?.touched) {
-                                 <mat-error>Fee feeHeadName is required</mat-error>
-                                }
-                            </mat-form-field>
-                        </div>
-                        <div class="col-sm-3">
-                            <mat-form-field class="w-100">
-                                <mat-label>Installment Date</mat-label>
-                                <input matInput formControlName="InstallMentDate"  placeholder="Please enter installment Date" [matDatepicker]="picker2"/>
-                                <mat-datepicker-toggle matSuffix [for]="picker2" />
-                                <mat-datepicker #picker2 />
-                                @if (feeInstallmentForm.get('installMentDate')?.hasError('required') && feeInstallmentForm.get('installMentDate')?.touched) {
-                                 <mat-error>Fee feeHeadName is required</mat-error>
-                                }
-                            </mat-form-field>
-                        </div>
-                         </div>
-                    <div class="m-t-8">
+
+                    <div class="fee-installment-form__actions">
                         <button mat-flat-button color="primary" type="submit">Save</button>
                     </div>
                 </div>
@@ -68,38 +71,40 @@
                 <mat-label>Search</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Filter fee head">
             </mat-form-field>
-            <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-                <ng-container matColumnDef="session">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Session</th>
-                    <td mat-cell *matCellDef="let element">{{ element.sessionId }}</td>
-                </ng-container>
+            <div class="fee-installment-table__wrap">
+                <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 fee-installment-table">
+                    <ng-container matColumnDef="session">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Session</th>
+                        <td mat-cell *matCellDef="let element">{{ element.sessionId }}</td>
+                    </ng-container>
 
-                <ng-container matColumnDef="school">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>School</th>
-                    <td mat-cell *matCellDef="let element">{{ element.collegeId }}</td>
-                </ng-container>
+                    <ng-container matColumnDef="school">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>School</th>
+                        <td mat-cell *matCellDef="let element">{{ element.collegeId }}</td>
+                    </ng-container>
 
-                <ng-container matColumnDef="installment">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment</th>
-                    <td mat-cell *matCellDef="let element">{{ element.installmentName }}</td>
-                </ng-container>
-                <ng-container matColumnDef="installmentDate">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment Date</th>
-                    <td mat-cell *matCellDef="let element">{{ element.installMentDate }}</td>
-                </ng-container>
+                    <ng-container matColumnDef="installment">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment</th>
+                        <td mat-cell *matCellDef="let element">{{ element.installmentName }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="installmentDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment Date</th>
+                        <td mat-cell *matCellDef="let element">{{ element.installMentDate }}</td>
+                    </ng-container>
 
-                <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef>Actions</th>
-                    <td mat-cell *matCellDef="let row">
-                        <button mat-icon-button color="primary" (click)="openEditDialog(row)">
-                            <mat-icon>drive_file_rename_outline</mat-icon>
-                        </button>
-                    </td>
-                </ng-container>
-                <!-- Header & Rows -->
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef>Actions</th>
+                        <td mat-cell *matCellDef="let row">
+                            <button mat-icon-button color="primary" (click)="openEditDialog(row)">
+                                <mat-icon>drive_file_rename_outline</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+                    <!-- Header & Rows -->
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
             <!-- Paginator -->
             <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
 
