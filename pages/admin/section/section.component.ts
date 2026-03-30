@@ -1,7 +1,6 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -9,11 +8,11 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import { ISection } from '../interfaces/IClassAndSection';
-import { SectionService } from '../services/section.service';
+import { ISection } from '../../../interfaces/IClassAndSection';
+import { SectionService } from '../../../services/section.service';
 import { BreadcrumbComponent } from "@shared";
 import { debug } from 'console';
-import { IApiResponse } from '../interfaces/IDesignation';
+import { IApiResponse } from '../../../interfaces/IDesignation';
 
 @Component({
   selector: 'app-section',
@@ -23,7 +22,6 @@ import { IApiResponse } from '../interfaces/IDesignation';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatCheckbox,
     MatIcon,
     MatDialogModule],
   templateUrl: './section.component.html',
@@ -31,9 +29,8 @@ import { IApiResponse } from '../interfaces/IDesignation';
 })
 export class SectionComponent implements OnInit {
   private sectionService = inject(SectionService);
-  displayedColumns: string[] = ['select', 'sectionName', 'actions'];
+  displayedColumns: string[] = ['sectionName', 'actions'];
   dataSource = new MatTableDataSource<ISection>([])
-  selection: ISection[] = [];
   constructor(private dialog: MatDialog) { }
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -51,32 +48,6 @@ export class SectionComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-
-  /** Checkbox Selection Logic */
-  toggleSelection(row: ISection) {
-    if (this.selection.includes(row)) {
-      this.selection = this.selection.filter(r => r !== row);
-    } else {
-      this.selection.push(row);
-    }
-  }
-
-  isAllSelected() {
-    return this.selection.length === this.dataSource.data.length;
-  }
-
-  isPartialSelected() {
-    return this.selection.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection = [];
-    } else {
-      this.selection = [...this.dataSource.data];
-    }
-  }
-  // end here
 
   openEditDialog(section: ISection) {
     const dialogRef = this.dialog.open(this.editDialog, {

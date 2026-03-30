@@ -2,6 +2,9 @@ import { Component, inject, Inject, OnInit } from '@angular/core';
 import { MatCardModule, MatCardTitle } from "@angular/material/card";
 import { MaterialModule } from "../../../../../schematics/ng-add/files/module-files/app/material.module";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
+
+
 import { SessionService } from '../../../services/session.service';
 import { SectionService } from '../../../services/section.service';
 import { CollegeService } from '../../../services/college.service';
@@ -14,18 +17,16 @@ import { debug } from 'console';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-assign-section',
-  imports: [
-    MatCardTitle,
+  selector: 'app-filterstudent',
+  imports: [ MatCardTitle,
     MaterialModule,
     MatCardModule,
     ReactiveFormsModule,
-    MatColumnResizeCommonModule
-  ],
-  templateUrl: './assign-section.component.html',
-  styleUrl: './assign-section.component.scss'
+    MatColumnResizeCommonModule],
+  templateUrl: './filterstudent.component.html',
+  styleUrl: './filterstudent.component.scss'
 })
-export class AssignSectionComponent implements OnInit {
+export class FilterstudentComponent implements OnInit {
   constructor(private fb: FormBuilder, private dialog: MatDialog) { }
   //private fb = Inject(FormBuilder);
   sessionService = inject(SessionService);
@@ -131,3 +132,4 @@ export class AssignSectionComponent implements OnInit {
 
 
 }
+

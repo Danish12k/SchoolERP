@@ -22,6 +22,7 @@ import { AddSchoolComponent } from './add-school/add-school.component';
 import { AddsubjectComponent } from './addsubject/addsubject.component';
 import { AssignsubjectComponent } from './assignsubject/assignsubject.component';
 import { SubjectmasterComponent } from './subjectmaster/subjectmaster.component';
+import { StudentlistComponent } from '../student/studentlist/studentlist.component';
 
 
 export const routes: Routes = [
@@ -48,4 +49,5 @@ export const routes: Routes = [
   { path: 'addSubject', component: AddsubjectComponent },
   { path: 'assignSubject', component: AssignsubjectComponent },
   { path: 'subjectMaster', component: SubjectmasterComponent },
+  { path: 'studentlist', component: StudentlistComponent }
 ];

@@ -9,10 +9,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { IFeeGroup, IFeeHead } from '../interfaces/IFeeMaster';
+import { IFeeGroup, IFeeHead } from '../../../interfaces/IFeeMaster';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { FeeMasterService } from '../services/fee-master.service';
+import { FeeMasterService } from '../../../services/fee-master.service';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 

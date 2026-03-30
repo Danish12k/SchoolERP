@@ -9,15 +9,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { ISession } from '../interfaces/isession';
-import { ICollege } from '../interfaces/ICollege';
-import { CollegeService } from '../services/college.service';
-import { SessionService } from '../services/session.service';
+import { ISession } from '../../../interfaces/isession';
+import { ICollege } from '../../../interfaces/ICollege';
+import { CollegeService } from '../../../services/college.service';
+import { SessionService } from '../../../services/session.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { IClass } from '../interfaces/IClassmaster';
+import { IClass } from '../../../interfaces/IClassmaster';
 
 @Component({
   selector: 'app-classmaster',
@@ -50,8 +50,7 @@ export class ClassmasterComponent implements OnInit {
 
 
   dataSource = new MatTableDataSource<IClass>([]);
-  displayedColumns: string[] = ['select', 'className', 'seqNumber', 'actions'];
-  selection: IClass[] = [];
+  displayedColumns: string[] = ['className', 'seqNumber', 'actions'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -187,31 +186,6 @@ export class ClassmasterComponent implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  /** Checkbox Selection Logic */
-  toggleSelection(row: IClass) {
-    if (this.selection.includes(row)) {
-      this.selection = this.selection.filter(r => r !== row);
-    } else {
-      this.selection.push(row);
-    }
-  }
-
-  isAllSelected() {
-    return this.selection.length === this.dataSource.data.length;
-  }
-
-  isPartialSelected() {
-    return this.selection.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection = [];
-    } else {
-      this.selection = [...this.dataSource.data];
-    }
   }
 
   classDelete(session: IClass) {

@@ -1,0 +1,58 @@
+.student-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 8px 16px;
+}
+
+.student-list-page__filter {
+  width: 100%;
+}
+
+.student-list-page__card {
+  width: 100%;
+}
+
+.student-list-page__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.student-list-page__search {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.student-list-page__loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.student-list-page__error {
+  margin: 0 0 12px;
+  color: var(--mat-sys-error, #b3261e);
+}
+
+.student-list-page__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.student-list-table {
+  width: 100%;
+  min-width: 720px;
+}
+
+@media (max-width: 600px) {
+  .student-list-page__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

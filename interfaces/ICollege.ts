@@ -13,4 +13,7 @@ export interface ICollege {
   schoolCode: string;
   dioceseCode: string;
   portalURL: string | null;
+  /** Present when API returns session/year range fields */
+  yearFrom?: string | number | null;
+  yearTo?: string | number | null;
 }

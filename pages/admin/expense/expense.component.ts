@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { ExpenseService } from '../services/expense.service';
+import { ExpenseService } from '../../../services/expense.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { IExpenseHead } from '../interfaces/IAdmintMst';
+import { IExpenseHead } from '../../../interfaces/IAdmintMst';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatCard, MatCardModule } from '@angular/material/card';

@@ -131,8 +131,11 @@ export const apiEndpoint = {
         add:baseURL+'/Subject/AssignSubject',
         delete: baseURL+'/Subject/DeleteAssignSubject?ClassSectionSubjectId=',
         list: baseURL+'/Subject/AssignSubjectList?classSectionId='
-    }
+    },
 
-
+    // student
+    student: {
+        list: baseURL + '/Student/StudentList',
+    },
 
 };
