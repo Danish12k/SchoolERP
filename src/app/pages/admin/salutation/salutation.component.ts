@@ -9,13 +9,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { SalutationService } from '../services/salutation.service';
+import { SalutationService } from '../../../services/salutation.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { ISalutation } from '../interfaces/IAdmintMst';
+import { ISalutation } from '../../../interfaces/IAdmintMst';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { IApiResponse } from '../interfaces/ICommon';
+import { IApiResponse } from '../../../interfaces/ICommon';
 
 @Component({
   selector: 'app-salutation',
@@ -40,7 +40,7 @@ export class SalutationComponent implements OnInit{
 
  dataSource = new MatTableDataSource<ISalutation>([]);
    selection: ISalutation[] = [];
-  displayedColumns: string[] = ['select', 'salutationName', 'actions'];
+  displayedColumns: string[] = ['salutationName', 'actions'];
   salutationName: string = '';
   
     constructor(private dialog: MatDialog) { }
