@@ -137,5 +137,12 @@ export const apiEndpoint = {
     student: {
         list: baseURL + '/Student/StudentList',
     },
-
+    
+ country:{
+        add:baseURL+'/Country/AddCountry',
+        update:baseURL+'/Country/UpdateCountry',
+        delete: baseURL+'/Country/DeleteCountry?Id=',
+        list: baseURL+'/Country/CountryList',
+        getbyId: baseURL+'/Country/GetCountry?CountryId='
+    }
 };
