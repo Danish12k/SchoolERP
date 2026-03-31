@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+.section-student-form {
+  margin-bottom: 16px;
+}
+
+.section-student-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-student-toolbar__search {
+  flex: 1 1 240px;
+  min-width: 200px;
+}
+
+.section-student-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.section-student-error {
+  color: var(--mat-sys-error, #b3261e);
+  margin: 8px 0 16px;
+}
+
+.section-student-table__wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.section-student-table {
+  width: 100%;
+  min-width: 640px;
+}
+
