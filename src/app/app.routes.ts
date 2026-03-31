@@ -13,6 +13,7 @@ import { ClassmasterComponent } from './pages/admin/classmaster/classmaster.comp
 import { DesignationmasterComponent } from './pages/admin/designationmaster/designationmaster.component';
 import { SessionComponent } from './pages/admin/session/session.component';
 import { FeeGroupComponent } from './pages/admin/fee-group/fee-group.component';
+import { LocationComponent } from './pages/admin/location/location.component';
 //import { DesingnationMasterComponent } from './pages/admin/desingnation-master/desingnation-master.component';
 
 export const routes: Routes = [
@@ -66,7 +67,9 @@ export const routes: Routes = [
       {
         path: 'fee',
         loadChildren: () => import('./pages/admin/feeMaster.routes').then(m => m.routes),
-      }
+      },
+      { path: 'Location', component: LocationComponent },
+      
     ],
   },
   {
