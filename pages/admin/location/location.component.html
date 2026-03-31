@@ -1,0 +1,20 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Location</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-tab-group mat-stretch-tabs dynamicHeight>
+      <mat-tab label="County">
+        <app-country></app-country>
+      </mat-tab>
+
+      <mat-tab label="State">
+        <app-statemaster></app-statemaster>
+      </mat-tab>
+      <mat-tab label="District">
+        <app-district></app-district>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
