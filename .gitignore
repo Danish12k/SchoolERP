@@ -1,1 +1,7 @@
 node_modules
+
+# Angular CLI cache (regenerated on build/serve)
+.angular/
+
+# Build output
+dist/
