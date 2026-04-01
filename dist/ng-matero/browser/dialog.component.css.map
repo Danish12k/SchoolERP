@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/routes/material/dialog/dialog.component.ts"],
-  "sourcesContent": ["\n    iframe {\n      width: 800px;\n    }\n  "],
-  "mappings": ";AACI;AACE,SAAA;;",
-  "names": []
-}

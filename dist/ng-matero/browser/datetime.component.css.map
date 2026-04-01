@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/routes/forms/datetime/datetime.component.scss"],
-  "sourcesContent": [".mat-form-field {\r\n  margin: 0 8px;\r\n}\r\n"],
-  "mappings": ";AAAA,CAAA;AACE,UAAA,EAAA;;",
-  "names": []
-}

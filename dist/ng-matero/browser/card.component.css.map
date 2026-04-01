@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/routes/material/card/card.component.scss"],
-  "sourcesContent": [".demo-card button {\r\n  text-transform: uppercase;\r\n}\r\n\r\n.demo-card {\r\n  max-width: 450px;\r\n}\r\n"],
-  "mappings": ";AAAA,CAAA,UAAA;AACE,kBAAA;;AAGF,CAJA;AAKE,aAAA;;",
-  "names": []
-}

@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/routes/utilities/css-grid/css-grid.component.scss"],
-  "sourcesContent": ["@use '@angular/material' as mat;\r\n\r\n[class^='col'] {\r\n  padding-top: .75rem;\r\n  padding-bottom: .75rem;\r\n  background-color: mat.m2-get-color-from-palette(mat.$m2-red-palette, 100);\r\n  border: 1px solid mat.m2-get-color-from-palette(mat.$m2-red-palette, 200);\r\n}\r\n\r\n.row + .row {\r\n  margin-top: 1rem;\r\n}\r\n"],
-  "mappings": ";AAEA,CAAA;AACE,eAAA;AACA,kBAAA;AACA,oBAAA;AACA,UAAA,IAAA,MAAA;;AAGF,CAAA,IAAA,EAAA,CAAA;AACE,cAAA;;",
-  "names": []
-}

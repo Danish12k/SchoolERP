@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/pages/admin/section/section.component.scss"],
-  "sourcesContent": ["/* Local responsive layout (avoid relying on bootstrap presence) */\r\n\r\n:host {\r\n  display: block;\r\n}\r\n\r\n.section-form__actions {\r\n  margin-top: 8px;\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  gap: 8px;\r\n}\r\n\r\n.section-table__wrap {\r\n  width: 100%;\r\n  overflow-x: auto;\r\n}\r\n\r\n.section-table {\r\n  width: 100%;\r\n  min-width: 560px;\r\n}\r\n"],
-  "mappings": ";AAEA;AACE,WAAA;;AAGF,CAAA;AACE,cAAA;AACA,WAAA;AACA,aAAA;AACA,OAAA;;AAGF,CAAA;AACE,SAAA;AACA,cAAA;;AAGF,CAAA;AACE,SAAA;AACA,aAAA;;",
-  "names": []
-}

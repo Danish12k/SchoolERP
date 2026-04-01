@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/theme/header/header.component.scss"],
-  "sourcesContent": [".matero-header {\r\n  --mat-toolbar-container-background-color: transparent;\r\n\r\n  position: relative;\r\n  z-index: 200;\r\n  display: block;\r\n  background-color: var(--header-background-color);\r\n  backdrop-filter: blur(8px);\r\n}\r\n"],
-  "mappings": ";AAAA,CAAA;AACE,4CAAA;AAEA,YAAA;AACA,WAAA;AACA,WAAA;AACA,oBAAA,IAAA;AACA,2BAAA,KAAA;AAAA,mBAAA,KAAA;;",
-  "names": []
-}

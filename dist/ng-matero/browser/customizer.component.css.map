@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/theme/customizer/customizer.component.scss"],
-  "sourcesContent": [".customizer-handle {\r\n  position: fixed;\r\n  right: 2rem;\r\n  bottom: 2rem;\r\n  z-index: 1;\r\n\r\n  [dir='rtl'] & {\r\n    right: auto;\r\n    left: 2rem;\r\n  }\r\n}\r\n"],
-  "mappings": ";AAAA,CAAA;AACE,YAAA;AACA,SAAA;AACA,UAAA;AACA,WAAA;;AAEA,CAAA,SAAA,CANF;AAOI,SAAA;AACA,QAAA;;",
-  "names": []
-}

@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/pages/admin/fee-installment/fee-installment.component.scss"],
-  "sourcesContent": ["/* Local responsive layout (avoid relying on bootstrap presence) */\r\n\r\n:host {\r\n  display: block;\r\n}\r\n\r\n.fee-installment-form {\r\n  display: grid;\r\n  gap: 12px;\r\n}\r\n\r\n.fee-installment-form__grid {\r\n  display: grid;\r\n  gap: 12px;\r\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\r\n  align-items: start;\r\n}\r\n\r\n.fee-installment-form__actions {\r\n  margin-top: 8px;\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  gap: 8px;\r\n}\r\n\r\n.w-100 {\r\n  width: 100%;\r\n}\r\n\r\n.fee-installment-table__wrap {\r\n  width: 100%;\r\n  overflow-x: auto;\r\n}\r\n\r\n.fee-installment-table {\r\n  width: 100%;\r\n  min-width: 760px;\r\n}\r\n\r\n@media (max-width: 600px) {\r\n  .fee-installment-form__grid {\r\n    grid-template-columns: 1fr;\r\n  }\r\n}\r\n"],
-  "mappings": ";AAEA;AACE,WAAA;;AAGF,CAAA;AACE,WAAA;AACA,OAAA;;AAGF,CAAA;AACE,WAAA;AACA,OAAA;AACA,yBAAA,OAAA,QAAA,EAAA,OAAA,KAAA,EAAA;AACA,eAAA;;AAGF,CAAA;AACE,cAAA;AACA,WAAA;AACA,aAAA;AACA,OAAA;;AAGF,CAAA;AACE,SAAA;;AAGF,CAAA;AACE,SAAA;AACA,cAAA;;AAGF,CAAA;AACE,SAAA;AACA,aAAA;;AAGF,OAAA,CAAA,SAAA,EAAA;AACE,GA7BF;AA8BI,2BAAA;;;",
-  "names": []
-}

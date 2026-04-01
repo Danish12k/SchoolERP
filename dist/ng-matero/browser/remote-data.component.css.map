@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/routes/tables/remote-data/remote-data.component.scss"],
-  "sourcesContent": [":host ::ng-deep .mtx-grid {\r\n  height: 480px;\r\n}\r\n"],
-  "mappings": ";AAAA,MAAA,UAAA,CAAA;AACE,UAAA;;",
-  "names": []
-}

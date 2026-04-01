@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/routes/material/snack-bar/snack-bar.component.scss"],
-  "sourcesContent": ["::ng-deep {\r\n  .demo-party.mat-mdc-snack-bar-container .mdc-snackbar__surface {\r\n    background: #d35400;\r\n  }\r\n}\r\n"],
-  "mappings": ";AACE,UAAA,CAAA,UAAA,CAAA,4BAAA,CAAA;AACE,cAAA;;",
-  "names": []
-}

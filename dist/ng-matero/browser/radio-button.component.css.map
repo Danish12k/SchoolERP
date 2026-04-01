@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/routes/material/radio-button/radio-button.component.scss"],
-  "sourcesContent": [".example-radio-group {\r\n  display: inline-flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.example-radio-button {\r\n  margin: 5px;\r\n}\r\n\r\n.example-selected-value {\r\n  margin: 15px 0;\r\n}\r\n"],
-  "mappings": ";AAAA,CAAA;AACE,WAAA;AACA,kBAAA;;AAGF,CAAA;AACE,UAAA;;AAGF,CAAA;AACE,UAAA,KAAA;;",
-  "names": []
-}

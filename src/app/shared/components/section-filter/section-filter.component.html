@@ -1,0 +1,33 @@
+@if (form) {
+<div class="section-filter">
+  <mat-form-field [appearance]="appearance" class="section-filter__field w-100">
+    <mat-label>{{ sectionLabel }}</mat-label>
+    <mat-select
+      [formControl]="sectionControl"
+      (selectionChange)="onSelectionChange()"
+    >
+      @for (section of sections; track section.sectionId) {
+        <mat-option [value]="section.sectionId">
+          {{ section.sectionName }}
+        </mat-option>
+      }
+    </mat-select>
+    @if (sectionControl.hasError('required') && sectionControl.touched) {
+      <mat-error>Choose a section</mat-error>
+    }
+  </mat-form-field>
+
+  @if (showActive && activeControl) {
+    <mat-form-field [appearance]="appearance" class="section-filter__field w-100">
+      <mat-label>{{ activeLabel }}</mat-label>
+      <mat-select
+        [formControl]="activeControl"
+        (selectionChange)="onSelectionChange()"
+      >
+        <mat-option [value]="1">Active</mat-option>
+        <mat-option [value]="0">Inactive</mat-option>
+      </mat-select>
+    </mat-form-field>
+  }
+</div>
+}
