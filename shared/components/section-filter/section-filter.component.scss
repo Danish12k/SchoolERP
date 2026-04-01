@@ -1,0 +1,25 @@
+:host.section-filter--inline,
+:host.section-filter--inline .section-filter {
+  display: contents;
+}
+
+.section-filter {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: start;
+}
+
+.section-filter__field {
+  width: 100%;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .section-filter {
+    grid-template-columns: 1fr;
+  }
+}
