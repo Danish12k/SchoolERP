@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { IApiResponse, IDesignation, IDesignationResponse } from '../interfaces/IDesignation';
+import { IApiResponse } from '../interfaces/ICommon';
+import { IDesignation, IDesignationResponse } from '../interfaces/IDesignation';
 import { Observable } from 'rxjs';
 import { apiEndpoint } from '@core/constants/apiendpoint';
 

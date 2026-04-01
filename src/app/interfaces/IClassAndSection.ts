@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 export interface ISection{
-    sectionId: number; 
+    sectionId: number;
     sectionName: string;
 }
 
@@ -44,6 +43,3 @@ export interface IFaculty {
   pan: string | null;
   aadhar: string | null;
 }
-=======
-export * from '../pages/admin/interfaces/IClassAndSection';
->>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576
