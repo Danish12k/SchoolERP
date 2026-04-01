@@ -136,6 +136,7 @@ export const apiEndpoint = {
     // student
     student: {
         list: baseURL + '/Student/StudentList',
+        sectionStudentList: baseURL + '/StudentData/SectionStudentList',
     },
     
  country:{

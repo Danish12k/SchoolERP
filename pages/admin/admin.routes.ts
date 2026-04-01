@@ -22,13 +22,9 @@ import { AddSchoolComponent } from './add-school/add-school.component';
 import { AddsubjectComponent } from './addsubject/addsubject.component';
 import { AssignsubjectComponent } from './assignsubject/assignsubject.component';
 import { SubjectmasterComponent } from './subjectmaster/subjectmaster.component';
-<<<<<<< HEAD
 import { StudentlistComponent } from '../student/studentlist/studentlist.component';
 import { SectionStudentListComponent } from './section-student-list/section-student-list.component';
-=======
 import { LocationComponent } from './location/location.component';
->>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576
-
 
 export const routes: Routes = [
   { path: 'country', component: CountryComponent },
@@ -54,10 +50,7 @@ export const routes: Routes = [
   { path: 'addSubject', component: AddsubjectComponent },
   { path: 'assignSubject', component: AssignsubjectComponent },
   { path: 'subjectMaster', component: SubjectmasterComponent },
-<<<<<<< HEAD
   { path: 'studentlist', component: StudentlistComponent },
   { path: 'sectionStudents', component: SectionStudentListComponent },
-=======
   { path: 'Location', component: LocationComponent },
->>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576
 ];

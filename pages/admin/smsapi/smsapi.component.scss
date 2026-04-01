@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* Local responsive layout (avoid relying on bootstrap presence) */
 
 :host {
@@ -44,50 +43,3 @@ textarea[matInput] {
   min-height: 96px;
   resize: vertical;
 }
-=======
-/* Local responsive layout (avoid relying on bootstrap presence) */
-
-:host {
-  display: block;
-}
-
-.smsapi-form {
-  display: grid;
-  gap: 12px;
-}
-
-.smsapi-form__grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  align-items: start;
-}
-
-.smsapi-form__grid--full {
-  grid-template-columns: 1fr;
-}
-
-.smsapi-form__actions {
-  margin-top: 12px;
-  display: flex;
-  justify-content: center;
-}
-
-.w-100 {
-  width: 100%;
-}
-
-.smsapi-table {
-  width: 100%;
-}
-
-.smsapi-table__wrap {
-  width: 100%;
-  overflow-x: auto;
-}
-
-textarea[matInput] {
-  min-height: 96px;
-  resize: vertical;
-}
->>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576

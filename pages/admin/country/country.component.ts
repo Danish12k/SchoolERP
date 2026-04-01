@@ -11,8 +11,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { isArray, TranslateModule } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { ICountry } from '../interfaces/ILocation';
-import { LocationService } from '../services/location.service';
+import { ICountry } from '../../../interfaces/ILocation';
+import { LocationService } from '../../../services/location.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 

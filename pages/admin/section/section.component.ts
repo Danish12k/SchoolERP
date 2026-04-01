@@ -11,8 +11,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 import { ISection } from '../../../interfaces/IClassAndSection';
 import { SectionService } from '../../../services/section.service';
 import { BreadcrumbComponent } from "@shared";
-import { debug } from 'console';
-import { IApiResponse } from '../../../interfaces/IDesignation';
+import { IApiResponse } from '../../../interfaces/ICommon';
 
 @Component({
   selector: 'app-section',
