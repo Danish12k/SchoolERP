@@ -16,10 +16,13 @@ export class StudentService {
   listStudents(): Observable<IApiResponse<IStudent>> {
     return this.http.get<IApiResponse<IStudent>>(this.endPoints.student.list);
   }
+<<<<<<< HEAD
 
   /** Students in a section (`Active`: 1 = active, 0 = inactive). */
   listStudentsBySection(sectionId: number, active: number = 1): Observable<IApiResponse<IStudent>> {
     const url = `${this.endPoints.student.sectionStudentList}?SectionId=${sectionId}&Active=${active}`;
     return this.http.get<IApiResponse<IStudent>>(url);
   }
+=======
+>>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576
 }

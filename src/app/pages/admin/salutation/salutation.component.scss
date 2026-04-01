@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Make the add-salutation input smaller (not full-width) */
 
 :host {
@@ -14,3 +15,21 @@
     max-width: 100%;
   }
 }
+=======
+/* Make the add-salutation input smaller (not full-width) */
+
+:host {
+  display: block;
+}
+
+.salutation-input {
+  width: 100%;
+  max-width: 320px;
+}
+
+@media (max-width: 600px) {
+  .salutation-input {
+    max-width: 100%;
+  }
+}
+>>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576

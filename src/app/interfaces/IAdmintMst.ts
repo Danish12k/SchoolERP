@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export interface IExpenseHead {
   id: number;
   expenseHead: string;
@@ -36,3 +37,6 @@ export interface ISchool {
   dioceseCode: string;
   portalURL: string;
 }
+=======
+export * from '../pages/admin/interfaces/IAdmintMst';
+>>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576

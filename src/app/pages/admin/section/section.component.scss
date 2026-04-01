@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Local responsive layout (avoid relying on bootstrap presence) */
 
 :host {
@@ -20,3 +21,27 @@
   width: 100%;
   min-width: 560px;
 }
+=======
+/* Local responsive layout (avoid relying on bootstrap presence) */
+
+:host {
+  display: block;
+}
+
+.section-form__actions {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.section-table__wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.section-table {
+  width: 100%;
+  min-width: 560px;
+}
+>>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576

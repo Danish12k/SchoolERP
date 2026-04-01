@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // i-designation.ts
 export interface IDesignation {
   id: number;
@@ -16,3 +17,6 @@ export interface IApiResponse<T> {
   data: T;        // single object or array depending on API
   totalRecord?: number;
 }
+=======
+export * from '../pages/admin/interfaces/IDesignation';
+>>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576

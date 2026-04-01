@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // fee group
 export interface IFeeGroup {
   streamId: number;
@@ -23,3 +24,6 @@ export interface IFeeInstallment {
   updateDate: Date;
   updatedBy: number;
 }
+=======
+export * from '../pages/admin/interfaces/IFeeMaster';
+>>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576

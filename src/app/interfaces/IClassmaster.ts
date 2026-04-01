@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export interface IClass {
   courseId: number;
   courseName: string;
@@ -6,3 +7,6 @@ export interface IClass {
   collegeId: number;
 }
 
+=======
+export * from '../pages/admin/interfaces/IClassmaster';
+>>>>>>> d232b93b353da02f32dddfd9ba4ee96f6b41d576
