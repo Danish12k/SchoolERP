@@ -1,0 +1,98 @@
+/* College list: no inner scrollbars; columns sized to fit card width */
+
+:host {
+  display: block;
+}
+
+.college-page {
+  padding: 0 4px 8px;
+}
+
+.college-page__card {
+  overflow: visible;
+}
+
+.college-page__content {
+  padding-bottom: 8px !important;
+}
+
+.college-page__header {
+  flex: 0 0 auto;
+}
+
+.college-page__search {
+  width: 100%;
+  max-width: 420px;
+}
+
+.college-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.college-page__scroll {
+  overflow: visible;
+  border-radius: 8px;
+  border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.12));
+}
+
+.college-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Column widths (Material adds mat-column-<id> on cells) */
+.college-table .mat-column-collegeAbreviation {
+  width: 14%;
+}
+
+.college-table .mat-column-collegeName {
+  width: 28%;
+}
+
+.college-table .mat-column-collegeAddress {
+  width: 48%;
+}
+
+.college-table .mat-column-actions {
+  width: 10%;
+  text-align: right;
+}
+
+.college-table .mat-mdc-header-cell,
+.college-table .mat-mdc-cell,
+.college-table .mat-mdc-footer-cell {
+  white-space: normal;
+  word-break: break-word;
+  vertical-align: top;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.college-row {
+  cursor: pointer;
+}
+
+.college-details {
+  display: grid;
+  gap: 8px;
+}
+
+.college-page__paginator {
+  flex: 0 0 auto;
+  margin-top: 8px;
+}
+
+.college-dialog-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}

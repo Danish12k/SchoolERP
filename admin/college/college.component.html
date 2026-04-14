@@ -1,0 +1,156 @@
+<div class="college-page">
+  <mat-card class="college-page__card">
+    <mat-card-content class="college-page__content">
+      <div class="college-page__header">
+        <div class="college-toolbar">
+          <button mat-flat-button color="primary" type="button" (click)="openAddDialog()">
+            Add School
+          </button>
+        </div>
+        <mat-form-field appearance="outline" class="college-page__search">
+          <mat-label>Search</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Filter colleges" />
+        </mat-form-field>
+      </div>
+
+      <div class="college-page__scroll">
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 college-table">
+          <ng-container matColumnDef="collegeAbreviation">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>College Abbreviation</th>
+            <td mat-cell *matCellDef="let element">{{ element.collegeAbreviation }}</td>
+          </ng-container>
+          <ng-container matColumnDef="collegeName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>College Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.collegeName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="collegeAddress">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>College Address</th>
+            <td mat-cell *matCellDef="let element">{{ element.collegeAddress }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let row">
+              <span>  <button mat-icon-button color="primary" (click)="$event.stopPropagation(); openEditDialog(row)">
+                <mat-icon>drive_file_rename_outline</mat-icon>
+              </button></span>
+              <span>  <button mat-icon-button color="primary" type="button">
+                <mat-icon>delete</mat-icon>
+              </button></span>
+            
+            
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            class="college-row"
+            (click)="openDetails(row)"
+          ></tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        class="college-page__paginator"
+        [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Add School Dialogvdvdsf -->
+<ng-template #addDialog>
+  <h2 mat-dialog-title>Add School</h2>
+  <mat-dialog-content>
+    <div class="college-dialog-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>College Abbreviation</mat-label>
+        <input matInput [(ngModel)]="newSchool.collegeAbreviation" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>College Name</mat-label>
+        <input matInput [(ngModel)]="newSchool.collegeName" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>College Address</mat-label>
+        <input matInput [(ngModel)]="newSchool.collegeAddress" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="newSchool.email" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Phone</mat-label>
+        <input matInput [(ngModel)]="newSchool.phone" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Website</mat-label>
+        <input matInput [(ngModel)]="newSchool.webSite" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Affiliation No</mat-label>
+        <input matInput [(ngModel)]="newSchool.affilicationNo" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Board</mat-label>
+        <input matInput [(ngModel)]="newSchool.board" />
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancel</button>
+    <button mat-flat-button color="primary" type="button" (click)="addSchool()">Save</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- Edit Dialog -->
+<ng-template #editDialog let-data>
+  <h2 mat-dialog-title>Edit College</h2>
+  <mat-dialog-content>
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>College Name</mat-label>
+      <input matInput [(ngModel)]="data.collegeName" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>College Address</mat-label>
+      <input matInput [(ngModel)]="data.collegeAddress" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>email</mat-label>
+      <input matInput [(ngModel)]="data.email" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>phone</mat-label>
+      <input matInput [(ngModel)]="data.phone" />
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- College Details Dialog -->
+<ng-template #detailsDialog let-data>
+  <h2 mat-dialog-title>College details</h2>
+  <mat-dialog-content>
+    <div class="college-details">
+      <div><strong>Abbreviation:</strong> {{ data.collegeAbreviation }}</div>
+      <div><strong>Name:</strong> {{ data.collegeName }}</div>
+      <div><strong>Address:</strong> {{ data.collegeAddress }}</div>
+      <div><strong>Email:</strong> {{ data.email }}</div>
+      <div><strong>Phone:</strong> {{ data.phone }}</div>
+      <div><strong>Website:</strong> {{ data.webSite }}</div>
+      <div><strong>Affiliation No:</strong> {{ data.affilicationNo }}</div>
+      <div><strong>Board:</strong> {{ data.board }}</div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Close</button>
+  </mat-dialog-actions>
+</ng-template>

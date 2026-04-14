@@ -1,0 +1,160 @@
+<div class="col-sm-12">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Add Fee Installment</mat-card-title>
+        </mat-card-header>
+        <form [formGroup]="feeInstallmentForm" (ngSubmit)="addFeeInstallment()">
+            <mat-card-content>
+                <div class="fee-installment-form">
+                    <div class="fee-installment-form__grid">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Select Session</mat-label>
+                            <mat-select formControlName="sessionId" (selectionChange)="GetFeeInsallmentList()">
+                                @for (session of sessions; track session.sessionId) {
+                                <mat-option [value]="session.sessionId">
+                                    {{ session.sessionName }}
+                                </mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Select School</mat-label>
+                            <mat-select formControlName="collegeId" (selectionChange)="GetFeeInsallmentList()">
+                                @for (school of schools; track school.collegeId) {
+                                <mat-option [value]="school.collegeId">
+                                    {{ school.collegeAbreviation }}
+                                </mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field class="w-100">
+                            <mat-label>Installment</mat-label>
+                            <input matInput formControlName="installmentName" placeholder="Please enter installment name" />
+                            @if (feeInstallmentForm.get('installmentName')?.hasError('required') &&
+                            feeInstallmentForm.get('installmentName')?.touched) {
+                            <mat-error>Installment name is required</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field class="w-100">
+                            <mat-label>Installment Date</mat-label>
+                            <input
+                                matInput
+                                formControlName="installMentDate"
+                                placeholder="Please enter installment date"
+                                [matDatepicker]="picker2"
+                            />
+                            <mat-datepicker-toggle matSuffix [for]="picker2" />
+                            <mat-datepicker #picker2 />
+                            @if (feeInstallmentForm.get('installMentDate')?.hasError('required') &&
+                            feeInstallmentForm.get('installMentDate')?.touched) {
+                            <mat-error>Installment date is required</mat-error>
+                            }
+                        </mat-form-field>
+                    </div>
+
+                    <div class="fee-installment-form__actions">
+                        <button mat-flat-button color="primary" type="submit">Save</button>
+                    </div>
+                </div>
+            </mat-card-content>
+        </form>
+    </mat-card>
+</div>
+
+<div class="col-sm-12">
+    <mat-card>
+        <mat-card-content>
+            <mat-form-field appearance="outline">
+                <mat-label>Search</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Filter fee head">
+            </mat-form-field>
+            <div class="fee-installment-table__wrap">
+                <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 fee-installment-table">
+                    <ng-container matColumnDef="session">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Session</th>
+                        <td mat-cell *matCellDef="let element">{{ element.sessionId }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="school">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>School</th>
+                        <td mat-cell *matCellDef="let element">{{ element.collegeId }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="installment">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment</th>
+                        <td mat-cell *matCellDef="let element">{{ element.installmentName }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="installmentDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment Date</th>
+                        <td mat-cell *matCellDef="let element">{{ element.installMentDate }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef>Actions</th>
+                        <td mat-cell *matCellDef="let row">
+                            <button mat-icon-button color="primary" (click)="openEditDialog(row)">
+                                <mat-icon>drive_file_rename_outline</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+                    <!-- Header & Rows -->
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+            <!-- Paginator -->
+            <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+
+        </mat-card-content>
+    </mat-card>
+</div>
+
+
+<!-- Edit Expense Popup Template -->
+<!-- ============================= -->
+<ng-template #editDialog let-data>
+    <h2 mat-dialog-title>Edit Fee Installment</h2>
+    <mat-dialog-content>
+        <form #editClassForm="ngForm" class="w-100">
+           
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Select Session</mat-label>
+                <mat-select [(ngModel)]="data.sessionId" name="sessionId" required>
+                    @for (feeGrp of sessions; track feeGrp.sessionId) {
+                    <mat-option [value]="feeGrp.sessionId">
+                        {{ feeGrp.sessionName }}
+                    </mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+             <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Select Session</mat-label>
+                <mat-select [(ngModel)]="data.collegeId" name="collegeId" required>
+                    @for (feeGrp of schools; track feeGrp.collegeId) {
+                    <mat-option [value]="feeGrp.collegeId">
+                        {{ feeGrp.collegeAbreviation }}
+                    </mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+             <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>Fee installMent Name</mat-label>
+                <input matInput [(ngModel)]="data.installmentName" name="installmentName" required minlength="1" />
+            </mat-form-field>
+ <mat-form-field appearance="fill" style="width:100%">
+                <mat-label>Fee installMent Date</mat-label>
+                <input matInput [(ngModel)]="data.installMentDate" name="installMentDate" required minlength="1" />
+            </mat-form-field>
+
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="data">Update</button>
+    </mat-dialog-actions>
+</ng-template>

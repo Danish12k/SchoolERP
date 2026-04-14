@@ -1,0 +1,28 @@
+export interface IFaculty {
+  facultyId: number;
+  empCode: string;
+  saltationId: number | null;
+  name: string;
+  middleName: string | null;
+  lastName: string | null;
+  dob: string; // can be Date if you parse it
+  gender: string | null;
+  communicationAddress: string;
+  permanentAddress: string;
+  pinCode: string;
+  cityId: string;
+  stateId: string;
+  countryId: string;
+  phoneNumber: string;
+  mobile: string;
+  emailId: string;
+  collegeId: string;
+  designation: string;
+  photo: string;
+  thumbPhoto: string;
+  fatherName: string | null;
+  motherName: string | null;
+  qualification: string | null;
+  pan: string | null;
+  aadhar: string | null;
+}
