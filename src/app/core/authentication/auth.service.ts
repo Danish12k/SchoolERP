@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, catchError, iif, map, merge, of, share, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, iif, map, merge, of, share, switchMap, tap, throwError } from 'rxjs';
 import { filterObject, isEmptyObject } from './helpers';
 import { User } from './interface';
 import { LoginService } from './login.service';
@@ -43,6 +43,10 @@ export class AuthService {
   login(username: string, password: string, rememberMe = false) {
     return this.loginService.login(username, password, rememberMe).pipe(
       tap(res => {
+        if (!res?.token) {
+          throw new Error(res?.message || 'Login failed: token not returned by API.');
+        }
+
         // Map API response to expected Token interface
         const tokenObj = {
           access_token: res.token,  // <--- important
@@ -85,7 +89,6 @@ export class AuthService {
   }
 
   user() {
-    debugger;
     return this.user$.pipe(share());
   }
 

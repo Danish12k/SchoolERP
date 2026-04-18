@@ -8,3 +8,5 @@ export interface IDesignationResponse {
   message: string;
   data: IDesignation[];
 }
+
+export { IApiResponse } from './ICommon';

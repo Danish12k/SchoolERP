@@ -1,4 +1,4 @@
 export interface ISection{
-    sectionId: number;
+    sectionId: number; 
     sectionName: string;
 }

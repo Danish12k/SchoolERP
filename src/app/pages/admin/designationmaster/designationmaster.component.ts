@@ -3,8 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { DesignationService } from '../../../services/designation.service';
 import { MatCardModule } from '@angular/material/card';
 import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
-import { IApiResponse } from '../../../interfaces/ICommon';
-import { IDesignation } from '../../../interfaces/IDesignation';
+import { IApiResponse, IDesignation } from '../../../interfaces/IDesignation';
 import { PageHeaderComponent } from '@shared';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -12,6 +11,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-designationmaster',
@@ -32,6 +32,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 })
 export class DesignationmasterComponent implements OnInit, AfterViewInit {
   private designationService = inject(DesignationService);
+  private toast = inject(ToastrService);
 
   dataSource = new MatTableDataSource<IDesignation>([]);
   displayedColumns: string[] = ['select', 'designation', 'actions'];
@@ -61,20 +62,22 @@ export class DesignationmasterComponent implements OnInit, AfterViewInit {
   addDesignation(): void {
     const name = this.designationName.trim();
     if (!name) {
-      alert('Please enter a designation name.');
+      this.toast.warning('Please enter a designation name.');
       return;
     }
 
     this.designationService.addDesignation(name).subscribe({
       next: (res: IApiResponse<IDesignation>) => {
         if (res.success) {
-          alert(res.message);
+          this.toast.success(res.message || 'Designation added successfully');
           this.getDesignationList();
           this.designationName = '';
+        } else {
+          this.toast.error(res.message || 'Failed to add designation');
         }
       },
       error: (err: Error) => {
-        alert(err?.message ?? 'Something went wrong.');
+        this.toast.error(err?.message ?? 'Something went wrong.');
         console.error('Error adding designation', err);
       },
     });
@@ -137,13 +140,15 @@ export class DesignationmasterComponent implements OnInit, AfterViewInit {
         this.designationService.updateDesignation(result).subscribe({
           next: (res) => {
             if (res.success) {
-              alert(res.message ?? 'Designation updated successfully');
+              this.toast.success(res.message ?? 'Designation updated successfully');
               this.getDesignationList();
+            } else {
+              this.toast.error(res.message || 'Failed to update designation');
             }
           },
           error: (err) => {
             console.error('Error updating designation:', err);
-            alert('Failed to update designation');
+            this.toast.error('Failed to update designation');
           },
         });
       }

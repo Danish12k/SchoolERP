@@ -18,6 +18,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { IClass } from '../../../interfaces/IClassmaster';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-classmaster',
@@ -47,6 +48,7 @@ export class ClassmasterComponent implements OnInit {
   constructor(private fb: FormBuilder, private dialog: MatDialog) { }
   sessionService = inject(SessionService);
   collegeService = inject(CollegeService);
+  private toast = inject(ToastrService);
 
 
   dataSource = new MatTableDataSource<IClass>([]);
@@ -103,15 +105,15 @@ export class ClassmasterComponent implements OnInit {
       this.collegeService.addClass(this.classForm.value).subscribe({
         next: (res) => {
           if (res.success) {
-            alert(res.message);
+            this.toast.success(res.message || 'Class added successfully');
             this.classForm.reset();
           } else {
-            alert('Failed to add class');
+            this.toast.error(res.message || 'Failed to add class');
           }
         },
         error: (err) => {
           console.log('Error adding class:', err);
-          alert('An error occurred while adding the class');
+          this.toast.error('An error occurred while adding the class');
         }
       });
     }
@@ -143,12 +145,13 @@ export class ClassmasterComponent implements OnInit {
         }
         else {
           debugger;
-          alert(res.message);
+          this.toast.warning(res.message || 'No data returned.');
         }
 
       }, error: (err) => {
         debugger;
         console.log("error");
+        this.toast.error('Failed to load classes.');
       }
 
 
@@ -170,13 +173,15 @@ export class ClassmasterComponent implements OnInit {
         this.collegeService.updateClass(result).subscribe({
           next: (res) => {
             if (res.success) {
-              alert(res.message);
+              this.toast.success(res.message || 'Class updated successfully');
               this.getSchoolListById(); // Refresh the list
+            } else {
+              this.toast.error(res.message || 'Failed to update class');
             }
           },
           error: (err) => {
             console.error('Error updating session:', err);
-            alert('Failed to update session');
+            this.toast.error('Failed to update class');
           }
         })
       }
@@ -191,7 +196,7 @@ export class ClassmasterComponent implements OnInit {
   classDelete(session: IClass) {
     debugger;
     // Implement delete functionality here
-    alert('Delete session:');
+    this.toast.info('Delete not implemented yet.');
   }
 
 }

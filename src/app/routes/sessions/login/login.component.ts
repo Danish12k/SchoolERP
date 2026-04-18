@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { MtxButtonModule } from '@ng-matero/extensions/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { finalize, timeout } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { AuthService, LoginService } from '@core/authentication';
@@ -39,7 +40,6 @@ export class LoginComponent implements OnInit {
   isSubmitting = false;
 
   ngOnInit() {
-    debugger;
     // reset login status
    /*  this.loginService.getUserDetails().subscribe(user => {
       this.auth.setUser(user);
@@ -65,10 +65,15 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    if (this.isSubmitting || this.loginForm.invalid) {
+      return;
+    }
     this.isSubmitting = true;
 
     this.auth
       .login(this.username.value, this.password.value, this.rememberMe.value)
+      .pipe(timeout(15000))
+      .pipe(finalize(() => (this.isSubmitting = false)))
       .pipe(filter(authenticated => authenticated))
       .subscribe({
         next: () => {
@@ -77,9 +82,18 @@ export class LoginComponent implements OnInit {
             this.auth.setUser(user);
           });
           // Navigate to the root route after setting the user
-          this.router.navigateByUrl('/');
+          this.router.navigateByUrl('/dashboard');
         },
         error: (errorRes: HttpErrorResponse) => {
+          // Generic fallback message for network/CORS/timeout/etc.
+          if (errorRes.status === 0) {
+            this.loginForm.setErrors({ remote: 'Network/CORS error. Please check API connectivity.' });
+            return;
+          }
+          if ((errorRes as any)?.name === 'TimeoutError') {
+            this.loginForm.setErrors({ remote: 'Login request timed out. Please try again.' });
+            return;
+          }
           if (errorRes.status === 422) {
             const form = this.loginForm;
             const errors = errorRes.error.errors;
@@ -89,7 +103,6 @@ export class LoginComponent implements OnInit {
               });
             });
           }
-          this.isSubmitting = false;
         },
       });
   }

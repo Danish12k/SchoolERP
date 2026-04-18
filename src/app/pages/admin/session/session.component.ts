@@ -18,6 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { DatePipe } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-session',
@@ -41,6 +42,7 @@ import { DatePipe } from '@angular/common';
 export class SessionComponent implements OnInit {
   private datepipe: DatePipe = inject(DatePipe);
   private _sessionservice = inject(SessionService);
+  private toast = inject(ToastrService);
   dataSource = new MatTableDataSource<ISession>([]);
   displayedColumns: string[] = ['select', 'Name', 'Description', 'yearFrom', 'yearTo', 'actions'];
   selection: ISession[] = [];
@@ -62,7 +64,7 @@ export class SessionComponent implements OnInit {
   addSession(form: NgForm) {
     debugger;
     if (form.invalid) {
-      alert("Please fill all required fields");
+      this.toast.warning('Please fill all required fields');
       return;
     }
     debugger;
@@ -78,14 +80,16 @@ export class SessionComponent implements OnInit {
       next: (res) => {
         debugger;
         if (res.success) {
-          alert('Session added successfully');
+          this.toast.success(res.message || 'Session added successfully');
           this.getsessionList(); // Refresh the list
           form.resetForm(); // Reset the form after successful submission
+        } else {
+          this.toast.error(res.message || 'Failed to add session');
         }
       },
       error: (err) => {
         console.error('Error adding session:', err);
-        alert('Failed to add session');
+        this.toast.error('Failed to add session');
       }
     });
 
@@ -119,13 +123,15 @@ export class SessionComponent implements OnInit {
         this._sessionservice.updateSession(result).subscribe({
           next: (res) => {
             if (res.success) {
-              alert('Session updated successfully');
+              this.toast.success(res.message || 'Session updated successfully');
               this.getsessionList(); // Refresh the list
+            } else {
+              this.toast.error(res.message || 'Failed to update session');
             }
           },
           error: (err) => {
             console.error('Error updating session:', err);
-            alert('Failed to update session');
+            this.toast.error('Failed to update session');
           }
         })
       }
@@ -139,6 +145,7 @@ export class SessionComponent implements OnInit {
   sessionDelete(session: ISession) {
     // Implement delete functionality here
     console.log('Delete session:', session);
+    this.toast.info('Delete not implemented yet.');
   }
   /** Checkbox Selection Logic */
   toggleSelection(row: ISession) {

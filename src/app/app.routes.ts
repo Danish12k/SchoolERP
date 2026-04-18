@@ -17,6 +17,9 @@ import { LocationComponent } from './pages/admin/location/location.component';
 //import { DesingnationMasterComponent } from './pages/admin/desingnation-master/desingnation-master.component';
 
 export const routes: Routes = [
+  // Public auth pages (no auth required)
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   {
     path: '',
     component: AdminLayoutComponent,
@@ -72,14 +75,11 @@ export const routes: Routes = [
       
     ],
   },
-  {
-    path: 'auth',
-    component: AuthLayoutComponent,
-    children: [
-      { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
-    ],
-  },
-  { path: '**', redirectTo: 'dashboard' },
+  // Backward-compatible routes: keep /auth/* working (optional)
+  { path: 'auth', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'auth/login', redirectTo: 'login' },
+  { path: 'auth/register', redirectTo: 'register' },
+
+  { path: '**', redirectTo: 'login' },
 
 ];

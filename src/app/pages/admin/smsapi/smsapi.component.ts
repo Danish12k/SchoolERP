@@ -17,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { error } from 'console';
 
 @Component({
   selector: 'app-smsapi',
@@ -84,6 +85,7 @@ export class SmsapiComponent implements OnInit {
     this._smsAPIService.GetSmsListByCollegeId(collegeId).subscribe({
       next: (res) => {
         if (res.success) {
+          //  this.smsapiList  =  Array.isArray(res.data)  ? res.data: [res.data];
           this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
@@ -93,6 +95,7 @@ export class SmsapiComponent implements OnInit {
   }
 
   addSMSAPI() {
+    debugger;
     if (this.smsForm.valid) {
           const formValue = { ...this.smsForm.value };
          formValue.apI_Status = formValue.apI_Status ? 1 : 0;
@@ -114,24 +117,29 @@ export class SmsapiComponent implements OnInit {
     }
     else {
   console.log('Form is invalid:', this.smsForm);
-  this.smsForm.markAllAsTouched();
+  this.smsForm.markAllAsTouched(); // shows errors in UI
 }
   }
+
+    // listing
 
       openEditDialog(smsapi: ISMSApi) {
         const dialogRef = this.dialog.open(this.editDialog, {
           width: '400px',
           data: { ...smsapi }
         });
+        debugger;
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
+            debugger;
+            // Handle the result from the dialog (e.g., save changes)
             console.log('Dialog result:', result);
             result.apI_Status = result.apI_Status ?1:0;
             this._smsAPIService.updateSMSAPI(result).subscribe({
               next: (res) => {
                 if (res.success) {
                   alert(res.message);
-                  this.getSMSApiList();
+                  this.getSMSApiList(); // Refresh the list
                 }
               },
               error: (err) => {
@@ -148,6 +156,7 @@ export class SmsapiComponent implements OnInit {
         this.dataSource.filter = filterValue.trim().toLowerCase();
       }
     
+      /** Checkbox Selection Logic */
       toggleSelection(row: ISMSApi) {
         if (this.smsapiList.includes(row)) {
           this.smsapiList = this.smsapiList.filter(r => r !== row);
@@ -173,6 +182,7 @@ export class SmsapiComponent implements OnInit {
       }
 
     SMSAPIDelete(smsAPI : ISMSApi){
+      debugger;
 const id = smsAPI.id;
 this._smsAPIService.deleteSMSAPI(id).subscribe({
   next:(res)=>{
@@ -192,5 +202,9 @@ this._smsAPIService.deleteSMSAPI(id).subscribe({
 });
 
     }
+
+/* onStatusToggle(event: any) {
+  this.data.apI_Status = event.checked ? 1 : 0;
+} */
 
 }

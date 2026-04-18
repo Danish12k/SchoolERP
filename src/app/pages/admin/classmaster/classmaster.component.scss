@@ -35,3 +35,40 @@
   width: 100%;
   overflow-x: auto;
 }
+/* Local responsive layout (avoid relying on bootstrap presence) */
+
+:host {
+  display: block;
+}
+
+.classmaster-form {
+  display: grid;
+  gap: 12px;
+}
+
+.classmaster-form__grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
+}
+
+.classmaster-form__actions {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.classmaster-table {
+  width: 100%;
+}
+
+.classmaster-table__wrap {
+  width: 100%;
+  overflow-x: auto;
+}

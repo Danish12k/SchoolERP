@@ -1,7 +1,15 @@
 node_modules
-
-# Angular CLI cache (regenerated on build/serve)
-.angular/
-
-# Build output
-dist/
+.angular
+dist
+coverage
+*.log
+*.tsbuildinfo
+.idea
+.vscode
+.DS_Store
+*.bak
+*.tmp
+*.swp
+*.swo
+*.env
+.angular/cache 

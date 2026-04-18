@@ -11,6 +11,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ICollege } from '../../../interfaces/ICollege';
 import { CollegeService } from '../../../services/college.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-college',
@@ -31,6 +32,7 @@ import { CollegeService } from '../../../services/college.service';
 })
 export class CollegeComponent implements OnInit {
   private collegeService = inject(CollegeService);
+  private toast = inject(ToastrService);
   displayedColumns: string[] = [
     'collegeAbreviation',
     'collegeName',
@@ -85,7 +87,7 @@ export class CollegeComponent implements OnInit {
   addSchool(): void {
     const body = this.newSchool as ICollege;
     if (!body.collegeName?.trim() || !body.collegeAbreviation?.trim()) {
-      alert('Please enter at least College Name and College Abbreviation.');
+      this.toast.warning('Please enter at least College Name and College Abbreviation.');
       return;
     }
 
@@ -93,16 +95,16 @@ export class CollegeComponent implements OnInit {
     this.collegeService.addClass(body).subscribe({
       next: (res) => {
         if (res.success) {
-          alert(res.message);
+          this.toast.success(res.message || 'School added successfully');
           this.getCollegeList();
           this.dialog.closeAll();
         } else {
-          alert(res.message);
+          this.toast.error(res.message || 'Failed to add school');
         }
       },
       error: (err) => {
         console.error('Error adding school', err);
-        alert('Failed to add school');
+        this.toast.error('Failed to add school');
       },
     });
   }

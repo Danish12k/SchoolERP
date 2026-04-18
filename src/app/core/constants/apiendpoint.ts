@@ -104,6 +104,14 @@ export const apiEndpoint = {
         list: baseURL + '/Salutaion/SalutationList',
     },
 
+    //country
+    country: {
+        add: baseURL + '/Country/AddCountry',
+        update: baseURL + '/Country/UpdateCountry',
+        delete: baseURL + '/Country/DeleteCountry',
+        list: baseURL + '/Country/CountryList',
+    },
+
     //admin category
     category: {
         add: baseURL + '/Category/AddCategory',
@@ -135,15 +143,8 @@ export const apiEndpoint = {
 
     // student
     student: {
-        list: baseURL + '/Student/StudentList',
-        sectionStudentList: baseURL + '/StudentData/SectionStudentList',
+        // Relative path so interceptors can append BASE_URL + Authorization reliably.
+        list: '/Student/StudentList',
     },
-    
- country:{
-        add:baseURL+'/Country/AddCountry',
-        update:baseURL+'/Country/UpdateCountry',
-        delete: baseURL+'/Country/DeleteCountry?Id=',
-        list: baseURL+'/Country/CountryList',
-        getbyId: baseURL+'/Country/GetCountry?CountryId='
-    }
+
 };

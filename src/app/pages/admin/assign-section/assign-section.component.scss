@@ -32,3 +32,37 @@
     grid-template-columns: 1fr;
   }
 }
+/* Local responsive layout (avoid relying on bootstrap presence) */
+
+:host {
+  display: block;
+}
+
+.assign-section-form {
+  display: grid;
+  gap: 12px;
+}
+
+.assign-section-form__grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: start;
+}
+
+.assign-section-form__actions {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .assign-section-form__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,20 +1,28 @@
-<div class="d-flex w-full h-full">
-  <mat-card class="m-auto" style="max-width: 380px;">
-    <mat-card-header class="m-b-24">
-      <mat-card-title>👋 {{'login_title' | translate}}!</mat-card-title>
+<div class="login-page">
+  <mat-card class="login-card" appearance="outlined">
+    <mat-card-header class="login-card__header">
+      <div class="login-brand" aria-hidden="true">S</div>
+      <div class="login-heading">
+        <mat-card-title class="login-title">{{ 'login_title' | translate }}</mat-card-title>
+        <div class="login-subtitle">Sign in to continue</div>
+      </div>
     </mat-card-header>
 
-    <mat-card-content>
-      <form class="form-field-full" [formGroup]="loginForm">
+    <mat-card-content class="login-card__content">
+      @if (loginForm.errors?.remote) {
+        <div class="login-alert" role="alert">
+          {{ loginForm.errors?.remote }}
+        </div>
+      }
+
+      <form class="login-form form-field-full" [formGroup]="loginForm" (ngSubmit)="login()">
         <mat-form-field appearance="outline">
-          <mat-label>{{'username' | translate}}</mat-label>
-          <input matInput placeholder="login id" formControlName="username" required>
-          @if (username.invalid) {
+          <mat-label>{{ 'username' | translate }}</mat-label>
+          <input matInput placeholder="Login ID" autocomplete="username" formControlName="username" required />
+          @if (username.invalid && (username.dirty || username.touched)) {
             <mat-error>
               @if (username.errors?.required) {
-                <span>{{'please_enter' | translate}}
-                  <strong>login id</strong>
-                </span>
+                <span>{{ 'please_enter' | translate }} <strong>login id</strong></span>
               }
               @if (username.errors?.remote) {
                 <span>{{ username.errors?.remote }}</span>
@@ -24,15 +32,19 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'password' | translate}}</mat-label>
-          <input matInput placeholder="password" type="password"
-            formControlName="password" required>
-          @if (password.invalid) {
+          <mat-label>{{ 'password' | translate }}</mat-label>
+          <input
+            matInput
+            placeholder="Password"
+            type="password"
+            autocomplete="current-password"
+            formControlName="password"
+            required
+          />
+          @if (password.invalid && (password.dirty || password.touched)) {
             <mat-error>
               @if (password.errors?.required) {
-                <span>{{'please_enter' | translate}}
-                  <strong>password</strong>
-                </span>
+                <span>{{ 'please_enter' | translate }} <strong>password</strong></span>
               }
               @if (password.errors?.remote) {
                 <span>{{ password.errors?.remote }}</span>
@@ -41,14 +53,23 @@
           }
         </mat-form-field>
 
-        <mat-checkbox formControlName="rememberMe">{{'remember_me' | translate}}</mat-checkbox>
+        <div class="login-row">
+          <mat-checkbox formControlName="rememberMe">{{ 'remember_me' | translate }}</mat-checkbox>
+          <a class="login-link" routerLink="/register">{{ 'create_one_account' | translate }}</a>
+        </div>
 
-        <button class="w-full m-y-16" mat-flat-button [disabled]="!!loginForm.invalid"
-          [loading]="isSubmitting" (click)="login()">{{'login' | translate}}</button>
+        <button
+          type="submit"
+          class="login-submit"
+          mat-flat-button
+          [disabled]="loginForm.invalid || isSubmitting"
+          [loading]="isSubmitting"
+        >
+          {{ 'login' | translate }}
+        </button>
 
-        <div>
-          <span>{{'have_no_account' | translate}}? </span>
-          <a routerLink="/auth/register">{{'create_one_account' | translate}}</a>
+        <div class="login-footnote">
+          By continuing, you agree to the school ERP access policy.
         </div>
       </form>
     </mat-card-content>

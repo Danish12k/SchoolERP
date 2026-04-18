@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { SessionService } from '../../../services/session.service';
 import { SectionService } from '../../../services/section.service';
@@ -15,7 +15,7 @@ import { MatColumnResizeCommonModule } from '@ng-matero/extensions/grid';
 @Component({
   selector: 'app-assign-class-teacher',
   imports: [
-    MatCardTitle,
+      MatCardTitle,
     MaterialModule,
     MatCardModule,
     ReactiveFormsModule,
@@ -24,8 +24,9 @@ import { MatColumnResizeCommonModule } from '@ng-matero/extensions/grid';
   templateUrl: './assign-class-teacher.component.html',
   styleUrl: './assign-class-teacher.component.scss'
 })
-export class AssignClassTeacherComponent implements OnInit {
+export class AssignClassTeacherComponent  implements OnInit{
   constructor(private fb: FormBuilder, private dialog: MatDialog) { }
+  //private fb = Inject(FormBuilder);
   sessionService = inject(SessionService);
   sectionService = inject(SectionService);
   collegeService = inject(CollegeService);
@@ -36,19 +37,23 @@ export class AssignClassTeacherComponent implements OnInit {
   schools!: ICollege[];
   classs!: IClass[];
 
+
   ngOnInit(): void {
-    this.assignSectionForm = this.fb.group({
+    debugger;
+   /*  this.assignSectionForm = this.fb.group({
       sessionId: [null, [Validators.required, Validators.min(1)]],
       collegeId: [null, [Validators.required, Validators.min(1)]],
       courseId: [null, [Validators.required, Validators.min(1)]],
       sectionId: [null, [Validators.required, Validators.min(1)]],
-    });
+    }); */
+    debugger;
     this.loadSession();
     this.loadCollege();
     this.loadSection();
-  }
+  };
 
-  loadSection() {
+ loadSection() {
+    debugger;
     this.sectionService.getSectionList().subscribe(res => {
       this.sections = Array.isArray(res.data) ? res.data : [res.data];
     });
@@ -64,7 +69,8 @@ export class AssignClassTeacherComponent implements OnInit {
     this.collegeService.getCollegeList().subscribe(res => {
       this.schools = Array.isArray(res.data) ? res.data : [res.data];
     })
-  }
+  };
+
 
   getSchoolListById() {
     const sessionIdControl = this.assignSectionForm.get('sessionId');
@@ -79,15 +85,19 @@ export class AssignClassTeacherComponent implements OnInit {
 
     this.collegeService.getClassListBySessionAndCollege(sessionId, collegeId).subscribe({
       next: (res) => {
+        debugger;
         if (res.success && res.data) {
           this.classs = Array.isArray(res.data) ? res.data : [res.data];
         } else {
+          debugger;
           alert(res.message);
         }
       },
-      error: () => {
+      error: (err) => {
+        debugger;
         console.log("error");
       }
     });
   }
+
 }

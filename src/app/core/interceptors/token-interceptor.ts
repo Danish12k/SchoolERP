@@ -16,11 +16,7 @@ export class TokenInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<unknown>, next: HttpHandler) {
     const handler = () => {
       if (req.url.includes('/auth/logout')) {
-        this.router.navigateByUrl('/auth/login');
-      }
-
-      if (this.router.url.includes('/auth/login')) {
-        this.router.navigateByUrl('/dashboard');
+        this.router.navigateByUrl('/login');
       }
     };
 
@@ -29,7 +25,10 @@ export class TokenInterceptor implements HttpInterceptor {
         .handle(
           req.clone({
             headers: req.headers.append('Authorization', this.tokenService.getBearerToken()),
-            withCredentials: true,
+            // Do NOT send cookies/credentials cross-origin by default.
+            // `withCredentials: true` triggers stricter CORS rules (ACAO cannot be '*')
+            // and will break calls to https://api.asterinfotech.com from localhost.
+            withCredentials: false,
           })
         )
         .pipe(

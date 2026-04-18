@@ -18,7 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-fee-head',
-  imports: [
+   imports: [
     MatCard,
     MaterialModule,
     FormsModule,
@@ -35,7 +35,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './fee-head.component.html',
   styleUrl: './fee-head.component.scss'
 })
-export class FeeHeadComponent implements OnInit {
+export class FeeHeadComponent implements OnInit{
 
   dataSource = new MatTableDataSource<IFeeHead>([]);
   displayedColumns: string[] = ['headName', 'feeFor', 'actions'];
@@ -57,14 +57,14 @@ export class FeeHeadComponent implements OnInit {
     })
 
     this.GetFeeHeadList();
-    this.getFeeGroupLlist();
+   this.getFeeGroupLlist();
   }
 
-  getFeeGroupLlist() {
+  getFeeGroupLlist(){
     this._feeHeadService.listFeeGroup().subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.feeGroupList = Array.isArray(res.data) ? res.data : [res.data];
+      next:(res)=>{
+        if(res.success){
+          this.feeGroupList =Array.isArray(res.data)?  res.data : [res.data]; 
         }
       }
     });
@@ -85,9 +85,10 @@ export class FeeHeadComponent implements OnInit {
       }
 
     });
-  }
+  };
 
   addFeeHead() {
+    debugger;
     if (this.feeHeadForm.valid) {
       const formValue = this.feeHeadForm.value;
       this._feeHeadService.addFeeHead(formValue).subscribe({
@@ -109,24 +110,29 @@ export class FeeHeadComponent implements OnInit {
   }
 
 
+  // listing
   openEditDialog(feeHead: IFeeHead) {
     const dialogRef = this.dialog.open(this.editDialog, {
       width: '400px',
       data: { ...feeHead }
     });
+    debugger;
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        debugger;
+        // Handle the result from the dialog (e.g., save changes)
         console.log('Dialog result:', result);
-        const feeHeadNew: IFeeHead = {
-          feeHeadId: result.feeHeadId,
-          feeHeadName: result.feeHeadName,
-          stream: result.streamId
-        };
-        this._feeHeadService.updateFeeHead(feeHeadNew).subscribe({
+    const feeHeadNew: IFeeHead = {
+  feeHeadId: result.feeHeadId,
+  feeHeadName: result.feeHeadName,
+  stream: result.streamId   // ensure property name matches your API
+};
+        this._feeHeadService.updateFeeHead(feeHeadNew ).subscribe({
           next: (res) => {
             if (res.success) {
-              this.GetFeeHeadList();
+              this.GetFeeHeadList(); 
               alert(res.message);
+              // Refresh the list
             }
           },
           error: (err) => {
@@ -143,6 +149,7 @@ export class FeeHeadComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  /** Checkbox Selection Logic */
   toggleSelection(row: IFeeHead) {
     if (this.feeHeadList.includes(row)) {
       this.feeHeadList = this.feeHeadList.filter(r => r !== row);
@@ -166,4 +173,7 @@ export class FeeHeadComponent implements OnInit {
       this.feeHeadList = [...this.dataSource.data];
     }
   }
+
+  
+
 }

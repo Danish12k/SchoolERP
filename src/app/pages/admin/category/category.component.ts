@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-category',
@@ -37,6 +38,7 @@ imports: [
 })
 export class CategoryComponent implements OnInit {
   private _categoryService = inject(CategoryService);
+  private toast = inject(ToastrService);
 
   dataSource = new MatTableDataSource<ICategory>([]);
   selection: ICategory[] = [];
@@ -54,7 +56,7 @@ export class CategoryComponent implements OnInit {
   addCategory() {
     const name = this.CategoryName.trim();
     if (!name) {
-      alert("Please enter category name.")
+      this.toast.warning('Please enter category name.');
       return;
     }
     const newSalutution: ICategory = {
@@ -67,11 +69,14 @@ export class CategoryComponent implements OnInit {
       next: (res: IApiResponse<ICategory>) => {
         debugger;
         if (res.success) {
-          alert(res.message);
+          this.toast.success(res.message || 'Category added successfully');
           this.getCategoryList(); // trigger table update
           this.CategoryName = '';
+        } else {
+          this.toast.error(res.message || 'Failed to add category');
         }
-      }
+      },
+      error: () => this.toast.error('Failed to add category'),
     })
   }
 
@@ -135,7 +140,11 @@ export class CategoryComponent implements OnInit {
         debugger;
         this._categoryService.update(result).subscribe({
           next: (res) => {
-            alert(res.message);
+            if ((res as any)?.success === false) {
+              this.toast.error((res as any)?.message || 'Failed to update category');
+              return;
+            }
+            this.toast.success((res as any)?.message || 'Category updated successfully');
             this.getCategoryList();
           }
         })

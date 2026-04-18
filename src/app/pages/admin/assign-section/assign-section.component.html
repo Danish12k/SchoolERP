@@ -40,13 +40,16 @@
                             </mat-select>
                         </mat-form-field>
 
-                        <app-section-filter
-                            [form]="assignSectionForm"
-                            [inline]="true"
-                            [showActive]="false"
-                            sectionKey="sectionId"
-                            sectionLabel="Select Sections"
-                        />
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Select Sections</mat-label>
+                            <mat-select formControlName="sectionId">
+                                @for (section of sections; track section.sectionId) {
+                                <mat-option [value]="section.sectionId">
+                                    {{ section.sectionName }}
+                                </mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
                     </div>
 
                     <div class="assign-section-form__actions">

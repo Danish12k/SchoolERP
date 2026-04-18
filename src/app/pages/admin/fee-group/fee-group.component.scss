@@ -39,3 +39,44 @@
     align-items: start;
   }
 }
+/* Local layout helpers (avoid relying on bootstrap presence) */
+
+:host {
+  display: block;
+}
+
+.fee-group-form {
+  display: grid;
+  gap: 12px;
+}
+
+.fee-group-form__grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: center;
+}
+
+.fee-group-form__actions {
+  margin-top: 8px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.fee-group-table {
+  width: 100%;
+}
+
+.fee-group-table__wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 600px) {
+  .fee-group-form__grid {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}

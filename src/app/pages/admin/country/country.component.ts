@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatCard, MatCardModule } from '@angular/material/card';
 import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
-import { isArray, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ICountry } from '../../../interfaces/ILocation';
@@ -33,7 +33,7 @@ import { MatSort } from '@angular/material/sort';
   templateUrl: './country.component.html',
   styleUrl: './country.component.scss'
 })
-export class CountryComponent {
+export class CountryComponent implements OnInit {
   constructor(private fb: FormBuilder, private dialog: MatDialog) { }
   countryGroupForm!: FormGroup;
   dataSource = new MatTableDataSource<ICountry>([]);
@@ -57,8 +57,8 @@ export class CountryComponent {
   countryList(){
     debugger;
     this._locationService.listCountry().subscribe({
-      next: (res)=>{
-        if(isArray(res.data)){
+      next: (res) => {
+        if (Array.isArray(res.data)) {
               debugger;
         //   const data: ICountry[] = Array.isArray(res.data)
         // ? res.data

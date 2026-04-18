@@ -11,7 +11,9 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 import { ISection } from '../../../interfaces/IClassAndSection';
 import { SectionService } from '../../../services/section.service';
 import { BreadcrumbComponent } from "@shared";
-import { IApiResponse } from '../../../interfaces/ICommon';
+import { debug } from 'console';
+import { IApiResponse } from '../../../interfaces/IDesignation';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-section',
@@ -28,6 +30,7 @@ import { IApiResponse } from '../../../interfaces/ICommon';
 })
 export class SectionComponent implements OnInit {
   private sectionService = inject(SectionService);
+  private toast = inject(ToastrService);
   displayedColumns: string[] = ['sectionName', 'actions'];
   dataSource = new MatTableDataSource<ISection>([])
   constructor(private dialog: MatDialog) { }
@@ -58,7 +61,11 @@ export class SectionComponent implements OnInit {
         debugger;
         this.sectionService.updateSection(result).subscribe({
           next: (res) => {
-            alert('Section updated successfully');
+            if ((res as any)?.success === false) {
+              this.toast.error((res as any)?.message || 'Failed to update section');
+              return;
+            }
+            this.toast.success((res as any)?.message || 'Section updated successfully');
             this.getSectionList();
           }
         })
@@ -71,7 +78,7 @@ export class SectionComponent implements OnInit {
   addSection() {
     const name = this.sectionName.trim();
     if (!name) {
-      alert("Please enter section name.")
+      this.toast.warning('Please enter section name.');
       return;
     }
     debugger;
@@ -79,11 +86,14 @@ export class SectionComponent implements OnInit {
       next: (res: IApiResponse<ISection>) => {
         debugger;
         if (res.success) {
-          alert(res.message);
+          this.toast.success(res.message || 'Section added successfully');
           this.getSectionList(); // trigger table update
           this.sectionName = '';
+        } else {
+          this.toast.error(res.message || 'Failed to add section');
         }
-      }
+      },
+      error: () => this.toast.error('Failed to add section'),
     })
   }
 

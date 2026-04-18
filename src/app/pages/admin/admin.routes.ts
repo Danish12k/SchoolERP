@@ -23,8 +23,7 @@ import { AddsubjectComponent } from './addsubject/addsubject.component';
 import { AssignsubjectComponent } from './assignsubject/assignsubject.component';
 import { SubjectmasterComponent } from './subjectmaster/subjectmaster.component';
 import { StudentlistComponent } from '../student/studentlist/studentlist.component';
-import { SectionStudentListComponent } from './section-student-list/section-student-list.component';
-import { LocationComponent } from './location/location.component';
+
 
 export const routes: Routes = [
   { path: 'country', component: CountryComponent },
@@ -50,7 +49,5 @@ export const routes: Routes = [
   { path: 'addSubject', component: AddsubjectComponent },
   { path: 'assignSubject', component: AssignsubjectComponent },
   { path: 'subjectMaster', component: SubjectmasterComponent },
-  { path: 'studentlist', component: StudentlistComponent },
-  { path: 'sectionStudents', component: SectionStudentListComponent },
-  { path: 'Location', component: LocationComponent },
+  { path: 'studentlist', component: StudentlistComponent }
 ];

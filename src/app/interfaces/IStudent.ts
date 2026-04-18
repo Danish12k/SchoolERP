@@ -1,9 +1,9 @@
-/** Student row for list/grid views; align field names with your API response. */
 export interface IStudent {
+  /** Some APIs use `studentId`, some use `id` */
   studentId?: number;
   id?: number;
   admissionNo?: string;
-  studentName?: string;
+  studentName?: string; // full name
   firstName?: string;
   lastName?: string;
   className?: string;

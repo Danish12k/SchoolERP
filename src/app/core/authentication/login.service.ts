@@ -4,11 +4,13 @@ import { catchError, map, Observable, tap, throwError } from 'rxjs';
 
 import { Menu, MenuChildrenItem, MenuResponse, MenuService } from '@core';
 import { Token, User } from './interface';
-import { debug } from 'console';
 
 export interface LoginResponse {
-  token: string;
-  message: string;
+  token?: string;
+  access_token?: string;
+  message?: string;
+  data?: any;
+  success?: boolean;
 }
 
 @Injectable({
@@ -82,9 +84,23 @@ private mapUserDetails(userDetails: any[] = []): User[] {
   protected readonly http = inject(HttpClient);
   private readonly menuService = inject(MenuService);
 
-  private loginUrl = 'https://api.asterinfotech.com/api/User/ValidateUser';
+  // Use relative URLs so BASE_URL + interceptors handle environments consistently.
+  private loginUrl = '/User/ValidateUser';
   login(loginName: string, password: string, rememberMe = false) {
-    return this.http.post<LoginResponse>(this.loginUrl, { loginName, password });
+    return this.http.post<LoginResponse>(this.loginUrl, { loginName, password }).pipe(
+      map((res: any) => {
+        // Normalize token across possible API shapes
+        const token =
+          res?.token ??
+          res?.access_token ??
+          res?.data?.token ??
+          res?.data?.access_token ??
+          res?.data?.data?.token ??
+          res?.data?.data?.access_token;
+
+        return { ...res, token, access_token: token } as LoginResponse;
+      })
+    );
     //return this.http.post<Token>('/auth/login', { username, password, rememberMe });
   }
 
@@ -104,7 +120,7 @@ private mapUserDetails(userDetails: any[] = []): User[] {
 
   menu(): Observable<Menu[]> {
 
-    return this.http.get<any>('https://api.asterinfotech.com/api/Menu/GetMenu').pipe(
+    return this.http.get<any>('/Menu/GetMenu').pipe(
     
       map(res => this.mapApiToMenu(res.data)), // convert API response → Menu[]
      
@@ -117,8 +133,7 @@ private mapUserDetails(userDetails: any[] = []): User[] {
 
 
   getUserDetails(): Observable<User> {
-    debugger
-    return this.http.get<any>('https://api.asterinfotech.com/api/Faculty/GetFacultyDetail').pipe(
+    return this.http.get<any>('/Faculty/GetFacultyDetail').pipe(
       tap(res => {
         console.log('✅ User Details API response:', res);
       }),

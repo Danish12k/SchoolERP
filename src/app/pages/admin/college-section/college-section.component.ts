@@ -5,7 +5,6 @@ import { SectionComponent } from '../section/section.component';
 import { ClassmasterComponent } from '../classmaster/classmaster.component';
 import { AssignSectionComponent } from "../assign-section/assign-section.component";
 import { AssignClassTeacherComponent } from "../assign-class-teacher/assign-class-teacher.component";
-import { SectionStudentListComponent } from '../section-student-list/section-student-list.component';
 
 @Component({
   selector: 'app-college-section',
@@ -15,8 +14,7 @@ import { SectionStudentListComponent } from '../section-student-list/section-stu
     SectionComponent,
     ClassmasterComponent,
     AssignSectionComponent,
-    AssignClassTeacherComponent,
-    SectionStudentListComponent,
+    AssignClassTeacherComponent
 ],
   templateUrl: './college-section.component.html',
   styleUrl: './college-section.component.scss'

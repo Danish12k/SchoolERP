@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatCard, MatCardModule } from '@angular/material/card';
 import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -42,7 +42,7 @@ import { CollegeService } from '../../../services/college.service';
 export class FeeInstallmentComponent implements OnInit {
 
   dataSource = new MatTableDataSource<IFeeInstallment>([]);
-  displayedColumns: string[] = ['session', 'school', 'installment', 'installmentDate', 'actions'];
+  displayedColumns: string[] = ['session', 'school', 'installment', 'installmentDate','actions'];
 
   private _feeMstService = inject(FeeMasterService);
   private sessionService = inject(SessionService);
@@ -80,10 +80,11 @@ export class FeeInstallmentComponent implements OnInit {
     this.collegeService.getCollegeList().subscribe(res => {
       this.schools = Array.isArray(res.data) ? res.data : [res.data];
     })
-  }
+  };
 
 
   GetFeeInsallmentList() {
+    debugger;
     const CollegeId = this.feeInstallmentForm.get('collegeId')?.value;
     const sessionId = this.feeInstallmentForm.get('sessionId')?.value;
     if (CollegeId > 0 && sessionId > 0) {
@@ -101,9 +102,10 @@ export class FeeInstallmentComponent implements OnInit {
 
       });
     }
-  }
+  };
 
   addFeeInstallment() {
+    debugger;
     if (this.feeInstallmentForm.valid) {
       const formValue = this.feeInstallmentForm.value;
       this._feeMstService.addFeeInstallment(formValue).subscribe({
@@ -125,13 +127,17 @@ export class FeeInstallmentComponent implements OnInit {
   }
 
 
+  // listing
   openEditDialog(feeInstallment: IFeeInstallment) {
     const dialogRef = this.dialog.open(this.editDialog, {
       width: '400px',
       data: { ...feeInstallment }
     });
+    debugger;
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        debugger;
+        // Handle the result from the dialog (e.g., save changes)
         console.log('Dialog result:', result);
 
         this._feeMstService.updateFeeInstallment(result).subscribe({
@@ -139,6 +145,7 @@ export class FeeInstallmentComponent implements OnInit {
             if (res.success) {
               this.GetFeeInsallmentList();
               alert(res.message);
+              // Refresh the list
             }
           },
           error: (err) => {
@@ -155,6 +162,7 @@ export class FeeInstallmentComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  /** Checkbox Selection Logic */
   toggleSelection(row: IFeeInstallment) {
     if (this.feeHeadList.includes(row)) {
       this.feeHeadList = this.feeHeadList.filter(r => r !== row);
@@ -178,4 +186,7 @@ export class FeeInstallmentComponent implements OnInit {
       this.feeHeadList = [...this.dataSource.data];
     }
   }
+
+
+
 }
