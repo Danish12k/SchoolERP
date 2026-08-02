@@ -1,0 +1,35 @@
+.exam-master {
+  display: grid;
+  gap: 1rem;
+}
+
+.exam-master__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.exam-master__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.exam-master__table-card {
+  margin-top: 0.25rem;
+}
+
+.exam-master__table {
+  width: 100%;
+}
+
+.exam-master__edit-grid {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 320px;
+  padding-top: 0.5rem;
+}
+
+.w-100 {
+  width: 100%;
+}

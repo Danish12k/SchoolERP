@@ -1,0 +1,122 @@
+<section class="student-update-hight-page">
+  <div class="student-update-hight-page__filter">
+    <app-filterstudent (classSectionChange)="onClassSectionChange($event)"></app-filterstudent>
+  </div>
+
+  <mat-card class="student-update-hight-page__card">
+    <mat-card-header>
+      <mat-card-title>Update Student Height Weight</mat-card-title>
+      <mat-card-subtitle>Edit vision, height and weight details by section.</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="student-update-hight-page__toolbar">
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="loadStudents()"
+          [disabled]="loading || !selectedClassSectionId"
+        >
+          Refresh
+        </button>
+      </div>
+
+      @if (!selectedClassSectionId && !loading) {
+        <p class="student-update-hight-page__empty-state">
+          Select session, school, class and section to load students.
+        </p>
+      }
+
+      @if (loadError && !loading) {
+        <p class="student-update-hight-page__error" role="alert">{{ loadError }}</p>
+      }
+
+      @if (updateMessage) {
+        <p class="student-update-hight-page__message" role="status">{{ updateMessage }}</p>
+      }
+
+      @if (selectedClassSectionId && !loading && !loadError && dataSource.data.length === 0) {
+        <p class="student-update-hight-page__empty-state">
+          No students found for selected section.
+        </p>
+      }
+
+      <div class="student-update-hight-page__table-wrap">
+        <table mat-table [dataSource]="dataSource" class="student-update-hight-table mat-elevation-z0">
+          <ng-container matColumnDef="rollNumber">
+            <th mat-header-cell *matHeaderCellDef>Roll Number</th>
+            <td mat-cell *matCellDef="let row">{{ displayRollNumber(row) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="studentName">
+            <th mat-header-cell *matHeaderCellDef>Student Name</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="student-update-hight-table__name">{{ displayStudentName(row) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="visionRight">
+            <th mat-header-cell *matHeaderCellDef>Vision Right</th>
+            <td mat-cell *matCellDef="let row">
+              <input matInput class="student-update-hight-table__input" [(ngModel)]="row.visionRight" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="visionLeft">
+            <th mat-header-cell *matHeaderCellDef>Vision Left</th>
+            <td mat-cell *matCellDef="let row">
+              <input matInput class="student-update-hight-table__input" [(ngModel)]="row.visionLeft" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="currentHeight">
+            <th mat-header-cell *matHeaderCellDef>Current Height</th>
+            <td mat-cell *matCellDef="let row">
+              <input matInput class="student-update-hight-table__input" [(ngModel)]="row.currentHeight" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="currentWeight">
+            <th mat-header-cell *matHeaderCellDef>Current Weight</th>
+            <td mat-cell *matCellDef="let row">
+              <input matInput class="student-update-hight-table__input" [(ngModel)]="row.currentWeight" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let row">
+              <button
+                mat-stroked-button
+                type="button"
+                color="primary"
+                (click)="updateRow(row)"
+                [disabled]="row.updating || updatingAll"
+              >
+                {{ row.updating ? 'Updating...' : 'Update' }}
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+
+      @if (dataSource.data.length) {
+        <div class="student-update-hight-page__actions">
+          <button
+            mat-flat-button
+            type="button"
+            color="primary"
+            (click)="updateAll()"
+            [disabled]="updatingAll || loading"
+          >
+            {{ updatingAll ? 'Updating All...' : 'Update All' }}
+          </button>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

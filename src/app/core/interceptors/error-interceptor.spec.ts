@@ -66,6 +66,22 @@ describe('ErrorInterceptor', () => {
     assertStatus(404, 'Not Found');
   });
 
+  it('should toast and not navigate for online exam API 404', () => {
+    spyOn(router, 'navigateByUrl');
+    spyOn(toast, 'error');
+
+    http
+      .get('/onlineexam/api/OnlineQuestionPaper/List')
+      .subscribe({ next: emptyFn, error: emptyFn, complete: emptyFn });
+
+    httpMock
+      .expectOne('/onlineexam/api/OnlineQuestionPaper/List')
+      .flush({}, { status: 404, statusText: 'Not Found' });
+
+    expect(router.navigateByUrl).not.toHaveBeenCalled();
+    expect(toast.error).toHaveBeenCalledWith('404 Not Found');
+  });
+
   it('should handle status code 500', () => {
     assertStatus(500, 'Internal Server Error');
   });

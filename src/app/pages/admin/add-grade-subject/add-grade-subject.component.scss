@@ -1,0 +1,43 @@
+.add-grade-subject__layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.add-grade-subject__form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.add-grade-subject__field {
+  width: 100%;
+}
+
+.add-grade-subject__progress {
+  margin-bottom: 0.75rem;
+}
+
+.add-grade-subject__table {
+  width: 100%;
+}
+
+.add-grade-subject__actions-col {
+  width: 72px;
+  text-align: center;
+}
+
+.add-grade-subject__empty {
+  text-align: center;
+  padding: 1rem;
+}
+
+.add-grade-subject__paginator {
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 960px) {
+  .add-grade-subject__layout {
+    grid-template-columns: 1fr;
+  }
+}

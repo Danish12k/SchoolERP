@@ -1,10 +1,10 @@
-import { Component, inject, Inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { MatCardModule, MatCardTitle } from "@angular/material/card";
 import { MaterialModule } from "../../../../../schematics/ng-add/files/module-files/app/material.module";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SessionService } from '../../../services/session.service';
-import { SectionService } from '../../../services/section.service';
-import { CollegeService } from '../../../services/college.service';
+import { SessionService } from '../../../services/masterservice/session.service';
+import { SectionService } from '../../../services/masterservice/section.service';
+import { CollegeService } from '../../../services/masterservice/college.service';
 import { ISession } from '../../../interfaces/isession';
 import { IAssignSection, ISection } from '../../../interfaces/IClassAndSection';
 import { ICollege } from '../../../interfaces/ICollege';
@@ -26,6 +26,8 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrl: './assign-section.component.scss'
 })
 export class AssignSectionComponent implements OnInit {
+  @Input() embedded = false;
+
   constructor(private fb: FormBuilder, private dialog: MatDialog) { }
   //private fb = Inject(FormBuilder);
   sessionService = inject(SessionService);

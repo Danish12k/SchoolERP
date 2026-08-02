@@ -6,7 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, tap } from 'rxjs';
 
-import { AuthService, SettingsService, User } from '@core';
+import { AuthService, User } from '@core';
 
 @Component({
     selector: 'app-user',
@@ -21,12 +21,8 @@ import { AuthService, SettingsService, User } from '@core';
         <span>{{ 'profile' | translate }}</span>
       </button>
       <button routerLink="/profile/settings" mat-menu-item>
-        <mat-icon>edit</mat-icon>
-        <span>{{ 'edit_profile' | translate }}</span>
-      </button>
-      <button mat-menu-item (click)="restore()">
-        <mat-icon>restore</mat-icon>
-        <span>{{ 'restore_defaults' | translate }}</span>
+        <mat-icon>lock_reset</mat-icon>
+        <span>Change Password</span>
       </button>
       <button mat-menu-item (click)="logout()">
         <mat-icon>exit_to_app</mat-icon>
@@ -47,7 +43,6 @@ export class UserComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly settings = inject(SettingsService);
 
   user!: User;
 
@@ -63,12 +58,7 @@ export class UserComponent implements OnInit {
 
   logout() {
     this.auth.logout().subscribe(() => {
-      this.router.navigateByUrl('/login');
+      this.router.navigateByUrl('/login', { replaceUrl: true });
     });
-  }
-
-  restore() {
-    this.settings.reset();
-    window.location.reload();
   }
 }

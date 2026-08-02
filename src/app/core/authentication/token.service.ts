@@ -75,7 +75,9 @@ export class TokenService implements OnDestroy {
       this.store.remove(this.key);
     } else {
       const value = Object.assign({ access_token: '', token_type: 'Bearer' }, token, {
-        exp: token.expires_in ? currentTimestamp() + token.expires_in : null,
+        exp: token.expires_in
+          ? currentTimestamp() + token.expires_in
+          : (token.exp ?? null),
       });
       this.store.set(this.key, filterObject(value));
     }

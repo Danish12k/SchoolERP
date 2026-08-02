@@ -6,4 +6,8 @@
   display: block;
   background-color: var(--header-background-color);
   backdrop-filter: blur(8px);
+
+  .mat-mdc-button-touch-target {
+    display: none;
+  }
 }

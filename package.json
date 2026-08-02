@@ -46,14 +46,18 @@
     "@ngx-translate/http-loader": "^8.0.0",
     "angular-in-memory-web-api": "^0.20.0",
     "apexcharts": "^3.54.1",
+    "katex": "^0.17.0",
     "moment": "^2.30.0",
     "ngx-permissions": "^17.1.0",
     "ngx-progressbar": "^13.0.0",
+    "ngx-quill": "^28.0.2",
     "ngx-toastr": "^19.0.0",
     "photoviewer": "^3.10.3",
+    "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "screenfull": "^6.0.2",
     "tslib": "^2.6.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.15.1"
   },
   "devDependencies": {

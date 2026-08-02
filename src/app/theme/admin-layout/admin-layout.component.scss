@@ -13,8 +13,20 @@
 
   position: absolute;
   overflow-x: hidden;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
   border-width: 0 !important;
   transition: width mat.$private-swift-ease-out-duration mat.$private-swift-ease-out-timing-function;
+
+  .mat-drawer-inner-container {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  [dir='rtl'] & {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
 }
 
 // Layout control

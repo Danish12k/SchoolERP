@@ -3,12 +3,15 @@ import { Injectable, inject } from '@angular/core';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 
 import { Menu, MenuChildrenItem, MenuResponse, MenuService } from '@core';
+import { masterApiEndpoint } from '@core/constants/master_api_endpoint';
 import { Token, User } from './interface';
 
 export interface LoginResponse {
   token?: string;
   access_token?: string;
+  accessToken?: string;
   message?: string;
+  errorMessage?: string | null;
   data?: any;
   success?: boolean;
 }
@@ -20,45 +23,63 @@ export interface LoginResponse {
 export class LoginService {
 
   private mapApiToMenu(apiItems: any[] = []): Menu[] {
-    if (!apiItems || apiItems.length === 0) {
+    if (!apiItems?.length) {
       return [];
     }
-    // Deep clone the list first
-    const clonedItems = JSON.parse(JSON.stringify(apiItems));
-    clonedItems.map((item: any) => ({
+
+    const mapped = apiItems.map(item => ({
       route: item.route ?? '',
       name: item.name ?? '',
       type: item.type ?? 'link',
       icon: item.icon ?? '',
+      seqNo: this.readExplicitSeqNo(item),
       label: item.label
         ? { color: item.label.color, value: item.label.value }
         : undefined,
       badge: item.badge
         ? { color: item.badge.color, value: item.badge.value }
         : undefined,
-      permissions: undefined, // not coming from API
-      children: item.children && item.children.length > 0
-        ? this.mapApiToChildren(item.children) // go deeper
-        : []
+      permissions: undefined,
+      children: item.children?.length ? this.mapApiToChildren(item.children) : [],
     }));
-    return clonedItems;
+
+    return this.sortBySeqNo(mapped);
   }
 
-
-
   private mapApiToChildren(apiChildren: any[] = []): MenuChildrenItem[] {
-   
-    const clonedChildren = JSON.parse(JSON.stringify(apiChildren));
-
-    return clonedChildren.map((child: any) => ({
-      route: child.route ?? '',        // one by one
+    const mapped = apiChildren.map(child => ({
+      route: child.route ?? '',
       name: child.name ?? '',
       type: child.type ?? 'link',
-      children: child.children && child.children.length > 0
-        ? this.mapApiToChildren(child.children) // recurse after clone
-        : [],
-      permissions: undefined           // extra property (not from API)
+      seqNo: this.readExplicitSeqNo(child),
+      children: child.children?.length ? this.mapApiToChildren(child.children) : [],
+      permissions: undefined,
     }));
+
+    return this.sortBySeqNo(mapped);
+  }
+
+  private sortBySeqNo<T extends { seqNo?: number }>(items: T[]): T[] {
+    return items
+      .map((item, index) => ({ item, index }))
+      .sort((a, b) => {
+        const seqA = a.item.seqNo ?? Number.MAX_SAFE_INTEGER;
+        const seqB = b.item.seqNo ?? Number.MAX_SAFE_INTEGER;
+        if (seqA !== seqB) {
+          return seqA - seqB;
+        }
+        return a.index - b.index;
+      })
+      .map(({ item }) => item);
+  }
+
+  private readExplicitSeqNo(item: Record<string, unknown>): number | undefined {
+    const value = item['seqNo'] ?? item['SeqNo'] ?? item['sequenceNo'] ?? item['menuSeqNo'];
+    if (value == null || value === '') {
+      return undefined;
+    }
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
   }
 private mapUserDetails(userDetails: any[] = []): User[] {
   if (!userDetails || userDetails.length === 0) {
@@ -84,28 +105,59 @@ private mapUserDetails(userDetails: any[] = []): User[] {
   protected readonly http = inject(HttpClient);
   private readonly menuService = inject(MenuService);
 
-  // Use relative URLs so BASE_URL + interceptors handle environments consistently.
-  private loginUrl = '/User/ValidateUser';
+  /**
+   * POST /master/api/User/ValidateUser
+   * Headers: Accept star-slash-star, X-School-Code (interceptor), Content-Type application/json
+   * Body: { loginName, password }
+   */
   login(loginName: string, password: string, rememberMe = false) {
-    return this.http.post<LoginResponse>(this.loginUrl, { loginName, password }).pipe(
-      map((res: any) => {
-        // Normalize token across possible API shapes
-        const token =
-          res?.token ??
-          res?.access_token ??
-          res?.data?.token ??
-          res?.data?.access_token ??
-          res?.data?.data?.token ??
-          res?.data?.data?.access_token;
-
-        return { ...res, token, access_token: token } as LoginResponse;
-      })
-    );
-    //return this.http.post<Token>('/auth/login', { username, password, rememberMe });
+    return this.http
+      .post<LoginResponse | string>(
+        masterApiEndpoint.user.validate,
+        { loginName, password },
+        { headers: { Accept: '*/*' } }
+      )
+      .pipe(
+        map(raw => this.normalizeLoginResponse(raw)),
+        map((res: LoginResponse) => {
+          const token = this.extractToken(res);
+          return { ...res, token, access_token: token } as LoginResponse;
+        })
+      );
   }
 
-  refresh(params: Record<string, any>) {
-    return this.http.post<Token>('/auth/refresh', params);
+  private extractToken(res: LoginResponse): string | undefined {
+    return (
+      res?.token ??
+      res?.access_token ??
+      res?.accessToken ??
+      res?.data?.token ??
+      res?.data?.access_token ??
+      res?.data?.accessToken ??
+      (typeof res?.data === 'string' ? res.data : undefined)
+    );
+  }
+
+  private normalizeLoginResponse(raw: string | LoginResponse): LoginResponse {
+    if (typeof raw === 'object' && raw !== null) {
+      return raw;
+    }
+
+    const trimmed = String(raw ?? '').trim();
+    if (!trimmed) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(trimmed) as LoginResponse;
+    } catch {
+      return {};
+    }
+  }
+
+  /** No refresh-token API — ValidateUser returns only access token. */
+  refresh(_params: Record<string, unknown>) {
+    return throwError(() => new Error('Refresh token is not supported by this API.'));
   }
 
   logout() {
@@ -119,11 +171,8 @@ private mapUserDetails(userDetails: any[] = []): User[] {
 
 
   menu(): Observable<Menu[]> {
-
-    return this.http.get<any>('/Menu/GetMenu').pipe(
-    
-      map(res => this.mapApiToMenu(res.data)), // convert API response → Menu[]
-     
+    return this.http.get<any>(masterApiEndpoint.menu.get).pipe(
+      map(res => this.mapApiToMenu(res.data)),
       catchError(err => {
         console.error('❌ Menu API error:', err);
         return throwError(() => err);
@@ -133,15 +182,15 @@ private mapUserDetails(userDetails: any[] = []): User[] {
 
 
   getUserDetails(): Observable<User> {
-    return this.http.get<any>('/Faculty/GetFacultyDetail').pipe(
-      tap(res => {
-        console.log('✅ User Details API response:', res);
+    return this.http.get<any>(masterApiEndpoint.faculty.getDetail).pipe(
+      map(res => {
+        const data = res?.data ?? res;
+        const rows = Array.isArray(data) ? data : data ? [data] : [];
+        const mapped = this.mapUserDetails(rows);
+        return mapped[0] ?? {};
       }),
-      map(res => this.mapUserDetails(res.data)),
-      tap(mapped=>{console.log('✅ Mapped UserDetails[]:', mapped);
-        }),
       catchError(err => {
-        console.error('❌ User Details API error:', err);
+        console.error('User details API error:', err);
         return throwError(() => err);
       })
     );

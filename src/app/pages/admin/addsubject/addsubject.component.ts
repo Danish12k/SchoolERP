@@ -11,7 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { ISubject, ISubjectType } from '../../../interfaces/ISubjectMst';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { SubjectmasterService } from '../../../services/subjectmaster.service';
+import { SubjectmasterService } from '../../../services/masterservice/subjectmaster.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';

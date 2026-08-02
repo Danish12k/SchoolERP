@@ -4,7 +4,6 @@ import { InMemoryDbService, RequestInfo, STATUS } from 'angular-in-memory-web-ap
 import { from, Observable } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { find, map, switchMap } from 'rxjs/operators';
-import { environment } from '@env/environment';
 import { base64, currentTimestamp, filterObject, User } from '@core/authentication';
 
 class JWT {
@@ -73,11 +72,8 @@ class JWT {
 const jwt = new JWT();
 
 function is(reqInfo: RequestInfo, path: string) {
-  if (environment.baseUrl) {
-    return false;
-  }
-
-  return new RegExp(`${path}(/)?$`, 'i').test(reqInfo.req.url);
+  // Module APIs use absolute URLs — in-memory mock routes are disabled.
+  return false;
 }
 
 @Injectable({

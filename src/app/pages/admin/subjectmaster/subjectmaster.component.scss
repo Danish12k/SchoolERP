@@ -1,0 +1,25 @@
+.add-subject__layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.add-subject__form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.add-subject__field {
+  width: 100%;
+}
+
+.add-subject__progress {
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 960px) {
+  .add-subject__layout {
+    grid-template-columns: 1fr;
+  }
+}

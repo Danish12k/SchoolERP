@@ -1,0 +1,146 @@
+<section class="installment-status-page">
+  <div class="installment-status-page__filter">
+    <app-filterfeereport (filterChange)="onFilterChange($event)"></app-filterfeereport>
+  </div>
+
+  <mat-card class="installment-status-page__card">
+    <mat-card-content>
+      <div class="installment-status-page__toolbar">
+        <mat-form-field appearance="outline" class="installment-status-page__search">
+          <mat-label>Search</mat-label>
+          <input
+            matInput
+            (keyup)="applyFilter($event)"
+            placeholder="Filter by name, admission no., status…"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="installment-status-page__columns">
+          <mat-label>Columns</mat-label>
+          <mat-select multiple [(value)]="selectedColumns">
+            @for (column of columnOptions; track column.id) {
+              <mat-option [value]="column.id">{{ column.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="loadReport()"
+          [disabled]="loading || !canLoadReport"
+        >
+          Refresh
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="exportExcel()"
+          [disabled]="!dataSource.data.length"
+        >
+          <mat-icon>download</mat-icon>
+          Excel
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="exportPdf()"
+          [disabled]="!dataSource.data.length"
+        >
+          <mat-icon>picture_as_pdf</mat-icon>
+          PDF
+        </button>
+      </div>
+
+      @if (loading) {
+        <div class="installment-status-page__loading">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+      }
+
+      @if (!hasSelectedFilters && !loading) {
+        <p class="installment-status-page__empty-state">
+          Select session, school, class, section and installment(s) to load the report.
+        </p>
+      }
+
+      @if (loadError && !loading) {
+        <p class="installment-status-page__error" role="alert">{{ loadError }}</p>
+      }
+
+      @if (hasSelectedFilters && !loading && !loadError && dataSource.data.length === 0) {
+        <p class="installment-status-page__empty-state">
+          No installment status found for selected filters.
+        </p>
+      }
+
+      <div class="installment-status-page__table-wrap">
+        @for (tableKey of [installmentColumns.join('|')]; track tableKey) {
+          <table
+            mat-table
+            [dataSource]="dataSource"
+            matSort
+            class="installment-status-table mat-elevation-z0"
+          >
+          <ng-container matColumnDef="RollNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>RollNumber</th>
+            <td mat-cell *matCellDef="let row">{{ row.RollNumber || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="StuName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>StuName</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="installment-status-table__strong">{{ row.StuName || '—' }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="StuAdmission">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>StuAdmission</th>
+            <td mat-cell *matCellDef="let row">{{ row.StuAdmission || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="FatherName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>FatherName</th>
+            <td mat-cell *matCellDef="let row">{{ row.FatherName || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Mobile">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</th>
+            <td mat-cell *matCellDef="let row">{{ row.Mobile || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Gender">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Gender</th>
+            <td mat-cell *matCellDef="let row">{{ row.Gender || '—' }}</td>
+          </ng-container>
+
+          @for (col of installmentColumns; track col) {
+            <ng-container [matColumnDef]="col">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col }}</th>
+              <td mat-cell *matCellDef="let row">
+                <span
+                  class="installment-status-table__status"
+                  [class.is-paid]="statusClass(row[col]) === 'is-paid'"
+                  [class.is-unpaid]="statusClass(row[col]) === 'is-unpaid'"
+                >
+                  {{ displayStatus(row[col]) }}
+                </span>
+              </td>
+            </ng-container>
+          }
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        }
+      </div>
+
+      <mat-paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</section>

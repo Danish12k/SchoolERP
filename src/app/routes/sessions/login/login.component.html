@@ -1,77 +1,134 @@
 <div class="login-page">
-  <mat-card class="login-card" appearance="outlined">
-    <mat-card-header class="login-card__header">
-      <div class="login-brand" aria-hidden="true">S</div>
-      <div class="login-heading">
-        <mat-card-title class="login-title">{{ 'login_title' | translate }}</mat-card-title>
-        <div class="login-subtitle">Sign in to continue</div>
-      </div>
-    </mat-card-header>
-
-    <mat-card-content class="login-card__content">
-      @if (loginForm.errors?.remote) {
-        <div class="login-alert" role="alert">
-          {{ loginForm.errors?.remote }}
+  <div class="login-shell">
+    <mat-card class="login-card" appearance="outlined">
+      <mat-card-header class="login-card__header">
+        <div class="login-heading">
+          <mat-card-title class="login-title">{{ 'login_title' | translate }}</mat-card-title>
+          <div class="login-subtitle">Enter your campus details to continue</div>
         </div>
-      }
+      </mat-card-header>
 
-      <form class="login-form form-field-full" [formGroup]="loginForm" (ngSubmit)="login()">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'username' | translate }}</mat-label>
-          <input matInput placeholder="Login ID" autocomplete="username" formControlName="username" required />
-          @if (username.invalid && (username.dirty || username.touched)) {
-            <mat-error>
-              @if (username.errors?.required) {
-                <span>{{ 'please_enter' | translate }} <strong>login id</strong></span>
+      <mat-card-content class="login-card__content">
+        @if (loginForm.errors?.remote) {
+          <div class="login-alert" role="alert">
+            {{ loginForm.errors?.remote }}
+          </div>
+        }
+
+        <form class="login-form form-field-full" [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="off">
+          @if (!hasSavedSchoolCode) {
+            <mat-form-field appearance="outline">
+              <mat-label>School Code</mat-label>
+              <input
+                matInput
+                placeholder="e.g. SCH-001"
+                autocomplete="off"
+                autocapitalize="off"
+                autocorrect="off"
+                spellcheck="false"
+                data-lpignore="true"
+                data-1p-ignore
+                data-form-type="other"
+                formControlName="schoolCode"
+                name="school-code-no-suggest"
+                required
+              />
+              @if (schoolCode.invalid && (schoolCode.dirty || schoolCode.touched)) {
+                <mat-error>
+                  @if (schoolCode.errors?.required) {
+                    <span>{{ 'please_enter' | translate }} <strong>school code</strong></span>
+                  }
+                  @if (schoolCode.errors?.remote) {
+                    <span>{{ schoolCode.errors?.remote }}</span>
+                  }
+                </mat-error>
               }
-              @if (username.errors?.remote) {
-                <span>{{ username.errors?.remote }}</span>
-              }
-            </mat-error>
+            </mat-form-field>
+          } @else {
+            <!-- school code is stored from prior successful login -->
           }
-        </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'password' | translate }}</mat-label>
-          <input
-            matInput
-            placeholder="Password"
-            type="password"
-            autocomplete="current-password"
-            formControlName="password"
-            required
-          />
-          @if (password.invalid && (password.dirty || password.touched)) {
-            <mat-error>
-              @if (password.errors?.required) {
-                <span>{{ 'please_enter' | translate }} <strong>password</strong></span>
-              }
-              @if (password.errors?.remote) {
-                <span>{{ password.errors?.remote }}</span>
-              }
-            </mat-error>
-          }
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'username' | translate }}</mat-label>
+            <input
+              matInput
+              placeholder="Login ID"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              data-lpignore="true"
+              data-1p-ignore
+              data-form-type="other"
+              readonly
+              onfocus="this.removeAttribute('readonly')"
+              formControlName="username"
+              name="login-id-no-suggest"
+              required
+            />
+            @if (username.invalid && (username.dirty || username.touched)) {
+              <mat-error>
+                @if (username.errors?.required) {
+                  <span>{{ 'please_enter' | translate }} <strong>login id</strong></span>
+                }
+                @if (username.errors?.remote) {
+                  <span>{{ username.errors?.remote }}</span>
+                }
+              </mat-error>
+            }
+          </mat-form-field>
 
-        <div class="login-row">
-          <mat-checkbox formControlName="rememberMe">{{ 'remember_me' | translate }}</mat-checkbox>
-          <a class="login-link" routerLink="/register">{{ 'create_one_account' | translate }}</a>
-        </div>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'password' | translate }}</mat-label>
+            <input
+              matInput
+              placeholder="Password"
+              type="password"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              data-lpignore="true"
+              data-1p-ignore
+              data-form-type="other"
+              readonly
+              onfocus="this.removeAttribute('readonly')"
+              formControlName="password"
+              name="new-password-no-suggest"
+              required
+            />
+            @if (password.invalid && (password.dirty || password.touched)) {
+              <mat-error>
+                @if (password.errors?.required) {
+                  <span>{{ 'please_enter' | translate }} <strong>password</strong></span>
+                }
+                @if (password.errors?.remote) {
+                  <span>{{ password.errors?.remote }}</span>
+                }
+              </mat-error>
+            }
+          </mat-form-field>
 
-        <button
-          type="submit"
-          class="login-submit"
-          mat-flat-button
-          [disabled]="loginForm.invalid || isSubmitting"
-          [loading]="isSubmitting"
-        >
-          {{ 'login' | translate }}
-        </button>
+          <div class="login-row">
+            <mat-checkbox formControlName="rememberMe">{{ 'remember_me' | translate }}</mat-checkbox>
+            <a class="login-link" routerLink="/register">{{ 'create_one_account' | translate }}</a>
+          </div>
 
-        <div class="login-footnote">
-          By continuing, you agree to the school ERP access policy.
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+          <button
+            type="submit"
+            class="login-submit"
+            mat-flat-button
+            [disabled]="loginForm.invalid || isSubmitting"
+            [loading]="isSubmitting"
+          >
+            {{ 'login' | translate }}
+          </button>
+
+          <div class="login-footnote">
+            By continuing, you agree to the school ERP access policy.
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

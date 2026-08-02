@@ -1,0 +1,114 @@
+.search-student-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 8px 16px;
+}
+
+.search-student-page__card {
+  width: 100%;
+  box-shadow: 0 4px 18px rgb(0 0 0 / 10%);
+}
+
+.search-student-page__filter-card,
+.search-student-page__table-card {
+  border-radius: 0;
+}
+
+.search-student-page__filter-card {
+  min-height: 120px;
+}
+
+.search-student-page__filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+
+  button {
+    height: 35px;
+  }
+}
+
+.search-student-page__search {
+  grid-column: span 2;
+}
+
+.search-student-page__loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.search-student-page__info {
+  margin: 0 0 8px;
+  color: var(--mat-sys-on-surface-variant, #5f6368);
+}
+
+.search-student-page__error {
+  margin: 0 0 12px;
+  color: var(--mat-sys-error, #b3261e);
+}
+
+.search-student-page__empty-state {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px dashed rgb(0 0 0 / 18%);
+  color: var(--mat-sys-on-surface-variant, #5f6368);
+  background: rgb(0 0 0 / 2%);
+}
+
+.search-student-page__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.search-student-table {
+  width: max-content;
+  min-width: 100%;
+
+  th.mat-mdc-header-cell {
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  th.mat-mdc-header-cell,
+  td.mat-mdc-cell {
+    padding-right: 14px;
+  }
+
+  td.mat-mdc-cell {
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+}
+
+.mat-column-studentName,
+.mat-column-fatherName,
+.mat-column-motherName {
+  max-width: 170px;
+  min-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 992px) {
+  .search-student-page__filters {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .search-student-page__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .search-student-page__search {
+    grid-column: auto;
+  }
+}

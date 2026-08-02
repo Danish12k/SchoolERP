@@ -1,210 +1,290 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { SmsapiService } from '../../../services/smsapi.service';
-import { CollegeService } from '../../../services/college.service';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
+import { SmsapiService } from '../../../services/masterservice/smsapi.service';
+import { CollegeService } from '../../../services/masterservice/college.service';
 import { ICollege } from '../../../interfaces/ICollege';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { ISMSApi } from '../../../interfaces/Ismsapi';
-import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
-import { MatCard, MatCardModule } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
-import { error } from 'console';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PageHeaderComponent } from '@shared';
+import { ToastrService } from 'ngx-toastr';
+
+interface ISmsApiForm {
+  id: number;
+  collegeId: number;
+  apI_SenderId: string;
+  api_UserName: string;
+  api_Password: string;
+  apI_Provider: string;
+  apI_Status: boolean;
+}
 
 @Component({
   selector: 'app-smsapi',
+  host: { class: 'admin-page-host' },
   imports: [
-    MatCard,
-    MaterialModule,
     FormsModule,
-    MatButtonModule,
+    PageHeaderComponent,
     MatCardModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
-    MatOptionModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
     MatSelectModule,
-    TranslateModule,
-    ReactiveFormsModule
+    MatSlideToggleModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './smsapi.component.html',
-  styleUrl: './smsapi.component.scss'
+  styleUrl: './smsapi.component.scss',
 })
-export class SmsapiComponent implements OnInit {
-  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
-  private _smsAPIService = inject(SmsapiService);
-  _colloegeService = inject(CollegeService);
+export class SmsapiComponent implements OnInit, AfterViewInit {
+  private smsService = inject(SmsapiService);
+  private collegeService = inject(CollegeService);
+  private toast = inject(ToastrService);
+  private dialog = inject(MatDialog);
 
-  dataSource = new MatTableDataSource<ISMSApi>([]);
-  displayedColumns: string[] = ['select', 'school','sender','usename','password','status', 'actions'];
-  smsapiList: ISMSApi[] = [];
   schoolList: ICollege[] = [];
+  filterCollegeId: number | null = null;
+  dataSource = new MatTableDataSource<ISMSApi>([]);
+  displayedColumns: string[] = ['index', 'sender', 'usename', 'status', 'actions'];
+  newSms: ISmsApiForm = this.emptyForm();
+  isLoading = false;
+  isSaving = false;
+  isUpdating = false;
+  deletingIds = new Set<number>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
-
-
-  smsForm!: FormGroup;
-
+  @ViewChild('addDialog') addDialog!: TemplateRef<void>;
+  @ViewChild('editDialog') editDialog!: TemplateRef<ISmsApiForm>;
 
   ngOnInit(): void {
-    this.smsForm = this.fb.group({
-      collegeId: [null, [Validators.required, Validators.min(1)]],
-      apI_SenderId: [null, [Validators.required]],
-      api_UserName: [null, [Validators.required, Validators.minLength(3)]],
-      api_Password: [null, [Validators.required, Validators.minLength(6)]],
-      apI_Status: [false],
-      apI_Provider: [null, [Validators.required, Validators.minLength(1)]]
-    });
-
-    this.loadCollege();
+    this.dataSource.filterPredicate = (row, filter) => {
+      const hay = `${row.apI_SenderId} ${row.api_UserName} ${row.apI_Provider}`.toLowerCase();
+      return hay.includes(filter);
+    };
+    this.loadColleges();
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
-  loadCollege() {
-    this._colloegeService.getCollegeList().subscribe(res => {
-      this.schoolList = Array.isArray(res.data) ? res.data : [res.data];
-    })
-  };
+  private emptyForm(): ISmsApiForm {
+    return {
+      id: 0,
+      collegeId: 0,
+      apI_SenderId: '',
+      api_UserName: '',
+      api_Password: '',
+      apI_Provider: '',
+      apI_Status: true,
+    };
+  }
 
-  getSMSApiList() {
-    const collegeId = this.smsForm.get("collegeId")?.value;
+  private toApiBody(form: ISmsApiForm): ISMSApi {
+    return {
+      id: form.id,
+      collegeId: form.collegeId,
+      apI_SenderId: form.apI_SenderId.trim(),
+      api_UserName: form.api_UserName.trim(),
+      api_Password: form.api_Password,
+      apI_Provider: form.apI_Provider.trim(),
+      apI_Status: form.apI_Status ? 1 : 0,
+    };
+  }
+
+  private toForm(row: ISMSApi): ISmsApiForm {
+    return {
+      id: row.id,
+      collegeId: row.collegeId,
+      apI_SenderId: row.apI_SenderId ?? '',
+      api_UserName: row.api_UserName ?? '',
+      api_Password: row.api_Password ?? '',
+      apI_Provider: row.apI_Provider ?? '',
+      apI_Status: row.apI_Status === 1,
+    };
+  }
+
+  statusLabel(status: number): string {
+    return status === 1 ? 'Active' : 'Inactive';
+  }
+
+  loadColleges(): void {
+    this.collegeService.getCollegeList().subscribe({
+      next: res => {
+        if (res.success) {
+          this.schoolList = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
+        }
+      },
+      error: () => this.toast.error('Failed to load schools'),
+    });
+  }
+
+  onCollegeFilterChange(): void {
+    if (this.filterCollegeId) {
+      this.loadList();
+    } else {
+      this.dataSource.data = [];
+    }
+  }
+
+  loadList(): void {
+    const collegeId = Number(this.filterCollegeId);
     if (!collegeId) {
+      this.toast.warning('Select a school to load SMS API records.');
       return;
     }
-
-    this._smsAPIService.GetSmsListByCollegeId(collegeId).subscribe({
-      next: (res) => {
+    this.isLoading = true;
+    this.smsService.GetSmsListByCollegeId(collegeId).subscribe({
+      next: res => {
+        this.isLoading = false;
         if (res.success) {
-          //  this.smsapiList  =  Array.isArray(res.data)  ? res.data: [res.data];
-          this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];
+          const rows = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
+          this.dataSource.data = rows;
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
+        } else {
+          this.toast.error(res.message || 'Failed to load SMS API list');
         }
-      }
-    })
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toast.error('Failed to load SMS API list');
+      },
+    });
   }
 
-  addSMSAPI() {
-    debugger;
-    if (this.smsForm.valid) {
-          const formValue = { ...this.smsForm.value };
-         formValue.apI_Status = formValue.apI_Status ? 1 : 0;
-      this._smsAPIService.addSMSAPI(formValue).subscribe({
-        next: (res) => {
+  openAddDialog(): void {
+    this.newSms = { ...this.emptyForm(), collegeId: this.filterCollegeId ?? 0 };
+    this.dialog.open(this.addDialog, {
+      width: 'min(680px, 94vw)',
+      maxWidth: '96vw',
+      panelClass: 'smsapi-add-dialog-panel',
+    });
+  }
+
+  addSmsApi(): void {
+    if (!this.newSms.collegeId) {
+      this.toast.warning('Please select a school.');
+      return;
+    }
+    if (!this.newSms.apI_SenderId?.trim() || !this.newSms.api_UserName?.trim() || !this.newSms.api_Password) {
+      this.toast.warning('Sender, user name, and password are required.');
+      return;
+    }
+    if (!this.newSms.apI_Provider?.trim()) {
+      this.toast.warning('Provider details are required.');
+      return;
+    }
+    this.isSaving = true;
+    this.smsService
+      .addSMSAPI(this.toApiBody(this.newSms))
+      .pipe(finalize(() => (this.isSaving = false)))
+      .subscribe({
+        next: res => {
           if (res.success) {
-            alert(res.message);
-            this.getSMSApiList();
-          }
-          else {
-            alert(res.message);
+            this.toast.success(res.message || 'SMS API added');
+            this.dialog.closeAll();
+            this.loadList();
+          } else {
+            this.toast.error(res.message || 'Failed to add SMS API');
           }
         },
-        error: (err) => {
-          console.log("error", err);
-          alert('An error occurred while adding the class');
-        }
+        error: () => this.toast.error('Failed to add SMS API'),
       });
-    }
-    else {
-  console.log('Form is invalid:', this.smsForm);
-  this.smsForm.markAllAsTouched(); // shows errors in UI
-}
   }
 
-    // listing
-
-      openEditDialog(smsapi: ISMSApi) {
-        const dialogRef = this.dialog.open(this.editDialog, {
-          width: '400px',
-          data: { ...smsapi }
+  openEditDialog(row: ISMSApi): void {
+    const dialogRef = this.dialog.open(this.editDialog, {
+      width: 'min(680px, 94vw)',
+      maxWidth: '96vw',
+      data: this.toForm(row),
+    });
+    dialogRef.afterClosed().subscribe((result: ISmsApiForm | undefined) => {
+      if (!result?.apI_SenderId?.trim()) {
+        return;
+      }
+      if (this.isUpdating) {
+        return;
+      }
+      this.isUpdating = true;
+      this.smsService
+        .updateSMSAPI(this.toApiBody(result))
+        .pipe(finalize(() => (this.isUpdating = false)))
+        .subscribe({
+          next: res => {
+            if (res.success) {
+              this.toast.success(res.message || 'SMS API updated');
+              this.loadList();
+            } else {
+              this.toast.error(res.message || 'Failed to update SMS API');
+            }
+          },
+          error: () => this.toast.error('Failed to update SMS API'),
         });
-        debugger;
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            debugger;
-            // Handle the result from the dialog (e.g., save changes)
-            console.log('Dialog result:', result);
-            result.apI_Status = result.apI_Status ?1:0;
-            this._smsAPIService.updateSMSAPI(result).subscribe({
-              next: (res) => {
-                if (res.success) {
-                  alert(res.message);
-                  this.getSMSApiList(); // Refresh the list
-                }
-              },
-              error: (err) => {
-                console.error('Error updating session:', err);
-                alert('Failed to update session');
-              }
-            })
+    });
+  }
+
+  deleteSmsApi(row: ISMSApi): void {
+    const id = Number(row.id);
+    if (!id || this.deletingIds.has(id)) {
+      return;
+    }
+    if (!confirm('Delete this SMS API configuration?')) {
+      return;
+    }
+    this.deletingIds.add(id);
+    this.smsService
+      .deleteSMSAPI(id)
+      .pipe(finalize(() => this.deletingIds.delete(id)))
+      .subscribe({
+        next: res => {
+          if (res.success) {
+            this.toast.success(res.message || 'SMS API deleted');
+            this.loadList();
+          } else {
+            this.toast.error(res.message || 'Failed to delete SMS API');
           }
-        });
-      }
-    
-      applyFilter(event: Event) {
-        const filterValue = (event.target as HTMLInputElement).value;
-        this.dataSource.filter = filterValue.trim().toLowerCase();
-      }
-    
-      /** Checkbox Selection Logic */
-      toggleSelection(row: ISMSApi) {
-        if (this.smsapiList.includes(row)) {
-          this.smsapiList = this.smsapiList.filter(r => r !== row);
-        } else {
-          this.smsapiList.push(row);
-        }
-      }
-    
-      isAllSelected() {
-        return this.smsapiList.length === this.dataSource.data.length;
-      }
-    
-      isPartialSelected() {
-        return this.smsapiList.length > 0 && !this.isAllSelected();
-      }
-    
-      masterToggle() {
-        if (this.isAllSelected()) {
-          this.smsapiList = [];
-        } else {
-          this.smsapiList = [...this.dataSource.data];
-        }
-      }
-
-    SMSAPIDelete(smsAPI : ISMSApi){
-      debugger;
-const id = smsAPI.id;
-this._smsAPIService.deleteSMSAPI(id).subscribe({
-  next:(res)=>{
-    if(res.success){
-      alert(res.message);
-      this.getSMSApiList();
-    }
-    else{
-      alert(res.message);
-    }
-  },
-  error:(err)=>{
-    console.log("error",err);
-    alert("Something went wrong!");
+        },
+        error: () => this.toast.error('Failed to delete SMS API'),
+      });
   }
 
-});
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.paginator?.firstPage();
+  }
 
-    }
-
-/* onStatusToggle(event: any) {
-  this.data.apI_Status = event.checked ? 1 : 0;
-} */
-
+  rowIndex(i: number): number {
+    return this.paginator ? this.paginator.pageIndex * this.paginator.pageSize + i + 1 : i + 1;
+  }
 }

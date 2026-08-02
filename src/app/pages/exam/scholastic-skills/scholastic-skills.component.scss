@@ -1,0 +1,27 @@
+.scholastic-skills {
+  display: grid;
+  gap: 1rem;
+}
+
+.scholastic-skills__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.scholastic-skills__table {
+  width: 100%;
+}
+
+.scholastic-skills__dialog-form {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 280px;
+  padding-top: 0.25rem;
+}
+
+.w-100 {
+  width: 100%;
+}

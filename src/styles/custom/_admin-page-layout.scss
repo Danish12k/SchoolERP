@@ -1,0 +1,731 @@
+/**
+ * Shared admin master-list page layout (Category pattern).
+ * Use on simple CRUD pages: layout + toolbar + table + dialogs.
+ */
+$admin-accent: #e65100;
+$admin-label-color: #000;
+$admin-sky-border: #87ceeb;
+$admin-sky-header: #4a90e2;
+$admin-sky-header-text: #fff;
+$admin-sky-title-bg: #e3f4fc;
+$admin-sky-row-alt: #f5fbff;
+$admin-sky-row-hover: #e1f5fe;
+
+/** Typed/selected text in inputs and mat-select. */
+@mixin admin-field-value-text-black {
+  --mat-form-field-input-text-color: #000;
+  --mat-form-field-input-text-placeholder-color: rgba(0, 0, 0, 0.45);
+  --mdc-outlined-text-field-input-text-color: #000;
+  --mdc-outlined-text-field-placeholder-text-color: rgba(0, 0, 0, 0.45);
+  --mdc-filled-text-field-input-text-color: #000;
+  --mat-select-enabled-trigger-text-color: #000;
+  --mat-select-disabled-trigger-text-color: rgba(0, 0, 0, 0.38);
+
+  input.mat-mdc-input-element,
+  .mdc-text-field__input,
+  textarea.mat-mdc-input-element {
+    color: #000 !important;
+    caret-color: #000;
+  }
+
+  .mat-mdc-select-value,
+  .mat-mdc-select-value-text,
+  .mat-mdc-select-min-line {
+    color: #000 !important;
+  }
+
+  .mat-mdc-select-arrow {
+    color: rgba(0, 0, 0, 0.54) !important;
+  }
+}
+
+:host.admin-page-host,
+.admin-page-host {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: calc(100dvh - var(--mat-toolbar-standard-height, 64px) - 2rem);
+}
+
+.admin-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  min-height: inherit;
+  box-sizing: border-box;
+
+  &--embedded {
+    min-height: auto;
+
+    .admin-page {
+      min-height: auto;
+    }
+
+    .admin-page__card {
+      border: none;
+      box-shadow: none;
+    }
+
+    .admin-page__list-title {
+      display: none;
+    }
+  }
+}
+
+.admin-layout__header {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.admin-page {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.admin-page__card {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.admin-page__list-title {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0d47a1;
+  background-color: $admin-sky-title-bg;
+  border-radius: 4px 4px 0 0;
+  border: 1px solid $admin-sky-border;
+  border-bottom: none;
+}
+
+.admin-page__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  padding-top: 1rem !important;
+  overflow: hidden;
+}
+
+.admin-page__progress {
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+
+.admin-toolbar {
+  --admin-toolbar-row-height: 48px;
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  min-height: var(--admin-toolbar-row-height);
+}
+
+.admin-toolbar__start {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  height: var(--admin-toolbar-row-height);
+
+  .mat-mdc-button-base {
+    height: var(--admin-toolbar-row-height);
+    min-height: var(--admin-toolbar-row-height);
+    margin: 0;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+}
+
+.admin-toolbar__filters {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+
+  .admin-toolbar__filter-field {
+    flex: 0 1 11rem;
+    min-width: 9rem;
+    max-width: 14rem;
+    margin: 0;
+
+    &.mat-mdc-form-field {
+      @include admin-field-value-text-black;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+  }
+}
+
+.admin-toolbar__end {
+  display: flex;
+  flex: 0 0 30%;
+  align-items: center;
+  width: 30%;
+  max-width: 30%;
+  min-width: 10rem;
+  height: var(--admin-toolbar-row-height);
+  margin-left: auto;
+}
+
+.admin-toolbar__search {
+  width: 100%;
+  margin: 0;
+  max-height: none;
+  overflow: visible;
+
+  &.mat-mdc-form-field {
+    margin: 0;
+    @include admin-field-value-text-black;
+  }
+
+  .mat-mdc-form-field-icon-prefix {
+    padding: 0 4px 0 8px;
+
+    .mat-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+      line-height: 16px;
+    }
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  .mat-mdc-floating-label,
+  .mdc-floating-label {
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  &.mat-focused,
+  &.mat-form-field-should-float {
+    .mat-mdc-floating-label,
+    .mdc-floating-label,
+    .mdc-floating-label--float-above {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .admin-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-toolbar__start {
+    width: 100%;
+  }
+
+  .admin-toolbar__end {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-left: 0;
+  }
+}
+
+.admin-table__wrap {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid $admin-sky-border;
+  border-radius: 0;
+}
+
+.admin-page__paginator {
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+@mixin admin-data-table-header-cell {
+  background-color: $admin-sky-header !important;
+  color: $admin-sky-header-text !important;
+  font-weight: 700 !important;
+}
+
+table.mat-mdc-table,
+.mat-mdc-table {
+  .mat-mdc-header-row {
+    background-color: $admin-sky-header;
+  }
+
+  .mat-mdc-header-cell {
+    @include admin-data-table-header-cell;
+    font-size: 12px;
+    border: 1px solid $admin-sky-border;
+  }
+}
+
+.admin-table__wrap table thead th,
+table.admin-table thead th {
+  background-color: $admin-sky-header;
+  color: $admin-sky-header-text;
+  font-weight: 700;
+  font-size: 12px;
+  border: 1px solid $admin-sky-border;
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 360px;
+  --admin-row-height: 20px;
+
+  .mat-mdc-header-row,
+  .mat-mdc-row.admin-table__row {
+    height: var(--admin-row-height) !important;
+    min-height: var(--admin-row-height) !important;
+    max-height: var(--admin-row-height) !important;
+  }
+
+  .mat-mdc-header-cell,
+  .mat-mdc-cell {
+    border: 1px solid $admin-sky-border;
+    box-sizing: border-box;
+    height: var(--admin-row-height) !important;
+    max-height: var(--admin-row-height) !important;
+    min-height: var(--admin-row-height) !important;
+    padding: 0 8px !important;
+    line-height: var(--admin-row-height) !important;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+
+  .mat-mdc-header-row {
+    background-color: $admin-sky-header;
+  }
+
+  .mat-mdc-header-cell {
+    @include admin-data-table-header-cell;
+    font-size: 12px;
+  }
+
+  thead th {
+    background-color: $admin-sky-header;
+    color: $admin-sky-header-text;
+    font-weight: 700;
+    font-size: 12px;
+    border: 1px solid $admin-sky-border;
+    text-align: center;
+  }
+
+  .mat-mdc-row.admin-table__row:nth-child(even) {
+    background-color: $admin-sky-row-alt;
+  }
+
+  .mat-mdc-row.admin-table__row:hover {
+    background-color: $admin-sky-row-hover;
+  }
+
+  .admin-table__index-col {
+    width: 48px;
+    text-align: center;
+  }
+
+  .admin-table__actions-col {
+    width: 72px;
+    text-align: center;
+    padding: 0 4px !important;
+  }
+
+  .mat-mdc-cell .mat-mdc-icon-button {
+    width: 20px !important;
+    height: 20px !important;
+    max-height: 20px !important;
+    padding: 0 !important;
+    line-height: 20px !important;
+    --mdc-icon-button-state-layer-size: 20px;
+
+    .mat-icon {
+      width: 14px;
+      height: 14px;
+      font-size: 14px;
+      line-height: 14px;
+    }
+  }
+}
+
+.admin-table__empty {
+  text-align: center;
+  padding: 16px !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 48px !important;
+  line-height: 1.4 !important;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+}
+
+.admin-dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  min-width: min(100%, 320px);
+  min-height: 120px;
+  overflow: visible;
+  box-sizing: border-box;
+
+  > .admin-dialog__field,
+  > .mat-mdc-form-field {
+    width: 100%;
+    margin: 0;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    min-height: 0;
+  }
+
+  mat-slide-toggle {
+    margin: 0;
+    align-self: flex-start;
+  }
+}
+
+.admin-dialog__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+  align-items: start;
+}
+
+.admin-dialog__span-2 {
+  grid-column: 1 / -1;
+}
+
+.admin-dialog__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.admin-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px 16px !important;
+}
+
+.admin-dialog__field {
+  width: 100%;
+  max-height: none;
+  overflow: visible;
+  padding-top: 10px;
+  @include admin-field-value-text-black;
+  --mat-form-field-container-height: 35px;
+  --mat-form-field-container-vertical-padding: 0;
+  --mat-form-field-outlined-label-text-color: #{$admin-label-color};
+  --mat-form-field-outlined-focus-label-text-color: #{$admin-label-color};
+  --mat-form-field-required-marker-color: #{$admin-accent};
+  --mdc-outlined-text-field-outline-color: #{$admin-accent};
+  --mdc-outlined-text-field-hover-outline-color: #{$admin-accent};
+  --mdc-outlined-text-field-focus-outline-color: #{$admin-accent};
+  --mdc-outlined-text-field-label-text-color: #{$admin-label-color};
+  --mdc-outlined-text-field-focus-label-text-color: #{$admin-label-color};
+  --mdc-outlined-text-field-error-outline-color: #{$admin-accent};
+  --mat-form-field-error-text-color: #{$admin-accent};
+
+  /* Heights: global _compact-inputs.scss (35px). Only layout/label colors here. */
+  &:not(:has(textarea)) {
+    overflow: visible;
+
+    .mat-mdc-text-field-wrapper {
+      height: 35px !important;
+      min-height: 35px !important;
+      max-height: 35px !important;
+      overflow: visible;
+    }
+
+    .mat-mdc-form-field-flex {
+      height: 35px !important;
+      min-height: 35px !important;
+      max-height: 35px !important;
+      align-items: center;
+      overflow: visible;
+    }
+
+    .mat-mdc-form-field-infix {
+      min-height: 35px !important;
+      max-height: 35px !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    input.mat-mdc-input-element,
+    .mat-mdc-select-trigger {
+      height: 33px !important;
+      max-height: 35px !important;
+      line-height: 33px !important;
+    }
+  }
+
+  &:has(textarea) {
+    --mat-form-field-container-height: auto;
+
+    .mat-mdc-text-field-wrapper {
+      height: auto !important;
+      min-height: 120px !important;
+      max-height: none !important;
+    }
+
+    .mat-mdc-form-field-flex {
+      height: auto !important;
+      min-height: 120px !important;
+      max-height: none !important;
+      align-items: stretch;
+    }
+
+    .mat-mdc-form-field-infix {
+      max-height: none !important;
+      min-height: auto !important;
+    }
+
+    textarea.mat-mdc-input-element {
+      height: auto !important;
+      max-height: none !important;
+      min-height: 88px;
+      line-height: 1.4 !important;
+      font-size: 12px;
+    }
+  }
+
+  .mat-mdc-floating-label,
+  .mdc-floating-label {
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: $admin-label-color !important;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  &.mat-focused,
+  &.mat-form-field-should-float {
+    .mat-mdc-floating-label,
+    .mdc-floating-label,
+    .mdc-floating-label--float-above {
+      opacity: 1 !important;
+      visibility: visible !important;
+      color: $admin-label-color !important;
+    }
+  }
+
+  .mdc-notched-outline {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $admin-accent;
+    }
+  }
+
+  &.mat-focused .mdc-notched-outline {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $admin-accent;
+      border-width: 2px;
+    }
+  }
+}
+
+/** Dark mode: main content (right panel) stays light/white for readability */
+@mixin admin-dark-light-panel {
+  color-scheme: light;
+  background-color: #fff !important;
+  color: rgba(0, 0, 0, 0.87);
+  --mat-card-elevated-container-color: #fff;
+  --mdc-elevated-card-container-color: #fff;
+  --mat-table-background-color: #fff;
+  --mat-table-header-headline-color: #fff;
+  --mat-table-row-item-label-text-color: rgba(0, 0, 0, 0.87);
+}
+
+.theme-dark .matero-page-content {
+  /* Migrated admin layout */
+  .admin-page__card,
+  .admin-page__content,
+  .admin-page__list-title,
+  .admin-table__wrap,
+  .admin-page__paginator,
+  .admin-page__content--tabs,
+  .mat-mdc-tab-body-content,
+  /* Legacy admin pages (col-sm-12, fee-page, plain mat-card) */
+  .col-sm-12 mat-card,
+  .fee-page mat-card,
+  .fee-page__section mat-card,
+  > mat-card,
+  mat-card {
+    @include admin-dark-light-panel;
+  }
+
+  mat-card-content,
+  .mat-mdc-card-content {
+    background-color: #fff !important;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  mat-card-header,
+  mat-card-title,
+  mat-card-subtitle {
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .admin-page__card--tabs .admin-tabs,
+  .admin-page__card--tabs .mat-mdc-tab-group,
+  .admin-page__card--tabs .mat-mdc-tab-header,
+  .admin-page__card--tabs .mat-mdc-tab-body-wrapper {
+    background-color: #fff !important;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .admin-page__card--tabs .mat-mdc-tab,
+  .admin-page__card--tabs .mat-mdc-tab .mdc-tab__text-label {
+    color: rgba(0, 0, 0, 0.74) !important;
+  }
+
+  .admin-page__card--tabs .mat-mdc-tab.mdc-tab--active,
+  .admin-page__card--tabs .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+    color: #0d47a1 !important;
+  }
+
+  app-classmaster,
+  app-assign-section,
+  app-assign-class-teacher {
+    color: rgba(0, 0, 0, 0.87);
+
+    mat-card,
+    mat-card-content,
+    .mat-mdc-card,
+    .mat-mdc-card-content {
+      background-color: #fff !important;
+      color: rgba(0, 0, 0, 0.87);
+    }
+
+    mat-card-title,
+    mat-label,
+    .mat-mdc-cell {
+      color: rgba(0, 0, 0, 0.87) !important;
+    }
+
+    .mat-mdc-header-cell {
+      color: $admin-sky-header-text !important;
+      background-color: $admin-sky-header !important;
+      font-weight: 700 !important;
+    }
+
+    .mat-mdc-form-field {
+      @include admin-field-value-text-black;
+      --mat-form-field-outlined-label-text-color: #{$admin-label-color};
+      --mat-form-field-outlined-focus-label-text-color: #{$admin-label-color};
+      --mdc-outlined-text-field-label-text-color: #{$admin-label-color};
+      --mdc-outlined-text-field-focus-label-text-color: #{$admin-label-color};
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      color: $admin-label-color !important;
+    }
+  }
+
+  .admin-page__list-title {
+    background-color: $admin-sky-title-bg;
+    color: #0d47a1;
+    border-color: $admin-sky-border;
+  }
+
+  .admin-table,
+  table.mat-mdc-table,
+  .mat-mdc-table {
+    background-color: #fff !important;
+
+    .mat-mdc-header-row,
+    .mat-mdc-header-cell {
+      color: $admin-sky-header-text !important;
+      background-color: $admin-sky-header !important;
+      font-weight: 700 !important;
+    }
+
+    .mat-mdc-row.admin-table__row,
+    .mat-mdc-row {
+      background-color: #fff;
+      color: rgba(0, 0, 0, 0.87);
+    }
+
+    .mat-mdc-row.admin-table__row:nth-child(even),
+    .mat-mdc-row:nth-child(even) {
+      background-color: $admin-sky-row-alt;
+    }
+
+    .mat-mdc-cell {
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  .admin-table__empty {
+    background-color: #fff !important;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  /* Legacy table wrappers */
+  [class*='-table__wrap'],
+  .mat-elevation-z8 {
+    background-color: #fff;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+@media (max-width: 599px) {
+  .admin-page-host {
+    min-height: calc(100dvh - var(--mat-toolbar-mobile-height, 56px) - 1.5rem);
+  }
+
+  .admin-dialog__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dialog__span-2 {
+    grid-column: auto;
+  }
+
+  .admin-dialog__actions {
+    justify-content: flex-end;
+
+    .mat-mdc-button-base {
+      flex: 1 1 auto;
+      min-width: 96px;
+    }
+  }
+}

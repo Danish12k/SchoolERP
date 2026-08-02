@@ -1,0 +1,175 @@
+.installment-status-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 8px 16px;
+}
+
+.installment-status-page__filter {
+  width: 100%;
+}
+
+.installment-status-page__card {
+  width: 100%;
+  box-shadow: 0 4px 18px rgb(0 0 0 / 10%);
+}
+
+.installment-status-page__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.installment-status-page__search {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.installment-status-page__columns {
+  flex: 0 1 220px;
+  min-width: 180px;
+}
+
+.installment-status-page__loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.installment-status-page__error {
+  margin: 0 0 12px;
+  color: var(--mat-sys-error, #b3261e);
+}
+
+.installment-status-page__empty-state {
+  margin: 0 0 12px;
+  padding: 14px 16px;
+  border: 1px dashed rgb(0 0 0 / 18%);
+  color: var(--mat-sys-on-surface-variant, #5f6368);
+  background: rgb(0 0 0 / 2%);
+}
+
+.installment-status-page__table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.installment-status-table {
+  width: max-content;
+  min-width: 100%;
+
+  th.mat-mdc-header-cell {
+    white-space: nowrap;
+    font-weight: 600;
+    background: #e8f0fe;
+    color: #1a3a6b;
+  }
+
+  th.mat-mdc-header-cell,
+  td.mat-mdc-cell {
+    padding-right: 14px;
+  }
+
+  td.mat-mdc-cell {
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+}
+
+.mat-column-RollNumber {
+  min-width: 90px;
+}
+
+.mat-column-StuName,
+.mat-column-FatherName {
+  min-width: 160px;
+  max-width: 220px;
+}
+
+.mat-column-StuAdmission,
+.mat-column-Mobile,
+.mat-column-Gender {
+  min-width: 110px;
+}
+
+.installment-status-table__strong {
+  display: block;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface, #1f1f1f);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.installment-status-table__status {
+  font-weight: 500;
+}
+
+.installment-status-table__status.is-paid {
+  color: #1b7a3d;
+}
+
+.installment-status-table__status.is-unpaid {
+  color: #b3261e;
+}
+
+@media (max-width: 600px) {
+  .installment-status-page {
+    gap: 12px;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .installment-status-page__card {
+    border-radius: 0;
+  }
+
+  .installment-status-page__card .mat-mdc-card-content {
+    padding: 12px;
+  }
+
+  .installment-status-page__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .installment-status-page__search {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .installment-status-page__columns {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .installment-status-page__toolbar button {
+    width: 100%;
+    min-height: 35px;
+  }
+
+  .installment-status-page__table-wrap {
+    margin-right: -12px;
+    margin-left: -12px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .installment-status-table {
+    th.mat-mdc-header-cell,
+    td.mat-mdc-cell {
+      padding-right: 10px;
+      padding-left: 10px;
+    }
+  }
+}

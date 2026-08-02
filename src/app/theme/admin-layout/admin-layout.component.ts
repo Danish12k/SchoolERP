@@ -20,6 +20,7 @@ import { HeaderComponent } from '../header/header.component';
 import { SidebarNoticeComponent } from '../sidebar-notice/sidebar-notice.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopmenuComponent } from '../topmenu/topmenu.component';
+import { LoadingOverlayComponent } from '../loading-overlay/loading-overlay.component';
 
 const MOBILE_MEDIAQUERY = 'screen and (max-width: 599px)';
 const TABLET_MEDIAQUERY = 'screen and (min-width: 600px) and (max-width: 959px)';
@@ -36,6 +37,7 @@ const MONITOR_MEDIAQUERY = 'screen and (min-width: 960px)';
         MatSidenavModule,
         NgProgressbar,
         NgProgressRouter,
+        LoadingOverlayComponent,
         HeaderComponent,
         TopmenuComponent,
         SidebarComponent,

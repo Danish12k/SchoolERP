@@ -1,0 +1,84 @@
+<section class="upload-student-page">
+  <div class="upload-student-page__upload-bar">
+    <span class="upload-student-page__label">Please Select Excel File.</span>
+    <input
+      #fileInput
+      type="file"
+      accept=".xlsx,.xls,.csv"
+      (change)="onFileSelected($event)"
+    />
+    <button
+      mat-stroked-button
+      type="button"
+      color="primary"
+      (click)="uploadFile()"
+      [disabled]="parsing || !selectedFile"
+    >
+      {{ parsing ? 'Reading…' : 'Upload' }}
+    </button>
+    <a class="upload-student-page__sample-link" href="#" (click)="downloadSample(); $event.preventDefault()">
+      Download Sample Excel File.
+    </a>
+  </div>
+
+  <mat-card class="upload-student-page__card">
+    <mat-card-content>
+      @if (errorMessage) {
+        <p class="upload-student-page__error" role="alert">{{ errorMessage }}</p>
+      }
+
+      @if (infoMessage && !errorMessage) {
+        <p class="upload-student-page__info">{{ infoMessage }}</p>
+      }
+
+      @if (!dataSource.data.length && !parsing) {
+        <p class="upload-student-page__empty-state">
+          Select an Excel file and click Upload to preview student data here.
+        </p>
+      }
+
+      @if (displayedColumns.length) {
+        @for (version of [tableVersion]; track version) {
+          <div class="upload-student-page__table-wrap">
+            <table mat-table [dataSource]="dataSource" class="upload-student-table mat-elevation-z0">
+              <ng-container matColumnDef="seqNo">
+                <th mat-header-cell *matHeaderCellDef>S.No.</th>
+                <td mat-cell *matCellDef="let row; let i = index">{{ rowNumber(i) }}</td>
+              </ng-container>
+
+              @for (column of dataColumns; track column) {
+                <ng-container [matColumnDef]="column">
+                  <th mat-header-cell *matHeaderCellDef>{{ columnLabels[column] }}</th>
+                  <td mat-cell *matCellDef="let row">{{ displayCell(row, column) }}</td>
+                </ng-container>
+              }
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </div>
+        }
+      }
+
+      <div class="upload-student-page__actions">
+        <button
+          mat-flat-button
+          type="button"
+          color="primary"
+          (click)="submitData()"
+          [disabled]="submitting || !dataSource.data.length"
+        >
+          {{ submitting ? 'Submitting…' : 'Submit Data' }}
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="clearData()"
+          [disabled]="!dataSource.data.length && !selectedFile"
+        >
+          Clear
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>

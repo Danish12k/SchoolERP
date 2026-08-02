@@ -1,0 +1,222 @@
+<div class="admin-layout">
+  <page-header
+    class="admin-layout__header"
+    title="Online Question Paper"
+    [nav]="['home', 'Online Exam', 'Online Question Paper']"
+  />
+
+  <section class="admin-page online-question-paper" aria-label="Online question paper">
+    <div class="online-question-paper__layout">
+      <div class="online-question-paper__left">
+        <mat-card class="admin-page__card online-question-paper__filters">
+          <mat-card-header>
+            <mat-card-title>Filters</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="online-question-paper__filter-form">
+              <mat-form-field appearance="outline" class="online-question-paper__field">
+                <mat-label>Session</mat-label>
+                <mat-select
+                  name="session"
+                  [(ngModel)]="selectedSessionId"
+                  (selectionChange)="onSessionOrCollegeChange()"
+                  required
+                >
+                  @for (session of sessions; track session.sessionId) {
+                    <mat-option [value]="session.sessionId">{{ session.sessionName }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="online-question-paper__field">
+                <mat-label>College</mat-label>
+                <mat-select
+                  name="college"
+                  [(ngModel)]="selectedCollegeId"
+                  (selectionChange)="onSessionOrCollegeChange()"
+                  required
+                >
+                  @for (college of colleges; track college.collegeId) {
+                    <mat-option [value]="college.collegeId">{{ college.collegeAbreviation }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="online-question-paper__field">
+                <mat-label>Class</mat-label>
+                <mat-select
+                  name="class"
+                  [(ngModel)]="selectedCourseId"
+                  (selectionChange)="onClassChange($event.value)"
+                  required
+                >
+                  @for (classItem of classes; track classItem.courseId) {
+                    <mat-option [value]="classItem.courseId">{{ classItem.courseName }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="online-question-paper__field">
+                <mat-label>Exam Name</mat-label>
+                <mat-select
+                  name="examName"
+                  [(ngModel)]="examName"
+                  (selectionChange)="onExamOrSubjectChange()"
+                  required
+                >
+                  @for (exam of exams; track exam.examId) {
+                    <mat-option [value]="exam.examName">{{ exam.examName }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="online-question-paper__field">
+                <mat-label>Subject Name</mat-label>
+                <mat-select
+                  name="subjectName"
+                  [(ngModel)]="selectedSubjectName"
+                  (selectionChange)="onExamOrSubjectChange()"
+                  required
+                >
+                  @for (subject of subjects; track subject.subjectId) {
+                    <mat-option [value]="subject.subjectName">{{ subject.subjectName }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="admin-page__card online-question-paper__master">
+          <mat-card-header>
+            <mat-card-title>Question Master List</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (loadingQuestions) {
+              <p class="online-question-paper__loading">Loading questions…</p>
+            }
+            <div class="online-question-paper__table-wrap">
+              <table class="admin-table online-question-paper__table mat-elevation-z0">
+                <thead>
+                  <tr>
+                    <th class="online-question-paper__sl-col">S.N</th>
+                    <th class="online-question-paper__select-col"></th>
+                    <th class="online-question-paper__marks-col">Marks</th>
+                    <th>Question</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (questionMasterList.length) {
+                    @for (row of questionMasterList; track row.questionId ?? row.seqNo; let i = $index) {
+                      <tr class="admin-table__row" [class.admin-table__row--alt]="i % 2 === 1">
+                        <td class="online-question-paper__sl-col">{{ row.seqNo }}</td>
+                        <td class="online-question-paper__select-col">
+                          <mat-checkbox
+                            [checked]="isQuestionChecked(row)"
+                            (change)="toggleQuestionSelection(row, $event.checked)"
+                          />
+                        </td>
+                        <td class="online-question-paper__marks-col">
+                          <input
+                            class="online-question-paper__marks-input"
+                            type="number"
+                            min="0"
+                            name="marks{{ row.questionId }}"
+                            [(ngModel)]="row.marks"
+                          />
+                        </td>
+                        <td class="online-question-paper__question-cell">
+                          @if (isImageQuestion(row.question)) {
+                            <img [src]="row.question" alt="Question {{ row.seqNo }}" class="online-question-paper__question-img" />
+                          } @else {
+                            <div [innerHTML]="questionHtml(row.question)"></div>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  } @else {
+                    <tr>
+                      <td class="online-question-paper__empty" colspan="4">
+                        @if (canLoadQuestions()) {
+                          No questions found for selected filters.
+                        } @else {
+                          Select session, college, class, exam, and subject to load questions.
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="online-question-paper__actions">
+              <button
+                mat-stroked-button
+                color="primary"
+                type="button"
+                [disabled]="saving || !checkedQuestionIds.size"
+                (click)="addCheckedToPaper()"
+              >
+                {{ saving ? 'Saving...' : 'Add Selected' }}
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="online-question-paper__right">
+        <mat-card class="admin-page__card online-question-paper__selected">
+          <mat-card-header>
+            <mat-card-title>Selected Question For Paper</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="online-question-paper__table-wrap">
+              <table class="admin-table online-question-paper__table mat-elevation-z0">
+                <thead>
+                  <tr>
+                    <th class="online-question-paper__remove-col"></th>
+                    <th class="online-question-paper__sl-col">SL. No.</th>
+                    <th>Question</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (selectedQuestionList.length) {
+                    @for (row of selectedQuestionList; track row.questionId ?? row.seqNo; let i = $index) {
+                      <tr class="admin-table__row" [class.admin-table__row--alt]="i % 2 === 1">
+                        <td class="online-question-paper__remove-col">
+                          <button
+                            mat-icon-button
+                            type="button"
+                            color="warn"
+                            aria-label="Remove question"
+                            (click)="removeFromPaper(row)"
+                          >
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        </td>
+                        <td class="online-question-paper__sl-col">{{ row.seqNo }}</td>
+                        <td class="online-question-paper__question-cell">
+                          @if (isImageQuestion(row.question)) {
+                            <img [src]="row.question" alt="Question {{ row.seqNo }}" class="online-question-paper__question-img" />
+                          } @else {
+                            <div [innerHTML]="questionHtml(row.question)"></div>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  } @else {
+                    <tr>
+                      <td class="online-question-paper__empty" colspan="3">
+                        No questions selected for paper.
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </section>
+</div>

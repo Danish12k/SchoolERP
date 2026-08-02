@@ -1,19 +1,136 @@
+/* Compact, polished page header */
+page-header.matero-page-header,
 .matero-page-header {
   display: block;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  color: rgba(255, 255, 255, .87);
-  background-color: #0074e9;
-  border-radius: var(--mdc-elevated-card-container-shape);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 8px;
+  padding: 0;
+  color: #fff;
+  background: linear-gradient(120deg, #0d47a1 0%, #1565c0 45%, #1976d2 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 1px 2px rgba(13, 71, 161, 0.2),
+    0 4px 12px rgba(13, 71, 161, 0.15);
+  overflow: hidden;
+}
 
-  .matero-breadcrumb {
-    margin-top: 0.5rem;
-    margin-bottom: 0;
-  }
+.matero-page-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 16px;
+  min-height: 44px;
+  padding: 8px 14px 8px 12px;
+  margin: 0;
+  border-left: 4px solid #4fc3f7;
+}
+
+.matero-page-header__title-block {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .matero-page-title {
   margin: 0;
-  font-size: 1.5rem;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+}
+
+.matero-page-subtitle {
+  margin: 2px 0 0;
+  padding: 0;
+  font-size: 12px;
   font-weight: 400;
+  line-height: 1.25;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.matero-page-header__breadcrumb,
+.matero-page-header breadcrumb {
+  display: block;
+  flex: 0 1 auto;
+  margin: 0;
+  padding: 0;
+}
+
+.matero-page-header .matero-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px 2px;
+  margin: 0 !important;
+  padding: 4px 8px !important;
+  list-style: none;
+  font-size: 12px;
+  line-height: 1.25;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.matero-page-header .matero-breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.25;
+  color: rgba(255, 255, 255, 0.78);
+  text-transform: capitalize;
+
+  > a.link {
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+  }
+
+  > span {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 500;
+  }
+
+  > .chevron {
+    width: 14px !important;
+    height: 14px !important;
+    margin: 0;
+    font-size: 14px !important;
+    line-height: 14px;
+    color: rgba(255, 255, 255, 0.55) !important;
+  }
+
+  &:last-child > span {
+    color: #fff;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 599px) {
+  .matero-page-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-height: 0;
+    padding: 8px 12px;
+  }
+
+  .matero-page-header .matero-breadcrumb {
+    justify-content: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+  }
 }

@@ -1,0 +1,37 @@
+/* Shared two-panel layout: entry (form/filter) + list (datatable) */
+
+.fee-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px 0 16px;
+}
+
+.fee-page__section {
+  display: block;
+}
+
+.fee-page__section--entry mat-card {
+  border-left: 4px solid var(--mat-sys-primary, #3f51b5);
+}
+
+.fee-page__section--list mat-card {
+  border-left: 4px solid var(--mat-sys-tertiary, #7c4dff);
+}
+
+.fee-page__section--list .mat-mdc-card-header {
+  padding-bottom: 0;
+}
+
+.fee-page__section--list mat-card-content {
+  padding-top: 8px;
+}
+
+.fee-page__list-toolbar {
+  margin-bottom: 12px;
+}
+
+.fee-page__list-toolbar .mat-mdc-form-field {
+  width: 100%;
+  max-width: 360px;
+}

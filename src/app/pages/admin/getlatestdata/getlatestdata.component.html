@@ -1,0 +1,41 @@
+<div class="admin-layout">
+  <page-header
+    class="admin-layout__header"
+    title="Get Student Latest Data"
+    [nav]="['home', 'Admin', 'Get Student Latest Data']"
+  />
+
+  <section class="admin-page get-latest-data" aria-label="Get student latest data">
+    <mat-card class="admin-page__card get-latest-data__card">
+      <div class="get-latest-data__banner">Get Student Latest Data</div>
+      <mat-card-content class="get-latest-data__content">
+        <div class="get-latest-data__toolbar">
+          <mat-form-field appearance="outline" class="get-latest-data__select">
+            <mat-label>College</mat-label>
+            <mat-select
+              name="college"
+              [(ngModel)]="selectedCollegeId"
+              placeholder="Select"
+              [disabled]="loadingColleges"
+              required
+            >
+              @for (college of colleges; track college.collegeId) {
+                <mat-option [value]="college.collegeId">{{ collegeLabel(college) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <button
+            mat-stroked-button
+            type="button"
+            class="get-latest-data__button"
+            [disabled]="loading || loadingColleges || selectedCollegeId == null"
+            (click)="getLatestData()"
+          >
+            {{ loading ? 'Loading...' : 'Get Latest Data' }}
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

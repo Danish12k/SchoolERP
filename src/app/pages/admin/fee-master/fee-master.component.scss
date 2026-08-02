@@ -1,0 +1,95 @@
+:host {
+  display: block;
+}
+
+.admin-page__content--tabs {
+  gap: 1rem;
+  padding-top: 1rem !important;
+}
+
+.fee-master-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #87ceeb;
+  border-radius: 10px;
+  background-color: #e3f4fc;
+}
+
+.fee-master-tabs__button {
+  min-height: 40px;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.74);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+
+  &:hover {
+    border-color: #4a90e2;
+    background-color: rgba(255, 255, 255, 0.65);
+    color: #0d47a1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #0d47a1;
+    outline-offset: 2px;
+  }
+}
+
+.fee-master-tabs__button--active {
+  border-color: #4a90e2;
+  background-color: #fff;
+  color: #0d47a1;
+  box-shadow: 0 2px 8px rgba(13, 71, 161, 0.12);
+}
+
+.fee-master-content {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  overflow: auto;
+}
+
+:host-context(.theme-dark) {
+  .fee-master-tabs {
+    background-color: #e3f4fc;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .fee-master-tabs__button {
+    color: rgba(0, 0, 0, 0.74);
+  }
+
+  .fee-master-tabs__button--active {
+    background-color: #fff;
+    color: #0d47a1;
+  }
+
+  .fee-master-content {
+    background-color: #fff;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+@media (max-width: 600px) {
+  .fee-master-tabs,
+  .fee-master-content {
+    border-radius: 8px;
+  }
+
+  .fee-master-tabs__button {
+    flex: 1 1 100%;
+  }
+}

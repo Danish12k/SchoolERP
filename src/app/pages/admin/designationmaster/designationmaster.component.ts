@@ -1,31 +1,45 @@
-import { AfterViewInit, Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DesignationService } from '../../../services/designation.service';
+import { DesignationService } from '../../../services/masterservice/designation.service';
 import { MatCardModule } from '@angular/material/card';
-import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
-import { IApiResponse, IDesignation } from '../../../interfaces/IDesignation';
-import { PageHeaderComponent } from '@shared';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { PageHeaderComponent } from '@shared';
+import { IApiResponse, IDesignation } from '../../../interfaces/IDesignation';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-designationmaster',
+  host: { class: 'admin-page-host' },
   imports: [
     FormsModule,
-    MatCardModule,
-    MaterialModule,
     PageHeaderComponent,
+    MatCardModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatCheckbox,
-    MatIcon,
     MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
   ],
   templateUrl: './designationmaster.component.html',
   styleUrl: './designationmaster.component.scss',
@@ -33,20 +47,22 @@ import { ToastrService } from 'ngx-toastr';
 export class DesignationmasterComponent implements OnInit, AfterViewInit {
   private designationService = inject(DesignationService);
   private toast = inject(ToastrService);
+  private dialog = inject(MatDialog);
 
   dataSource = new MatTableDataSource<IDesignation>([]);
-  displayedColumns: string[] = ['select', 'designation', 'actions'];
-  selection: IDesignation[] = [];
-
-  constructor(private dialog: MatDialog) {}
+  displayedColumns: string[] = ['index', 'designation', 'actions'];
+  newDesignation: IDesignation = { id: 0, designation: '' };
+  isLoading = false;
+  isSaving = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog!: TemplateRef<{ id: number; designation: string }>;
-
-  designationName = '';
+  @ViewChild('addDialog') addDialog!: TemplateRef<void>;
+  @ViewChild('editDialog') editDialog!: TemplateRef<IDesignation>;
 
   ngOnInit(): void {
+    this.dataSource.filterPredicate = (row, filter) =>
+      row.designation?.toLowerCase().includes(filter) ?? false;
     this.getDesignationList();
   }
 
@@ -55,103 +71,93 @@ export class DesignationmasterComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  clearForm(): void {
-    this.designationName = '';
+  openAddDialog(): void {
+    this.newDesignation = { id: 0, designation: '' };
+    this.dialog.open(this.addDialog, { width: 'min(440px, 92vw)', maxWidth: '95vw' });
   }
 
   addDesignation(): void {
-    const name = this.designationName.trim();
+    const name = this.newDesignation.designation?.trim() ?? '';
     if (!name) {
       this.toast.warning('Please enter a designation name.');
       return;
     }
-
+    this.isSaving = true;
     this.designationService.addDesignation(name).subscribe({
       next: (res: IApiResponse<IDesignation>) => {
+        this.isSaving = false;
         if (res.success) {
           this.toast.success(res.message || 'Designation added successfully');
+          this.dialog.closeAll();
           this.getDesignationList();
-          this.designationName = '';
         } else {
           this.toast.error(res.message || 'Failed to add designation');
         }
       },
-      error: (err: Error) => {
-        this.toast.error(err?.message ?? 'Something went wrong.');
-        console.error('Error adding designation', err);
+      error: () => {
+        this.isSaving = false;
+        this.toast.error('Failed to add designation');
       },
     });
   }
 
   getDesignationList(): void {
+    this.isLoading = true;
     this.designationService.getDesignationList().subscribe({
       next: (res) => {
-        if (res.success && res.data != null) {
-          const rows = Array.isArray(res.data) ? res.data : [res.data];
+        this.isLoading = false;
+        if (res.success) {
+          const rows = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
           this.dataSource.data = rows;
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
+        } else {
+          this.toast.error(res.message || 'Failed to load designations');
         }
       },
-      error: (err) => {
-        console.error('Error fetching designations:', err);
+      error: () => {
+        this.isLoading = false;
+        this.toast.error('Failed to load designations');
       },
     });
   }
 
   applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.paginator?.firstPage();
   }
 
-  toggleSelection(row: IDesignation): void {
-    if (this.selection.includes(row)) {
-      this.selection = this.selection.filter((r) => r !== row);
-    } else {
-      this.selection.push(row);
-    }
-  }
-
-  isAllSelected(): boolean {
-    return this.selection.length > 0 && this.selection.length === this.dataSource.data.length;
-  }
-
-  isPartialSelected(): boolean {
-    return this.selection.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle(): void {
-    if (this.isAllSelected()) {
-      this.selection = [];
-    } else {
-      this.selection = [...this.dataSource.data];
-    }
+  rowIndex(i: number): number {
+    return this.paginator ? this.paginator.pageIndex * this.paginator.pageSize + i + 1 : i + 1;
   }
 
   openEditDialog(row: IDesignation): void {
     const dialogRef = this.dialog.open(this.editDialog, {
-      width: 'min(480px, 92vw)',
+      width: 'min(440px, 92vw)',
       maxWidth: '95vw',
       data: { ...row },
     });
-
     dialogRef.afterClosed().subscribe((result: IDesignation | undefined) => {
-      if (result?.designation?.trim()) {
-        this.designationService.updateDesignation(result).subscribe({
+      if (!result?.designation?.trim()) {
+        return;
+      }
+      this.designationService
+        .updateDesignation({
+          id: result.id,
+          designation: result.designation.trim(),
+        })
+        .subscribe({
           next: (res) => {
             if (res.success) {
-              this.toast.success(res.message ?? 'Designation updated successfully');
+              this.toast.success(res.message || 'Designation updated successfully');
               this.getDesignationList();
             } else {
               this.toast.error(res.message || 'Failed to update designation');
             }
           },
-          error: (err) => {
-            console.error('Error updating designation:', err);
-            this.toast.error('Failed to update designation');
-          },
+          error: () => this.toast.error('Failed to update designation'),
         });
-      }
     });
   }
 }

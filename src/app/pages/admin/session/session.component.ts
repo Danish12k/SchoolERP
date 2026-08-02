@@ -1,175 +1,247 @@
-import { Component, inject, Inject, OnInit, ViewChild } from '@angular/core';
-import { PageHeaderComponent } from "@shared";
-import { MatCard, MatCardModule } from "@angular/material/card";
-import { MaterialModule } from "../../../../../schematics/ng-add/files/module-files/app/material.module";
-import { FormsModule, NgForm } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
-import { SessionService } from '../../../services/session.service';
-import { ISession } from '../../../interfaces/isession';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ISession } from '../../../interfaces/isession';
+import { SessionService } from '../../../services/masterservice/session.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { PageHeaderComponent } from '@shared';
 import { ToastrService } from 'ngx-toastr';
+
+interface ISessionForm {
+  sessionId: number;
+  sessionName: string;
+  description: string;
+  yearFrom: Date | null;
+  yearTo: Date | null;
+}
 
 @Component({
   selector: 'app-session',
-  imports: [PageHeaderComponent, MatCard,
-    MaterialModule,
+  host: { class: 'admin-page-host' },
+  imports: [
     FormsModule,
-    MatButtonModule,
+    PageHeaderComponent,
     MatCardModule,
-    MatDatepickerModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
-    MatOptionModule,
-    MatSelectModule,
-    TranslateModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    MatDatepickerModule,
   ],
+  providers: [DatePipe],
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss',
-  providers: [DatePipe]
 })
-export class SessionComponent implements OnInit {
-  private datepipe: DatePipe = inject(DatePipe);
-  private _sessionservice = inject(SessionService);
+export class SessionComponent implements OnInit, AfterViewInit {
+  private sessionService = inject(SessionService);
+  private datePipe = inject(DatePipe);
   private toast = inject(ToastrService);
+  private dialog = inject(MatDialog);
+
   dataSource = new MatTableDataSource<ISession>([]);
-  displayedColumns: string[] = ['select', 'Name', 'Description', 'yearFrom', 'yearTo', 'actions'];
-  selection: ISession[] = [];
-  constructor(private dialog: MatDialog) { }
+  displayedColumns: string[] = ['index', 'sessionName', 'description', 'yearFrom', 'yearTo', 'actions'];
+  newSession: ISessionForm = this.emptySessionForm();
+  isLoading = false;
+  isSaving = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
-
-  sessionName: string = '';
-  description: string = '';
-  yearFrom: Date | null = null;
-  yearTo: Date | null = null;
+  @ViewChild('addDialog') addDialog!: TemplateRef<void>;
+  @ViewChild('editDialog') editDialog!: TemplateRef<ISessionForm>;
 
   ngOnInit(): void {
-    this.getsessionList();
+    this.dataSource.filterPredicate = (row, filter) => {
+      const hay = `${row.sessionName} ${row.description} ${row.yearFrom} ${row.yearTo}`.toLowerCase();
+      return hay.includes(filter);
+    };
+    this.loadSessionList();
   }
 
-  addSession(form: NgForm) {
-    debugger;
-    if (form.invalid) {
-      this.toast.warning('Please fill all required fields');
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  private emptySessionForm(): ISessionForm {
+    return {
+      sessionId: 0,
+      sessionName: '',
+      description: '',
+      yearFrom: null,
+      yearTo: null,
+    };
+  }
+
+  private parseDate(value: string): Date | null {
+    if (!value) {
+      return null;
+    }
+    const parts = value.split('/');
+    if (parts.length !== 3) {
+      return null;
+    }
+    const day = Number(parts[0]);
+    const month = Number(parts[1]);
+    const year = Number(parts[2]);
+    if (!day || !month || !year) {
+      return null;
+    }
+    return new Date(year, month - 1, day);
+  }
+
+  private formatDate(value: Date | null): string {
+    return this.datePipe.transform(value, 'dd/MM/yyyy') ?? '';
+  }
+
+  private toApiPayload(form: ISessionForm): ISession {
+    return {
+      sessionId: form.sessionId,
+      sessionName: form.sessionName.trim(),
+      description: form.description.trim(),
+      yearFrom: this.formatDate(form.yearFrom),
+      yearTo: this.formatDate(form.yearTo),
+    };
+  }
+
+  private toSessionForm(row: ISession): ISessionForm {
+    return {
+      sessionId: row.sessionId,
+      sessionName: row.sessionName,
+      description: row.description,
+      yearFrom: this.parseDate(row.yearFrom),
+      yearTo: this.parseDate(row.yearTo),
+    };
+  }
+
+  openAddDialog(): void {
+    this.newSession = this.emptySessionForm();
+    this.dialog.open(this.addDialog, { width: 'min(480px, 92vw)', maxWidth: '95vw' });
+  }
+
+  addSession(): void {
+    const name = this.newSession.sessionName?.trim() ?? '';
+    const description = this.newSession.description?.trim() ?? '';
+    if (!name || !description || !this.newSession.yearFrom || !this.newSession.yearTo) {
+      this.toast.warning('Please fill all required fields.');
       return;
     }
-    debugger;
-    const newSession: ISession = {
-      sessionId: 0, // Assuming 0 for new session, backend should assign the actual ID
-      sessionName: this.sessionName,
-      description: this.description,
-      yearFrom: this.datepipe.transform(this.yearFrom, "dd/MM/yyyy") || '',
-      yearTo: this.datepipe.transform(this.yearTo, "dd/MM/yyyy") || ''
-    };
-    debugger;
-    this._sessionservice.addSession(newSession).subscribe({
-      next: (res) => {
-        debugger;
+    this.isSaving = true;
+    this.sessionService.addSession(this.toApiPayload(this.newSession)).subscribe({
+      next: res => {
+        this.isSaving = false;
         if (res.success) {
           this.toast.success(res.message || 'Session added successfully');
-          this.getsessionList(); // Refresh the list
-          form.resetForm(); // Reset the form after successful submission
+          this.dialog.closeAll();
+          this.loadSessionList();
         } else {
           this.toast.error(res.message || 'Failed to add session');
         }
       },
-      error: (err) => {
-        console.error('Error adding session:', err);
+      error: () => {
+        this.isSaving = false;
         this.toast.error('Failed to add session');
-      }
-    });
-
-  }
-
-
-  getsessionList() {
-    this._sessionservice.getSessionList().subscribe(response => {
-      console.log('Session list fetched successfully:', response);
-      if (response.success && response.data) {
-        this.dataSource.data = response.data;
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      }
-    }, error => {
-      console.error('Error fetching session list:', error);
+      },
     });
   }
 
-  openEditDialog(session: ISession) {
+  loadSessionList(): void {
+    this.isLoading = true;
+    this.sessionService.getSessionList().subscribe({
+      next: res => {
+        this.isLoading = false;
+        if (res.success && res.data) {
+          this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        } else {
+          this.toast.error(res.message || 'Failed to load sessions');
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toast.error('Failed to load sessions');
+      },
+    });
+  }
+
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.paginator?.firstPage();
+  }
+
+  rowIndex(i: number): number {
+    return this.paginator ? this.paginator.pageIndex * this.paginator.pageSize + i + 1 : i + 1;
+  }
+
+  openEditDialog(row: ISession): void {
     const dialogRef = this.dialog.open(this.editDialog, {
-      width: '400px',
-      data: { ...session }
+      width: 'min(480px, 92vw)',
+      maxWidth: '95vw',
+      data: this.toSessionForm(row),
     });
-    debugger;
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        debugger;
-        // Handle the result from the dialog (e.g., save changes)
-        console.log('Dialog result:', result);
-        this._sessionservice.updateSession(result).subscribe({
-          next: (res) => {
-            if (res.success) {
-              this.toast.success(res.message || 'Session updated successfully');
-              this.getsessionList(); // Refresh the list
-            } else {
-              this.toast.error(res.message || 'Failed to update session');
-            }
-          },
-          error: (err) => {
-            console.error('Error updating session:', err);
-            this.toast.error('Failed to update session');
-          }
-        })
+    dialogRef.afterClosed().subscribe((result: ISessionForm | undefined) => {
+      if (!result?.sessionName?.trim() || !result.description?.trim()) {
+        return;
       }
+      if (!result.yearFrom || !result.yearTo) {
+        return;
+      }
+      this.sessionService.updateSession(this.toApiPayload(result)).subscribe({
+        next: res => {
+          if (res.success) {
+            this.toast.success(res.message || 'Session updated successfully');
+            this.loadSessionList();
+          } else {
+            this.toast.error(res.message || 'Failed to update session');
+          }
+        },
+        error: () => this.toast.error('Failed to update session'),
+      });
     });
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-  sessionDelete(session: ISession) {
-    // Implement delete functionality here
-    console.log('Delete session:', session);
-    this.toast.info('Delete not implemented yet.');
-  }
-  /** Checkbox Selection Logic */
-  toggleSelection(row: ISession) {
-    if (this.selection.includes(row)) {
-      this.selection = this.selection.filter(r => r !== row);
-    } else {
-      this.selection.push(row);
+  deleteSession(row: ISession): void {
+    if (row.sessionId <= 0) {
+      return;
     }
-  }
-
-  isAllSelected() {
-    return this.selection.length === this.dataSource.data.length;
-  }
-
-  isPartialSelected() {
-    return this.selection.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection = [];
-    } else {
-      this.selection = [...this.dataSource.data];
+    if (!confirm('Delete this session?')) {
+      return;
     }
+    this.sessionService.deleteSession(row.sessionId).subscribe({
+      next: res => {
+        if (res.success) {
+          this.toast.success(res.message || 'Session deleted successfully');
+          this.loadSessionList();
+        } else {
+          this.toast.error(res.message || 'Failed to delete session');
+        }
+      },
+      error: () => this.toast.error('Failed to delete session'),
+    });
   }
-
 }

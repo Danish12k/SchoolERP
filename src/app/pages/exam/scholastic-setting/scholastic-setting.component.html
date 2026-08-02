@@ -1,0 +1,39 @@
+<div class="admin-layout">
+  <page-header
+    class="admin-layout__header"
+    title="Scholastic Setting"
+    [nav]="['home', 'Admin', 'Scholastic Setting']"
+  />
+
+  <section class="admin-page" aria-label="Scholastic setting management">
+    <mat-card class="admin-page__card admin-page__card--tabs">
+      <mat-card-content class="admin-page__content admin-page__content--tabs">
+        <div class="class-section-tabs" role="tablist" aria-label="Scholastic setting sections">
+          @for (tab of tabs; track tab.key) {
+            <button
+              type="button"
+              class="class-section-tabs__button"
+              [class.class-section-tabs__button--active]="selectedTab === tab.key"
+              role="tab"
+              [attr.aria-selected]="selectedTab === tab.key"
+              (click)="selectedTab = tab.key"
+            >
+              {{ tab.label }}
+            </button>
+          }
+        </div>
+
+        <div class="class-section-content">
+          @switch (selectedTab) {
+            @case ('scholasticArea') {
+              <app-scholastic-area [embedded]="true" />
+            }
+            @case ('scholasticSkills') {
+              <app-scholastic-skills [embedded]="true" />
+            }
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

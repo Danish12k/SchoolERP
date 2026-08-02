@@ -6,3 +6,8 @@
 @use 'styles/helpers';
 @use 'styles/plugins';
 @use 'styles/custom';
+
+/* Quill rich text (ngx-quill) */
+@import 'quill/dist/quill.core.css';
+@import 'quill/dist/quill.snow.css';
+@import 'katex/dist/katex.min.css';

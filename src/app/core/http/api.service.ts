@@ -5,8 +5,7 @@ import { Observable } from 'rxjs';
 /**
  * Generic HTTP wrapper for the app.
  *
- * Use relative URLs (e.g. `/Student/StudentList`) so interceptors can apply:
- * - BASE_URL prefixing
+ * Use full module URLs from *_api_endpoint.ts so interceptors can apply:
  * - Authorization token
  * - error handling
  */

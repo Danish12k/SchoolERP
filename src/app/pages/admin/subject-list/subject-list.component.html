@@ -1,0 +1,39 @@
+<div class="admin-layout">
+  <page-header
+    class="admin-layout__header"
+    title="Subject Master"
+    [nav]="['home', 'Admin', 'Subject List']"
+  />
+
+  <section class="admin-page" aria-label="Subject management">
+    <mat-card class="admin-page__card admin-page__card--tabs">
+      <mat-card-content class="admin-page__content admin-page__content--tabs">
+        <div class="class-section-tabs" role="tablist" aria-label="Subject master sections">
+          @for (tab of tabs; track tab.key) {
+            <button
+              type="button"
+              class="class-section-tabs__button"
+              [class.class-section-tabs__button--active]="selectedTab === tab.key"
+              role="tab"
+              [attr.aria-selected]="selectedTab === tab.key"
+              (click)="selectedTab = tab.key"
+            >
+              {{ tab.label }}
+            </button>
+          }
+        </div>
+
+        <div class="class-section-content">
+          @switch (selectedTab) {
+            @case ('addSubject') {
+              <app-subjectmaster [embedded]="true" />
+            }
+            @case ('assignSubject') {
+              <app-assignsubject [embedded]="true" />
+            }
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

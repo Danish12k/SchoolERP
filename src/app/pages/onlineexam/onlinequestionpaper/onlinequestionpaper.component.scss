@@ -1,0 +1,200 @@
+.online-question-paper {
+  display: grid;
+  gap: 1rem;
+}
+
+.online-question-paper__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.online-question-paper__left,
+.online-question-paper__right {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.online-question-paper__filters,
+.online-question-paper__master,
+.online-question-paper__selected {
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .online-question-paper__layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.online-question-paper__master,
+.online-question-paper__selected {
+  .mat-mdc-card-header {
+    justify-content: center;
+  }
+
+  .mat-mdc-card-title {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+.online-question-paper__filter-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+$filter-outline-color: rgba(0, 0, 0, 0.38);
+$filter-outline-hover-color: rgba(0, 0, 0, 0.87);
+$filter-outline-focus-color: rgba(0, 0, 0, 0.87);
+
+.online-question-paper__field {
+  width: 100%;
+  --mat-form-field-required-marker-color: #{$filter-outline-color};
+  --mdc-outlined-text-field-outline-color: #{$filter-outline-color};
+  --mdc-outlined-text-field-hover-outline-color: #{$filter-outline-hover-color};
+  --mdc-outlined-text-field-focus-outline-color: #{$filter-outline-focus-color};
+  --mdc-outlined-text-field-disabled-outline-color: #{$filter-outline-color};
+  --mdc-outlined-text-field-disabled-label-text-color: rgba(0, 0, 0, 0.6);
+  --mdc-outlined-text-field-disabled-input-text-color: rgba(0, 0, 0, 0.38);
+}
+
+:host ::ng-deep .online-question-paper__field {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: #{$filter-outline-color} !important;
+    border-width: 1px !important;
+    opacity: 1 !important;
+  }
+
+  &:hover:not(.mat-form-field-disabled):not(.mat-mdc-form-field-disabled) {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #{$filter-outline-hover-color} !important;
+    }
+  }
+
+  &.mat-form-field-disabled,
+  &.mat-mdc-form-field-disabled {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #{$filter-outline-color} !important;
+      border-width: 1px !important;
+      opacity: 1 !important;
+    }
+
+    .mat-mdc-select-arrow {
+      opacity: 0.7;
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      opacity: 1 !important;
+      color: rgba(0, 0, 0, 0.6) !important;
+    }
+  }
+
+  &.mat-focused .mdc-notched-outline {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #{$filter-outline-focus-color} !important;
+      border-width: 2px !important;
+    }
+  }
+}
+
+.online-question-paper__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.online-question-paper__table {
+  width: 100%;
+  min-width: 480px;
+
+  th,
+  td {
+    vertical-align: middle;
+  }
+}
+
+.online-question-paper__select-col,
+.online-question-paper__remove-col,
+.online-question-paper__sl-col {
+  width: 72px;
+  text-align: center;
+}
+
+.online-question-paper__marks-col {
+  width: 88px;
+  text-align: center;
+}
+
+.online-question-paper__marks-input {
+  width: 64px;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid rgba(0, 0, 0, 0.38);
+  border-radius: 4px;
+  text-align: center;
+  background: #fff;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+.online-question-paper__question-cell {
+  min-width: 180px;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.4;
+  vertical-align: top;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+
+  ::ng-deep p {
+    margin: 0 0 0.35rem;
+  }
+
+  ::ng-deep p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.online-question-paper__question-img {
+  display: block;
+  max-width: 100%;
+  max-height: 160px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.online-question-paper__loading {
+  margin: 0 0 0.75rem;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.online-question-paper__empty {
+  text-align: center;
+  padding: 1rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.online-question-paper__actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}

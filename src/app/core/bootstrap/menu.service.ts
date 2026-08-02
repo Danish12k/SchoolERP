@@ -15,6 +15,7 @@ export interface MenuChildrenItem {
   route: string;
   name: string;
   type: 'link' | 'sub' | 'extLink' | 'extTabLink';
+  seqNo?: number;
   children?: MenuChildrenItem[];
   permissions?: MenuPermissions;
 }
@@ -24,6 +25,7 @@ export interface Menu {
   name: string;
   type: 'link' | 'sub' | 'extLink' | 'extTabLink';
   icon: string;
+  seqNo?: number;
   label?: MenuTag;
   badge?: MenuTag;
   children?: MenuChildrenItem[];
@@ -56,6 +58,8 @@ export interface MenuChildResponse  {
   route: string;
   icon: string;
   type: 'link' | 'extLink' | 'extTabLink';
+  seqNo?: number;
+  children?: MenuChildResponse[];
 }
 
 /* export interface MenuChildrenItem {
@@ -93,8 +97,36 @@ export class MenuService {
 
   /** Initialize the menu data. */
   set(menu: Menu[]) {
-    this.menu$.next(menu);
+    this.menu$.next(this.sortMenuTree(menu));
     return this.menu$.asObservable();
+  }
+
+  private sortMenuTree(menu: Menu[]): Menu[] {
+    return this.sortBySeqNo(menu).map(item => ({
+      ...item,
+      children: item.children?.length ? this.sortMenuChildren(item.children) : [],
+    }));
+  }
+
+  private sortMenuChildren(children: MenuChildrenItem[]): MenuChildrenItem[] {
+    return this.sortBySeqNo(children).map(child => ({
+      ...child,
+      children: child.children?.length ? this.sortMenuChildren(child.children) : [],
+    }));
+  }
+
+  private sortBySeqNo<T extends { seqNo?: number }>(items: T[]): T[] {
+    return items
+      .map((item, index) => ({ item, index }))
+      .sort((a, b) => {
+        const seqA = a.item.seqNo ?? Number.MAX_SAFE_INTEGER;
+        const seqB = b.item.seqNo ?? Number.MAX_SAFE_INTEGER;
+        if (seqA !== seqB) {
+          return seqA - seqB;
+        }
+        return a.index - b.index;
+      })
+      .map(({ item }) => item);
   }
 
   /** Add one item to the menu data. */
@@ -112,13 +144,41 @@ export class MenuService {
   /** Delete empty values and rebuild route. */
   buildRoute(routeArr: string[]) {
 
-    let route = '';
-    routeArr.forEach(item => {
-      if (item && item.trim()) {
-        route += '/' + item.replace(/^\/+|\/+$/g, '');
-      }
-    });
-    return route;
+    const routeParts = routeArr
+      .filter(item => item && item.trim())
+      .map(item => item.replace(/^\/+|\/+$/g, ''))
+      .filter(item => {
+        const key = item.toLowerCase();
+        return key !== '#' && key !== '%23';
+      });
+
+    if (routeParts.length === 1 && routeParts[0].toLowerCase() === 'home') {
+      return '/dashboard';
+    }
+
+    const lastPart = routeParts[routeParts.length - 1]?.toLowerCase().replace(/[\s_-]/g, '') ?? '';
+    if (lastPart === 'tclist') {
+      return '/student/tclist';
+    }
+    if (lastPart === 'uploadstudentdata') {
+      return '/student/uploadstudentdata';
+    }
+    if (lastPart === 'installmentstatus' || lastPart === 'feeinstallmentstatus') {
+      return '/fee/installmentStatus';
+    }
+    const lastPartNoAspx = lastPart.replace(/\.aspx$/, '');
+    if (
+      lastPartNoAspx === 'feedefaulter' ||
+      lastPartNoAspx === 'feedefaulterlist' ||
+      lastPartNoAspx === 'feedeefaulterlist'
+    ) {
+      return '/fee/feeDefaulter';
+    }
+    if (lastPartNoAspx === 'feeheadsection' || lastPartNoAspx === 'feeheadbysection') {
+      return '/fee/feeHeadSection';
+    }
+
+    return routeParts.length ? '/' + routeParts.join('/') : '';
   }
 
   /** Get the menu item name based on current route. */

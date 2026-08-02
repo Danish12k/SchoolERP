@@ -2,14 +2,13 @@ import { HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest } from '@a
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenService } from '@core/authentication';
+import { API_BASE_URLS } from '@core/constants';
 import { catchError, tap, throwError } from 'rxjs';
-import { BASE_URL } from './base-url-interceptor';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   private readonly router = inject(Router);
   private readonly tokenService = inject(TokenService);
-  private readonly baseUrl = inject(BASE_URL, { optional: true });
 
   private hasHttpScheme = (url: string) => new RegExp('^http(s)?://', 'i').test(url);
 
@@ -25,9 +24,6 @@ export class TokenInterceptor implements HttpInterceptor {
         .handle(
           req.clone({
             headers: req.headers.append('Authorization', this.tokenService.getBearerToken()),
-            // Do NOT send cookies/credentials cross-origin by default.
-            // `withCredentials: true` triggers stricter CORS rules (ACAO cannot be '*')
-            // and will break calls to https://api.asterinfotech.com from localhost.
             withCredentials: false,
           })
         )
@@ -35,6 +31,8 @@ export class TokenInterceptor implements HttpInterceptor {
           catchError((error: HttpErrorResponse) => {
             if (error.status === 401) {
               this.tokenService.clear();
+              sessionStorage.removeItem('schoolCode');
+              localStorage.removeItem('schoolCode');
             }
             return throwError(() => error);
           }),
@@ -46,16 +44,36 @@ export class TokenInterceptor implements HttpInterceptor {
   }
 
   private shouldAppendToken(url: string) {
-    return !this.hasHttpScheme(url) || this.includeBaseUrl(url);
-  }
-
-  private includeBaseUrl(url: string) {
-    if (!this.baseUrl) {
-      return false;
+    if (!this.hasHttpScheme(url)) {
+      return this.isModuleApiUrl(url);
     }
 
-    const baseUrl = this.baseUrl.replace(/\/$/, '');
+    return this.includeKnownApiBaseUrl(url);
+  }
 
-    return new RegExp(`^${baseUrl}`, 'i').test(url);
+  private isModuleApiUrl(url: string): boolean {
+    const normalized = url.replace(/^\.?\//, '');
+    return (
+      normalized.startsWith('master/api') ||
+      normalized.startsWith('student/api') ||
+      normalized.startsWith('onlineexam/api') ||
+      normalized.startsWith('examapi') ||
+      normalized.startsWith('feeapi')
+    );
+  }
+
+  private includeKnownApiBaseUrl(url: string) {
+    const masterBase = API_BASE_URLS.master.replace(/\/$/, '');
+    const studentBase = API_BASE_URLS.student.replace(/\/$/, '');
+    const onlineExamBase = API_BASE_URLS.onlineExam.replace(/\/$/, '');
+    const examBase = API_BASE_URLS.exam.replace(/\/$/, '');
+    const feeBase = API_BASE_URLS.fee.replace(/\/$/, '');
+    return (
+      new RegExp(`^${masterBase}`, 'i').test(url) ||
+      new RegExp(`^${studentBase}`, 'i').test(url) ||
+      new RegExp(`^${onlineExamBase}`, 'i').test(url) ||
+      new RegExp(`^${examBase}`, 'i').test(url) ||
+      new RegExp(`^${feeBase}`, 'i').test(url)
+    );
   }
 }

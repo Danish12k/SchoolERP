@@ -1,20 +1,38 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Location</mat-card-title>
-  </mat-card-header>
+<div class="admin-layout">
+  <page-header class="admin-layout__header" />
 
-  <mat-card-content>
-    <mat-tab-group mat-stretch-tabs dynamicHeight>
-      <mat-tab label="County">
-        <app-country></app-country>
-      </mat-tab>
+  <section class="admin-page" aria-label="Location management">
+    <mat-card class="admin-page__card admin-page__card--tabs">
+      <mat-card-content class="admin-page__content admin-page__content--tabs">
+        <div class="location-tabs" role="tablist" aria-label="Location sections">
+          @for (tab of tabs; track tab.key) {
+            <button
+              type="button"
+              class="location-tabs__button"
+              [class.location-tabs__button--active]="selectedTab === tab.key"
+              role="tab"
+              [attr.aria-selected]="selectedTab === tab.key"
+              (click)="selectedTab = tab.key"
+            >
+              {{ tab.label }}
+            </button>
+          }
+        </div>
 
-      <mat-tab label="State">
-        <app-statemaster></app-statemaster>
-      </mat-tab>
-      <mat-tab label="District">
-        <app-district></app-district>
-      </mat-tab>
-    </mat-tab-group>
-  </mat-card-content>
-</mat-card>
+        <div class="location-content">
+          @switch (selectedTab) {
+            @case ('country') {
+              <app-country [embedded]="true" />
+            }
+            @case ('state') {
+              <app-statemaster [embedded]="true" />
+            }
+            @case ('district') {
+              <app-district [embedded]="true" />
+            }
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

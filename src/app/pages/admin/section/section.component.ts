@@ -1,120 +1,165 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ISection } from '../../../interfaces/ISectionTest';
+import { SectionService } from '../../../services/masterservice/section.service';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatIcon } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import { ISection } from '../../../interfaces/IClassAndSection';
-import { SectionService } from '../../../services/section.service';
-import { BreadcrumbComponent } from "@shared";
-import { debug } from 'console';
-import { IApiResponse } from '../../../interfaces/IDesignation';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { PageHeaderComponent } from '@shared';
+import { IApiResponse } from '../../../interfaces/ICommon';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-section',
-  imports: [FormsModule,
+  host: { class: 'admin-page-host' },
+  imports: [
+    FormsModule,
+    PageHeaderComponent,
     MatCardModule,
-    MatInputModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatIcon,
-    MatDialogModule],
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+  ],
   templateUrl: './section.component.html',
-  styleUrl: './section.component.scss'
+  styleUrl: './section.component.scss',
 })
-export class SectionComponent implements OnInit {
+export class SectionComponent implements OnInit, AfterViewInit {
+  @Input() embedded = false;
+
   private sectionService = inject(SectionService);
   private toast = inject(ToastrService);
-  displayedColumns: string[] = ['sectionName', 'actions'];
-  dataSource = new MatTableDataSource<ISection>([])
-  constructor(private dialog: MatDialog) { }
+  private dialog = inject(MatDialog);
+
+  dataSource = new MatTableDataSource<ISection>([]);
+  displayedColumns: string[] = ['index', 'sectionName', 'actions'];
+  newSection: ISection = { sectionId: 0, sectionName: '' };
+  isLoading = false;
+  isSaving = false;
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
-
-  sectionName: string = '';
+  @ViewChild('addDialog') addDialog!: TemplateRef<void>;
+  @ViewChild('editDialog') editDialog!: TemplateRef<ISection>;
 
   ngOnInit(): void {
-    this.getSectionList();
+    this.dataSource.filterPredicate = (row, filter) =>
+      row.sectionName?.toLowerCase().includes(filter) ?? false;
+    this.loadSectionList();
   }
 
-
-  // for common table code 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
-  openEditDialog(section: ISection) {
-    const dialogRef = this.dialog.open(this.editDialog, {
-      width: '400px',
-      data: { ...section } // Pass a copy of the section data
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        debugger;
-        this.sectionService.updateSection(result).subscribe({
-          next: (res) => {
-            if ((res as any)?.success === false) {
-              this.toast.error((res as any)?.message || 'Failed to update section');
-              return;
-            }
-            this.toast.success((res as any)?.message || 'Section updated successfully');
-            this.getSectionList();
-          }
-        })
-      }
-    });
-
-
+  openAddDialog(): void {
+    this.newSection = { sectionId: 0, sectionName: '' };
+    this.dialog.open(this.addDialog, { width: 'min(440px, 92vw)', maxWidth: '95vw' });
   }
 
-  addSection() {
-    const name = this.sectionName.trim();
+  addSection(): void {
+    const name = this.newSection.sectionName?.trim() ?? '';
     if (!name) {
       this.toast.warning('Please enter section name.');
       return;
     }
-    debugger;
+    this.isSaving = true;
     this.sectionService.addSection(name).subscribe({
       next: (res: IApiResponse<ISection>) => {
-        debugger;
+        this.isSaving = false;
         if (res.success) {
           this.toast.success(res.message || 'Section added successfully');
-          this.getSectionList(); // trigger table update
-          this.sectionName = '';
+          this.dialog.closeAll();
+          this.loadSectionList();
         } else {
           this.toast.error(res.message || 'Failed to add section');
         }
       },
-      error: () => this.toast.error('Failed to add section'),
-    })
-  }
-
-  getSectionList() {
-    debugger;
-    this.sectionService.getSectionList().subscribe({
-      next: (res) => {
-        debugger;
-        if (res.success) {
-          this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];  // Ensure data is always an array
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        }
+      error: () => {
+        this.isSaving = false;
+        this.toast.error('Failed to add section');
       },
-      error: (err) => {
-        debugger;
-        console.error('Error fetching sections:', err);
-      }
     });
   }
 
+  loadSectionList(): void {
+    this.isLoading = true;
+    this.sectionService.getSectionList().subscribe({
+      next: res => {
+        this.isLoading = false;
+        if (res.success) {
+          const rows = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
+          this.dataSource.data = rows;
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        } else {
+          this.toast.error(res.message || 'Failed to load sections');
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toast.error('Failed to load sections');
+      },
+    });
+  }
 
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.paginator?.firstPage();
+  }
 
+  rowIndex(i: number): number {
+    return this.paginator ? this.paginator.pageIndex * this.paginator.pageSize + i + 1 : i + 1;
+  }
+
+  openEditDialog(row: ISection): void {
+    const dialogRef = this.dialog.open(this.editDialog, {
+      width: 'min(440px, 92vw)',
+      maxWidth: '95vw',
+      data: { ...row },
+    });
+    dialogRef.afterClosed().subscribe((result: ISection | undefined) => {
+      const name = result?.sectionName?.trim();
+      if (!name || !result?.sectionId) {
+        return;
+      }
+      this.sectionService
+        .updateSection({ sectionId: result.sectionId, sectionName: name })
+        .subscribe({
+          next: res => {
+            if (res.success) {
+              this.toast.success(res.message || 'Section updated successfully');
+              this.loadSectionList();
+            } else {
+              this.toast.error(res.message || 'Failed to update section');
+            }
+          },
+          error: () => this.toast.error('Failed to update section'),
+        });
+    });
+  }
 }

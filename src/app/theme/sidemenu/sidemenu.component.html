@@ -14,7 +14,7 @@
           routerLinkActive="active" [route]="menuItem.route" [type]="menuItem.type">
           @if (menuItem.type==='link') {
             <a class="menu-heading"
-              [routerLink]="buildRoute(parentRoute.concat([menuItem.route]))"
+              [routerLink]="buildMenuRoute(menuItem, parentRoute)"
               matRipple [matRippleDisabled]="!ripple">
               <ng-container
                 [ngTemplateOutlet]="linkTypeTpl"

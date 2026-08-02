@@ -10,9 +10,8 @@ import { Router, RouterLink } from '@angular/router';
 import { MtxButtonModule } from '@ng-matero/extensions/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { finalize, timeout } from 'rxjs';
-import { filter } from 'rxjs/operators';
 
-import { AuthService, LoginService } from '@core/authentication';
+import { AuthService } from '@core/authentication';
 
 @Component({
   selector: 'app-login',
@@ -35,22 +34,38 @@ export class LoginComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
-   private readonly loginService = inject(LoginService);
 
   isSubmitting = false;
+  hasSavedSchoolCode = false;
 
   ngOnInit() {
     // reset login status
    /*  this.loginService.getUserDetails().subscribe(user => {
       this.auth.setUser(user);
     }); */
+
+    const savedSchoolCode = localStorage.getItem('schoolCode')?.trim();
+    this.hasSavedSchoolCode = !!savedSchoolCode;
+    if (savedSchoolCode) {
+      // Keep tenant context available for the interceptor without showing it again.
+      sessionStorage.setItem('schoolCode', savedSchoolCode);
+      this.loginForm.patchValue({ schoolCode: savedSchoolCode });
+      this.schoolCode.disable({ emitEvent: false });
+      this.schoolCode.clearValidators();
+      this.schoolCode.updateValueAndValidity({ emitEvent: false });
+    }
   }
 
   loginForm = this.fb.nonNullable.group({
-    username: ['ng-matero', [Validators.required]],
-    password: ['ng-matero', [Validators.required]],
+    schoolCode: ['', [Validators.required]],
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]],
     rememberMe: [false],
   });
+
+  get schoolCode() {
+    return this.loginForm.get('schoolCode')!;
+  }
 
   get username() {
     return this.loginForm.get('username')!;
@@ -70,39 +85,73 @@ export class LoginComponent implements OnInit {
     }
     this.isSubmitting = true;
 
+    // The interceptor reads this value and sends it as X-School-Code.
+    const savedSchoolCode = localStorage.getItem('schoolCode')?.trim();
+    const sc = (this.schoolCode.value?.trim() || savedSchoolCode || '').trim();
+    if (sc) {
+      sessionStorage.setItem('schoolCode', sc);
+    }
+
     this.auth
       .login(this.username.value, this.password.value, this.rememberMe.value)
       .pipe(timeout(15000))
       .pipe(finalize(() => (this.isSubmitting = false)))
-      .pipe(filter(authenticated => authenticated))
       .subscribe({
         next: () => {
-          //this.router.navigateByUrl('/dashboard');
-          this.loginService.getUserDetails().subscribe(user => {
-            this.auth.setUser(user);
-          });
-          // Navigate to the root route after setting the user
+          if (sc) {
+            localStorage.setItem('schoolCode', sc);
+          }
+
           this.router.navigateByUrl('/dashboard');
         },
-        error: (errorRes: HttpErrorResponse) => {
-          // Generic fallback message for network/CORS/timeout/etc.
-          if (errorRes.status === 0) {
-            this.loginForm.setErrors({ remote: 'Network/CORS error. Please check API connectivity.' });
+        error: (errorRes: HttpErrorResponse | Error) => {
+          if (!this.hasSavedSchoolCode) {
+            sessionStorage.removeItem('schoolCode');
+          }
+
+          const status = errorRes instanceof HttpErrorResponse ? errorRes.status : 0;
+          const apiError =
+            errorRes instanceof HttpErrorResponse
+              ? errorRes.error
+              : { message: errorRes.message };
+
+          if (status === 0) {
+            this.loginForm.setErrors({
+              remote:
+                'Cannot reach API. Start with `ng serve` (proxy forwards to https://api.asterinfotech.in).',
+            });
             return;
           }
-          if ((errorRes as any)?.name === 'TimeoutError') {
+          if ((errorRes as { name?: string })?.name === 'TimeoutError') {
             this.loginForm.setErrors({ remote: 'Login request timed out. Please try again.' });
             return;
           }
-          if (errorRes.status === 422) {
+          if (status === 401 || status === 403) {
+            const msg =
+              apiError?.message ||
+              apiError?.error ||
+              'Invalid credentials. Please check school code, username, and password.';
+            this.loginForm.setErrors({ remote: msg });
+            return;
+          }
+          if (status === 422 && apiError?.errors) {
             const form = this.loginForm;
-            const errors = errorRes.error.errors;
+            const errors = apiError.errors;
             Object.keys(errors).forEach(key => {
               form.get(key === 'email' ? 'username' : key)?.setErrors({
                 remote: errors[key][0],
               });
             });
+            this.loginForm.setErrors({ remote: 'Please correct the highlighted fields.' });
+            return;
           }
+
+          const apiMessage =
+            apiError?.message ||
+            apiError?.error ||
+            apiError?.title ||
+            (errorRes instanceof Error ? errorRes.message : errorRes.message);
+          this.loginForm.setErrors({ remote: apiMessage || 'Login failed. Please try again.' });
         },
       });
   }

@@ -1,0 +1,122 @@
+<section class="student-appar-update-page">
+  <div class="student-appar-update-page__filter">
+    <app-filterstudent (classSectionChange)="onClassSectionChange($event)"></app-filterstudent>
+  </div>
+
+  <mat-card class="student-appar-update-page__card">
+    <mat-card-header>
+      <mat-card-title>Update APAAR/Aadhar Details</mat-card-title>
+      <mat-card-subtitle>Edit student mother Aadhar, father Aadhar, PEN No. and APAAR details.</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="student-appar-update-page__toolbar">
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="loadStudents()"
+          [disabled]="loading || !selectedClassSectionId"
+        >
+          Refresh
+        </button>
+      </div>
+
+      @if (!selectedClassSectionId && !loading) {
+        <p class="student-appar-update-page__empty-state">
+          Select session, school, class and section to load students.
+        </p>
+      }
+
+      @if (loadError && !loading) {
+        <p class="student-appar-update-page__error" role="alert">{{ loadError }}</p>
+      }
+
+      @if (updateMessage) {
+        <p class="student-appar-update-page__message" role="status">{{ updateMessage }}</p>
+      }
+
+      @if (selectedClassSectionId && !loading && !loadError && dataSource.data.length === 0) {
+        <p class="student-appar-update-page__empty-state">
+          No students found for selected section.
+        </p>
+      }
+
+      <div class="student-appar-update-page__table-wrap">
+        <table mat-table [dataSource]="dataSource" class="student-appar-update-table mat-elevation-z0">
+          <ng-container matColumnDef="rollNumber">
+            <th mat-header-cell *matHeaderCellDef>Roll Number</th>
+            <td mat-cell *matCellDef="let row">{{ displayRollNumber(row) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="studentName">
+            <th mat-header-cell *matHeaderCellDef>Student Name</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="student-appar-update-table__name">{{ displayStudentName(row) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="motherAadhar">
+            <th mat-header-cell *matHeaderCellDef>Mother Aadhar</th>
+            <td mat-cell *matCellDef="let row">
+              <input matInput class="student-appar-update-table__input" maxlength="12" [(ngModel)]="row.motherAadharValue" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="fatherAadhar">
+            <th mat-header-cell *matHeaderCellDef>Father Aadhar</th>
+            <td mat-cell *matCellDef="let row">
+              <input matInput class="student-appar-update-table__input" maxlength="12" [(ngModel)]="row.fatherAadharValue" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="penNo">
+            <th mat-header-cell *matHeaderCellDef>PEN No.</th>
+            <td mat-cell *matCellDef="let row">
+              <input matInput class="student-appar-update-table__input" maxlength="12" [(ngModel)]="row.penNoValue" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="apaar">
+            <th mat-header-cell *matHeaderCellDef>APAAR</th>
+            <td mat-cell *matCellDef="let row">
+              <input matInput class="student-appar-update-table__input" maxlength="12" [(ngModel)]="row.apaarValue" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let row">
+              <button
+                mat-stroked-button
+                type="button"
+                color="primary"
+                (click)="updateRow(row)"
+                [disabled]="row.updating || updatingAll"
+              >
+                {{ row.updating ? 'Updating...' : 'Update' }}
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+
+      @if (dataSource.data.length) {
+        <div class="student-appar-update-page__actions">
+          <button
+            mat-flat-button
+            type="button"
+            color="primary"
+            (click)="updateAll()"
+            [disabled]="updatingAll || loading"
+          >
+            {{ updatingAll ? 'Updating All...' : 'Update All' }}
+          </button>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

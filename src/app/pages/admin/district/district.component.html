@@ -1,1 +1,184 @@
-<p>district works!</p>
+<div class="admin-layout" [class.admin-layout--embedded]="embedded">
+  @if (!embedded) {
+    <page-header class="admin-layout__header" />
+  }
+
+  <section class="admin-page" aria-label="City management">
+    <mat-card class="admin-page__card">
+      <div class="admin-page__list-title">City List</div>
+
+      <mat-card-content class="admin-page__content">
+        <div class="admin-toolbar">
+          <div class="admin-toolbar__start">
+            <button mat-flat-button color="primary" type="button" (click)="openAddDialog()">
+              <mat-icon>add</mat-icon>
+              Add City
+            </button>
+          </div>
+          <div class="admin-toolbar__end">
+            <mat-form-field appearance="outline" class="admin-toolbar__filter">
+              <mat-label>State</mat-label>
+              <mat-select (selectionChange)="onFilterStateChange($event.value)" placeholder="Select state">
+                <mat-option [value]="null">— Select —</mat-option>
+                @for (s of allStates; track s.id) {
+                  <mat-option [value]="s.id">{{ s.stateName }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="admin-toolbar__search">
+              <mat-label>Search</mat-label>
+              <mat-icon matPrefix>search</mat-icon>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Filter cities" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="admin-table__wrap">
+          <table mat-table [dataSource]="dataSource" matSort class="admin-table mat-elevation-z0">
+            <ng-container matColumnDef="index">
+              <th mat-header-cell *matHeaderCellDef class="admin-table__index-col">#</th>
+              <td mat-cell *matCellDef="let row; let i = index" class="admin-table__index-col">
+                {{ rowIndex(i) }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="stateName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>State</th>
+              <td mat-cell *matCellDef="let row">{{ stateLabel(row.stateId) }}</td>
+            </ng-container>
+            <ng-container matColumnDef="cityName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>City</th>
+              <td mat-cell *matCellDef="let row">{{ row.cityName }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="admin-table__actions-col">Actions</th>
+              <td mat-cell *matCellDef="let row">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  type="button"
+                  (click)="openEditDialog(row)"
+                  matTooltip="Edit city"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  type="button"
+                  (click)="deleteDistrict(row)"
+                  matTooltip="Delete city"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns" class="admin-table__row"></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell admin-table__empty" [attr.colspan]="displayedColumns.length">
+                @if (isLoading) {
+                  Loading…
+                } @else if (!listFilterStateId) {
+                  Select a state to view cities.
+                } @else if (dataSource.filter) {
+                  No cities match your search.
+                } @else {
+                  No cities yet. Click Add City to create one.
+                }
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <mat-paginator
+          class="admin-page__paginator"
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10, 25, 50]"
+          showFirstLastButtons
+        />
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>
+
+<ng-template #addDialog>
+  <h2 mat-dialog-title>Add City</h2>
+  <mat-dialog-content class="admin-dialog__content">
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Country</mat-label>
+      <mat-select
+        [(ngModel)]="newDistrict.countryId"
+        name="addCountryId"
+        required
+        (selectionChange)="onAddCountryChange($event.value)"
+      >
+        @for (c of countries; track c.id) {
+          <mat-option [value]="c.id">{{ c.countryName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>State</mat-label>
+      <mat-select [(ngModel)]="newDistrict.stateId" name="addStateId" required>
+        @for (s of statesForAdd; track s.id) {
+          <mat-option [value]="s.id">{{ s.stateName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>City name</mat-label>
+      <input matInput [(ngModel)]="newDistrict.cityName" name="cityName" maxlength="100" required />
+      <mat-hint align="end">{{ newDistrict.cityName.length }}/100</mat-hint>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button" [disabled]="isSaving">Cancel</button>
+    <button mat-flat-button color="primary" type="button" [disabled]="isSaving" (click)="addDistrict()">
+      @if (isSaving) { Saving… } @else { Save }
+    </button>
+  </mat-dialog-actions>
+</ng-template>
+
+<ng-template #editDialog let-data>
+  <h2 mat-dialog-title>Edit City</h2>
+  <mat-dialog-content class="admin-dialog__content">
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Country</mat-label>
+      <mat-select
+        [(ngModel)]="data.editCountryId"
+        name="editCountryId"
+        required
+        (selectionChange)="data.stateId = 0"
+      >
+        @for (c of countries; track c.id) {
+          <mat-option [value]="c.id">{{ c.countryName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>State</mat-label>
+      <mat-select [(ngModel)]="data.stateId" name="stateId" required>
+        @for (s of statesForCountry(data.editCountryId); track s.id) {
+          <mat-option [value]="s.id">{{ s.stateName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>City name</mat-label>
+      <input matInput [(ngModel)]="data.cityName" name="editCityName" maxlength="100" required />
+      <mat-hint align="end">{{ data.cityName?.length ?? 0 }}/100</mat-hint>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [mat-dialog-close]="data"
+      [disabled]="!data.cityName?.trim() || !data.stateId"
+    >
+      Update
+    </button>
+  </mat-dialog-actions>
+</ng-template>

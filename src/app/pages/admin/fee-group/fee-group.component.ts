@@ -1,182 +1,211 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { MatCard, MatCardModule } from '@angular/material/card';
-import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IFeeGroup } from '../../../interfaces/IFeeMaster';
+import { FeeMasterService } from '../../../services/feeservice/fee-master.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
-import { IFeeGroup, IFeeHead } from '../../../interfaces/IFeeMaster';
-import { MatTableDataSource } from '@angular/material/table';
-import { FeeMasterService } from '../../../services/fee-master.service';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { PageHeaderComponent } from '@shared';
+import { IApiResponse } from '../../../interfaces/ICommon';
+import { ToastrService } from 'ngx-toastr';
+
+interface IFeeGroupForm {
+  streamId: number;
+  streamName: string;
+  activeStatus: boolean;
+}
 
 @Component({
   selector: 'app-fee-group',
+  host: { class: 'admin-page-host' },
   imports: [
-    MatCard,
-    MaterialModule,
     FormsModule,
-    MatButtonModule,
+    PageHeaderComponent,
     MatCardModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
-    MatOptionModule,
-    MatSelectModule,
-    TranslateModule,
-    ReactiveFormsModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './fee-group.component.html',
-  styleUrl: './fee-group.component.scss'
+  styleUrl: './fee-group.component.scss',
 })
-export class FeeGroupComponent implements OnInit {
+export class FeeGroupComponent implements OnInit, AfterViewInit {
+  @Input() embedded = false;
+
+  private feeService = inject(FeeMasterService);
+  private toast = inject(ToastrService);
+  private dialog = inject(MatDialog);
 
   dataSource = new MatTableDataSource<IFeeGroup>([]);
-  displayedColumns: string[] = ['feeGroup', 'status', 'actions'];
+  displayedColumns: string[] = ['index', 'feeGroup', 'status', 'actions'];
+  newFeeGroup: IFeeGroupForm = { streamId: 0, streamName: '', activeStatus: true };
+  isLoading = false;
+  isSaving = false;
 
-  private _feeGroupService = inject(FeeMasterService);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
+  @ViewChild('addDialog') addDialog!: TemplateRef<void>;
+  @ViewChild('editDialog') editDialog!: TemplateRef<IFeeGroupForm>;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
-  feeGroupForm!: FormGroup;
-  feeGroupList: IFeeGroup[] = [];
-  // expenseName: string = '';
   ngOnInit(): void {
-    this.feeGroupForm = this.fb.group({
-      streamId: [0],
-      streamName: [null, [Validators.required, Validators.minLength(2)]],
-      activeStatus: [false]
-    })
-
-    this.GetFeeGroupList();
+    this.dataSource.filterPredicate = (row, filter) =>
+      row.streamName?.toLowerCase().includes(filter) ?? false;
+    this.loadList();
   }
 
-  GetFeeGroupList() {
-    this._feeGroupService.listFeeGroup().subscribe({
-      next: (res) => {
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  statusLabel(activeStatus: number): string {
+    return activeStatus === 1 ? 'Active' : 'Inactive';
+  }
+
+  private toApiBody(form: IFeeGroupForm): IFeeGroup {
+    return {
+      streamId: form.streamId,
+      streamName: form.streamName.trim(),
+      activeStatus: form.activeStatus ? 1 : 0,
+    };
+  }
+
+  private toForm(row: IFeeGroup): IFeeGroupForm {
+    return {
+      streamId: row.streamId,
+      streamName: row.streamName,
+      activeStatus: row.activeStatus === 1,
+    };
+  }
+
+  openAddDialog(): void {
+    this.newFeeGroup = { streamId: 0, streamName: '', activeStatus: true };
+    this.dialog.open(this.addDialog, { width: 'min(440px, 92vw)', maxWidth: '95vw' });
+  }
+
+  addFeeGroup(): void {
+    const name = this.newFeeGroup.streamName?.trim() ?? '';
+    if (!name) {
+      this.toast.warning('Please enter fee group name.');
+      return;
+    }
+    this.isSaving = true;
+    this.feeService.addFeeGroup(this.toApiBody(this.newFeeGroup)).subscribe({
+      next: (res: IApiResponse<IFeeGroup>) => {
+        this.isSaving = false;
         if (res.success) {
-          this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
+          this.toast.success(res.message || 'Fee group added successfully');
+          this.dialog.closeAll();
+          this.loadList();
+        } else {
+          this.toast.error(res.message || 'Failed to add fee group');
         }
       },
-      error: (err) => {
-        console.log("error to fetch expense list", err);
-      }
-
+      error: () => {
+        this.isSaving = false;
+        this.toast.error('Failed to add fee group');
+      },
     });
-  };
-
-  addFeeGroup() {
-    debugger;
-    if (this.feeGroupForm.valid) {
-      const formValue = this.feeGroupForm.value;
-      formValue.activeStatus = formValue.activeStatus ? 1 : 0;
-      this._feeGroupService.addFeeGroup(formValue).subscribe({
-        next: (res) => {
-          if (res.success) {
-            alert(res.message);
-            this.GetFeeGroupList();
-          }
-          else {
-            alert(res.message);
-          }
-        },
-        error: (err) => {
-          console.log("add expense error", err);
-          alert("Something went wrong.");
-        }
-      });
-    }
   }
 
+  loadList(): void {
+    this.isLoading = true;
+    this.feeService.listFeeGroup().subscribe({
+      next: res => {
+        this.isLoading = false;
+        if (res.success) {
+          const rows = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
+          this.dataSource.data = rows;
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        } else {
+          this.toast.error(res.message || 'Failed to load fee groups');
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toast.error('Failed to load fee groups');
+      },
+    });
+  }
 
-  // listing
-  openEditDialog(feeGroup: IFeeGroup) {
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.paginator?.firstPage();
+  }
+
+  rowIndex(i: number): number {
+    return this.paginator ? this.paginator.pageIndex * this.paginator.pageSize + i + 1 : i + 1;
+  }
+
+  openEditDialog(row: IFeeGroup): void {
     const dialogRef = this.dialog.open(this.editDialog, {
-      width: '400px',
-      data: { ...feeGroup }
+      width: 'min(440px, 92vw)',
+      maxWidth: '95vw',
+      data: this.toForm(row),
     });
-    debugger;
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        debugger;
-        // Handle the result from the dialog (e.g., save changes)
-        console.log('Dialog result:', result);
-        result.activeStatus = result.activeStatus ? 1 : 0;
-        this._feeGroupService.updateFeeGroup(result).subscribe({
-          next: (res) => {
-            if (res.success) {
-              alert(res.message);
-              this.GetFeeGroupList(); // Refresh the list
-            }
-          },
-          error: (err) => {
-            console.error('Error updating session:', err);
-            alert('Failed to update session');
-          }
-        })
+    dialogRef.afterClosed().subscribe((result: IFeeGroupForm | undefined) => {
+      const name = result?.streamName?.trim();
+      if (!name || !result?.streamId) {
+        return;
       }
-    });
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  /** Checkbox Selection Logic */
-  toggleSelection(row: IFeeGroup) {
-    if (this.feeGroupList.includes(row)) {
-      this.feeGroupList = this.feeGroupList.filter(r => r !== row);
-    } else {
-      this.feeGroupList.push(row);
-    }
-  }
-
-  isAllSelected() {
-    return this.feeGroupList.length === this.dataSource.data.length;
-  }
-
-  isPartialSelected() {
-    return this.feeGroupList.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.feeGroupList = [];
-    } else {
-      this.feeGroupList = [...this.dataSource.data];
-    }
-  }
-
-  DeleteExpense(feeGroup: IFeeGroup) {
-    debugger;
-    const id = feeGroup.streamId;
-    if (id > 0) {
-      this._feeGroupService.deleteFeeGroup(id).subscribe({
-        next: (res) => {
+      this.feeService.updateFeeGroup(this.toApiBody(result)).subscribe({
+        next: res => {
           if (res.success) {
-            alert(res.message);
-
-            this.GetFeeGroupList();
+            this.toast.success(res.message || 'Fee group updated successfully');
+            this.loadList();
+          } else {
+            this.toast.error(res.message || 'Failed to update fee group');
           }
         },
-        error: (err) => {
-          console.log("error,", err);
-          alert("something went wrong");
-        }
+        error: () => this.toast.error('Failed to update fee group'),
       });
-    }
-
+    });
   }
 
+  deleteFeeGroup(row: IFeeGroup): void {
+    if (row.streamId <= 0) {
+      return;
+    }
+    if (!confirm('Delete this fee group?')) {
+      return;
+    }
+    this.feeService.deleteFeeGroup(row.streamId).subscribe({
+      next: res => {
+        if (res.success) {
+          this.toast.success(res.message || 'Fee group deleted successfully');
+          this.loadList();
+        } else {
+          this.toast.error(res.message || 'Failed to delete fee group');
+        }
+      },
+      error: () => this.toast.error('Failed to delete fee group'),
+    });
+  }
 }

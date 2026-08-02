@@ -1,16 +1,159 @@
-<mat-card>
+@if (!embedded) {
+  <div class="admin-layout">
+    <page-header class="admin-layout__header" title="Subject Master" [nav]="['home', 'Admin', 'Subject List']" />
+    <section class="admin-page" aria-label="Subject management">
+      <ng-container [ngTemplateOutlet]="content" />
+    </section>
+  </div>
+} @else {
+  <ng-container [ngTemplateOutlet]="content" />
+}
 
+<ng-template #content>
+  <div class="add-subject">
+    <div class="add-subject__layout">
+      <mat-card class="admin-page__card add-subject__form-card">
+        <mat-card-content>
+          <form class="add-subject__form" (ngSubmit)="addSubject()">
+            <mat-form-field appearance="outline" class="add-subject__field">
+              <mat-label>Subject Type</mat-label>
+              <mat-select
+                name="subjectType"
+                [(ngModel)]="selectedSubjectType"
+                (selectionChange)="onSubjectTypeChange($event.value)"
+                required
+              >
+                @for (option of subjectTypeOptions; track option.value) {
+                  <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
 
-  <mat-card-content>
-    <mat-tab-group mat-stretch-tabs dynamicHeight>
-      <mat-tab label="Add Subject">
-        <app-addsubject></app-addsubject>
-      </mat-tab>
+            <mat-form-field appearance="outline" class="add-subject__field">
+              <mat-label>Subject Code</mat-label>
+              <input matInput name="subjectCode" [(ngModel)]="newSubject.subjectCode" required />
+            </mat-form-field>
 
-      <mat-tab label="Assign Subject">
-        <app-assignsubject></app-assignsubject>
-      </mat-tab>
-    
-    </mat-tab-group>
-  </mat-card-content>
-</mat-card>
+            <mat-form-field appearance="outline" class="add-subject__field">
+              <mat-label>Subject Name</mat-label>
+              <input matInput name="subjectName" [(ngModel)]="newSubject.subjectName" maxlength="50" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="add-subject__field">
+              <mat-label>Sequence</mat-label>
+              <input matInput type="number" name="subjectSeq" [(ngModel)]="newSubject.subjectSeq" min="1" required />
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" type="submit" [disabled]="isSaving || !selectedSubjectType">
+              Submit
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="admin-page__card add-subject__table-card">
+        <mat-card-content>
+          <div class="admin-table__wrap">
+            <table mat-table [dataSource]="dataSource" matSort class="admin-table mat-elevation-z0">
+              <ng-container matColumnDef="subjectCode">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Subject Code</th>
+                <td mat-cell *matCellDef="let row">{{ row.subjectCode }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="subjectName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Subject Name</th>
+                <td mat-cell *matCellDef="let row">{{ row.subjectName }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="subjectSeq">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Sequence</th>
+                <td mat-cell *matCellDef="let row">{{ row.subjectSeq }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="admin-table__actions-col">Actions</th>
+                <td mat-cell *matCellDef="let row">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    type="button"
+                    (click)="openEditDialog(row)"
+                    matTooltip="Edit subject"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns" class="admin-table__row"></tr>
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell admin-table__empty" [attr.colspan]="displayedColumns.length">
+                  @if (isLoading) {
+                    Loading…
+                  } @else if (!selectedSubjectType) {
+                    Select a subject type to view subjects.
+                  } @else {
+                    No subjects found for selected type.
+                  }
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <mat-paginator
+            class="admin-page__paginator"
+            [pageSize]="10"
+            [pageSizeOptions]="[5, 10, 25, 50]"
+            showFirstLastButtons
+          />
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #editDialog let-data>
+  <h2 mat-dialog-title>Edit Subject</h2>
+  <mat-dialog-content class="admin-dialog__content">
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Subject type</mat-label>
+      <mat-select [(ngModel)]="data.subjectType" name="editSubjectType" required>
+        @for (option of subjectTypeOptions; track option.value) {
+          @if (option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Subject code</mat-label>
+      <input matInput [(ngModel)]="data.subjectCode" name="editSubjectCode" required />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Subject name</mat-label>
+      <input matInput [(ngModel)]="data.subjectName" name="editSubjectName" maxlength="50" required />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Sequence</mat-label>
+      <input matInput type="number" [(ngModel)]="data.subjectSeq" name="editSubjectSeq" min="1" required />
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [mat-dialog-close]="data"
+      [disabled]="
+        !data.subjectName?.trim() ||
+        !data.subjectCode?.trim() ||
+        !data.subjectType ||
+        !data.subjectSeq
+      "
+    >
+      Update
+    </button>
+  </mat-dialog-actions>
+</ng-template>

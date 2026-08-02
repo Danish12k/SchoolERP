@@ -1,0 +1,140 @@
+<section class="search-student-page">
+  <mat-card class="search-student-page__card search-student-page__filter-card">
+    <mat-card-header>
+      <mat-card-title>Search Student</mat-card-title>
+      <mat-card-subtitle>Search by value, session, and section.</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="search-student-page__filters">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Session</mat-label>
+          <mat-select [(ngModel)]="sessionId" (selectionChange)="onSessionOrSchoolChange()">
+            @for (session of sessions; track session.sessionId) {
+              <mat-option [value]="session.sessionId">{{ session.sessionName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Select School</mat-label>
+          <mat-select [(ngModel)]="collegeId" (selectionChange)="onSessionOrSchoolChange()">
+            @for (school of schools; track school.collegeId) {
+              <mat-option [value]="school.collegeId">{{ school.collegeAbreviation || school.collegeName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Select Class</mat-label>
+          <mat-select [(ngModel)]="courseId" (selectionChange)="onClassChange()" [disabled]="loadingClasses || !classes.length">
+            @for (class of classes; track class.courseId) {
+              <mat-option [value]="class.courseId">{{ class.courseName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Select Section</mat-label>
+          <mat-select [(ngModel)]="sectionId" [disabled]="loadingSections || !sections.length">
+            @for (section of sections; track section.classSectionId) {
+              <mat-option [value]="section.classSectionId">
+                {{ section.displayName || section.sectionName || section.section }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="search-student-page__search">
+          <mat-label>Search Value</mat-label>
+          <input
+            matInput
+            [(ngModel)]="searchValue"
+            placeholder="Name, admission no., mobile..."
+            (keyup.enter)="searchStudents()"
+          />
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="button" (click)="searchStudents()" [disabled]="searching">
+          Search
+        </button>
+      </div>
+
+      @if (loadingClasses) {
+        <p class="search-student-page__info">Loading classes...</p>
+      }
+
+      @if (loadingSections) {
+        <p class="search-student-page__info">Loading sections...</p>
+      }
+
+      @if (errorMessage && !searching) {
+        <p class="search-student-page__error" role="alert">{{ errorMessage }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="search-student-page__card search-student-page__table-card">
+    <mat-card-header>
+      <mat-card-title>Search Result</mat-card-title>
+      <mat-card-subtitle>Student records matching selected filters.</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (!searching && !dataSource.data.length) {
+        <p class="search-student-page__empty-state">
+          Search students to view records here.
+        </p>
+      }
+
+      @if (dataSource.data.length) {
+      <div class="search-student-page__table-wrap">
+        <table mat-table [dataSource]="dataSource" class="search-student-table mat-elevation-z0">
+          <ng-container matColumnDef="rollNumber">
+            <th mat-header-cell *matHeaderCellDef>Roll No.</th>
+            <td mat-cell *matCellDef="let row">{{ displayRollNumber(row) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="admissionNo">
+            <th mat-header-cell *matHeaderCellDef>Admission No.</th>
+            <td mat-cell *matCellDef="let row">{{ displayAdmission(row) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="studentName">
+            <th mat-header-cell *matHeaderCellDef>Student Name</th>
+            <td mat-cell *matCellDef="let row">{{ displayStudentName(row) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="fatherName">
+            <th mat-header-cell *matHeaderCellDef>Father Name</th>
+            <td mat-cell *matCellDef="let row">{{ row.fatherName || row.gaurdianName || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="motherName">
+            <th mat-header-cell *matHeaderCellDef>Mother Name</th>
+            <td mat-cell *matCellDef="let row">{{ row.motherName || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="mobile">
+            <th mat-header-cell *matHeaderCellDef>Mobile</th>
+            <td mat-cell *matCellDef="let row">{{ displayMobile(row) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="className">
+            <th mat-header-cell *matHeaderCellDef>Class</th>
+            <td mat-cell *matCellDef="let row">{{ displayClass(row) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="sectionName">
+            <th mat-header-cell *matHeaderCellDef>Section</th>
+            <td mat-cell *matCellDef="let row">{{ row.sectionName || '—' }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

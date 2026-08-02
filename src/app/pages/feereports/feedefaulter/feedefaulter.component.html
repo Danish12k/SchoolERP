@@ -1,0 +1,122 @@
+<section class="fee-defaulter-page">
+  <div class="fee-defaulter-page__filter">
+    <app-filterfeereport (filterChange)="onFilterChange($event)"></app-filterfeereport>
+  </div>
+
+  <mat-card class="fee-defaulter-page__card">
+    <mat-card-content>
+      <div class="fee-defaulter-page__toolbar">
+        <mat-form-field appearance="outline" class="fee-defaulter-page__search">
+          <mat-label>Search</mat-label>
+          <input
+            matInput
+            (keyup)="applyFilter($event)"
+            placeholder="Filter by name, admission no., status…"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="fee-defaulter-page__columns">
+          <mat-label>Columns</mat-label>
+          <mat-select multiple [(value)]="selectedColumns">
+            @for (column of columnOptions; track column.id) {
+              <mat-option [value]="column.id">{{ column.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="loadReport()"
+          [disabled]="loading || !canLoadReport"
+        >
+          Refresh
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="exportExcel()"
+          [disabled]="!dataSource.data.length"
+        >
+          <mat-icon>download</mat-icon>
+          Excel
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="exportPdf()"
+          [disabled]="!dataSource.data.length"
+        >
+          <mat-icon>picture_as_pdf</mat-icon>
+          PDF
+        </button>
+      </div>
+
+      @if (loading) {
+        <div class="fee-defaulter-page__loading">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+      }
+
+      @if (!hasSelectedFilters && !loading) {
+        <p class="fee-defaulter-page__empty-state">
+          Select session, school, class, section and installment(s) to load the report.
+        </p>
+      }
+
+      @if (loadError && !loading) {
+        <p class="fee-defaulter-page__error" role="alert">{{ loadError }}</p>
+      }
+
+      @if (hasSelectedFilters && !loading && !loadError && dataSource.data.length === 0) {
+        <p class="fee-defaulter-page__empty-state">
+          No fee defaulters found for selected filters.
+        </p>
+      }
+
+      <div class="fee-defaulter-page__table-wrap">
+        @for (tableKey of [tableColumnsKey]; track tableKey) {
+          <table
+            mat-table
+            [dataSource]="dataSource"
+            matSort
+            class="fee-defaulter-table mat-elevation-z0"
+          >
+            @for (col of columnDefs; track col.id) {
+              <ng-container [matColumnDef]="col.id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col.label }}</th>
+                <td mat-cell *matCellDef="let row">
+                  @if (isStatusColumn(col)) {
+                    <span
+                      class="fee-defaulter-table__status"
+                      [class.is-paid]="statusClass(row[col.apiKey]) === 'is-paid'"
+                      [class.is-unpaid]="statusClass(row[col.apiKey]) === 'is-unpaid'"
+                    >
+                      {{ displayCell(row[col.apiKey]) }}
+                    </span>
+                  } @else if (col.apiKey === 'Student Name') {
+                    <span class="fee-defaulter-table__strong">{{
+                      displayCell(row[col.apiKey])
+                    }}</span>
+                  } @else {
+                    {{ displayCell(row[col.apiKey]) }}
+                  }
+                </td>
+              </ng-container>
+            }
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        }
+      </div>
+
+      <mat-paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</section>

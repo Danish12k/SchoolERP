@@ -1,0 +1,126 @@
+.student-appar-update-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 8px 16px;
+}
+
+.student-appar-update-page__filter {
+  width: 100%;
+}
+
+.student-appar-update-page__card {
+  width: 100%;
+  border-radius: 0;
+  box-shadow: 0 4px 18px rgb(0 0 0 / 10%);
+}
+
+.student-appar-update-page__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.student-appar-update-page__loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.student-appar-update-page__error {
+  margin: 0 0 12px;
+  color: var(--mat-sys-error, #b3261e);
+}
+
+.student-appar-update-page__message {
+  margin: 0 0 12px;
+  color: #1b5e20;
+}
+
+.student-appar-update-page__empty-state {
+  margin: 0 0 12px;
+  padding: 14px 16px;
+  border: 1px dashed rgb(0 0 0 / 18%);
+  color: var(--mat-sys-on-surface-variant, #5f6368);
+  background: rgb(0 0 0 / 2%);
+}
+
+.student-appar-update-page__table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.student-appar-update-table {
+  width: max-content;
+  min-width: 100%;
+
+  th.mat-mdc-header-cell {
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  th.mat-mdc-header-cell,
+  td.mat-mdc-cell {
+    padding-right: 14px;
+  }
+
+  td.mat-mdc-cell {
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+}
+
+.student-appar-update-table__name {
+  display: inline-block;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.student-appar-update-table__input {
+  width: 112px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid rgb(0 0 0 / 18%);
+  border-radius: 4px;
+  color: #000;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.student-appar-update-page__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+@media (max-width: 600px) {
+  .student-appar-update-page {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .student-appar-update-page__card .mat-mdc-card-header {
+    padding: 12px 12px 0;
+  }
+
+  .student-appar-update-page__card .mat-mdc-card-content {
+    padding: 12px;
+  }
+
+  .student-appar-update-table__name {
+    max-width: 120px;
+  }
+
+  .student-appar-update-table__input {
+    width: 104px;
+  }
+}

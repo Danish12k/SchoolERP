@@ -6,6 +6,7 @@ import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from 
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { MAT_CARD_CONFIG } from '@angular/material/card';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { provideMomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
@@ -13,9 +14,10 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { provideToastr } from 'ngx-toastr';
+import { provideQuillConfig } from 'ngx-quill/config';
 
 import { BASE_URL, appInitializerProviders, httpInterceptorProviders } from '@core';
-import { environment } from '@env/environment';
+import { API_BASE_URLS } from '@core/constants';
 import { PaginatorI18nService } from '@shared';
 import { InMemDataService } from '@shared/in-mem/in-mem-data.service';
 import { routes } from './app.routes';
@@ -30,6 +32,18 @@ export function TranslateHttpLoaderFactory(http: HttpClient) {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideQuillConfig({
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ header: [1, 2, 3, false] }],
+          ['link'],
+          ['clean'],
+        ],
+      },
+    }),
     provideAnimationsAsync(),
     provideHttpClient(
       withInterceptorsFromDi()
@@ -57,7 +71,7 @@ export const appConfig: ApplicationConfig = {
         passThruUnknownUrl: true,
       })
     ),
-    { provide: BASE_URL, useValue: environment.baseUrl },
+    { provide: BASE_URL, useValue: API_BASE_URLS.master },
     appInitializerProviders,
     {
       provide: MatPaginatorIntl,
@@ -73,6 +87,12 @@ export const appConfig: ApplicationConfig = {
       provide: MAT_CARD_CONFIG,
       useValue: {
         appearance: 'outlined',
+      },
+    },
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: {
+        subscriptSizing: 'dynamic',
       },
     },
     provideMomentDateAdapter({

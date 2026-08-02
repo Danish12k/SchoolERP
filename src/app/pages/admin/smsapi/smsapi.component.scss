@@ -1,90 +1,122 @@
-/* Local responsive layout (avoid relying on bootstrap presence) */
+/* Shared admin layout: src/styles/custom/_admin-page-layout.scss */
 
-:host {
-  display: block;
-}
-
-.smsapi-form {
-  display: grid;
+.smsapi-page {
   gap: 12px;
 }
 
-.smsapi-form__grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  align-items: start;
+.smsapi-controls-card {
+  flex: 0 0 auto;
+  min-height: 100px;
+  margin: 0;
+  overflow: visible;
+  border-radius: 0;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14);
 }
 
-.smsapi-form__grid--full {
-  grid-template-columns: 1fr;
-}
-
-.smsapi-form__actions {
-  margin-top: 12px;
+.smsapi-controls {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  padding: 12px 16px !important;
 }
 
-.w-100 {
-  width: 100%;
-}
-
-.smsapi-table {
-  width: 100%;
-}
-
-.smsapi-table__wrap {
-  width: 100%;
-  overflow-x: auto;
-}
-
-textarea[matInput] {
-  min-height: 96px;
-  resize: vertical;
-}
-/* Local responsive layout (avoid relying on bootstrap presence) */
-
-:host {
-  display: block;
-}
-
-.smsapi-form {
-  display: grid;
-  gap: 12px;
-}
-
-.smsapi-form__grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  align-items: start;
-}
-
-.smsapi-form__grid--full {
-  grid-template-columns: 1fr;
-}
-
-.smsapi-form__actions {
-  margin-top: 12px;
+.smsapi-controls__group {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
 }
 
-.w-100 {
-  width: 100%;
+.smsapi-controls__school {
+  flex: 0 1 260px;
+  min-width: min(100%, 220px);
+  margin: 0;
 }
 
-.smsapi-table {
-  width: 100%;
+.smsapi-table-card {
+  min-height: 0;
+  border-radius: 0;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14);
 }
 
-.smsapi-table__wrap {
-  width: 100%;
-  overflow-x: auto;
+.smsapi-table-card .admin-table__wrap {
+  border-radius: 0;
+  box-shadow: none;
 }
 
-textarea[matInput] {
-  min-height: 96px;
-  resize: vertical;
+.smsapi-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.smsapi-table-toolbar__add {
+  flex: 0 0 auto;
+  font-size: 12px;
+}
+
+.smsapi-table-toolbar__search {
+  width: min(100%, 360px);
+}
+
+.smsapi-add-dialog,
+.smsapi-add-dialog__actions,
+.smsapi-add-dialog__title {
+  font-size: 12px;
+}
+
+.smsapi-add-dialog {
+  .mat-mdc-floating-label,
+  .mdc-floating-label,
+  input.mat-mdc-input-element,
+  textarea.mat-mdc-input-element,
+  .mat-mdc-select-value,
+  .mat-mdc-select-min-line,
+  .mdc-label {
+    font-size: 12px !important;
+  }
+
+  .admin-dialog__toggle-row {
+    margin-top: 10px;
+  }
+}
+
+.smsapi-add-dialog__actions button {
+  font-size: 12px;
+}
+
+:host ::ng-deep .smsapi-add-dialog-panel {
+  font-size: 12px;
+
+  .mat-mdc-dialog-title,
+  .mat-mdc-dialog-content,
+  .mat-mdc-dialog-actions,
+  .mat-mdc-button-base,
+  .mat-mdc-floating-label,
+  .mdc-floating-label,
+  input.mat-mdc-input-element,
+  textarea.mat-mdc-input-element,
+  .mat-mdc-select-value,
+  .mat-mdc-select-min-line,
+  .mdc-label {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .smsapi-controls__group {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .smsapi-controls__school,
+  .smsapi-table-toolbar__add,
+  .smsapi-table-toolbar__search {
+    width: 100%;
+    max-width: 100%;
+    flex-basis: auto;
+  }
 }

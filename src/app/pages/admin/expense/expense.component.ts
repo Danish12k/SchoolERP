@@ -1,180 +1,234 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { ExpenseService } from '../../../services/expense.service';
-import { MatTableDataSource } from '@angular/material/table';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { IExpenseHead } from '../../../interfaces/IAdmintMst';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatCard, MatCardModule } from '@angular/material/card';
-import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
-import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ExpenseService } from '../../../services/masterservice/expense.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatDialog } from '@angular/material/dialog';
-import { PageHeaderComponent } from "@shared";
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { PageHeaderComponent } from '@shared';
+import { IApiResponse } from '../../../interfaces/ICommon';
+import { ToastrService } from 'ngx-toastr';
+
+interface IExpenseForm {
+  id: number;
+  expenseHead: string;
+  activeStatus: boolean;
+}
 
 @Component({
   selector: 'app-expense',
+  host: { class: 'admin-page-host' },
   imports: [
-    MatCard,
-    MaterialModule,
     FormsModule,
-    MatButtonModule,
+    PageHeaderComponent,
     MatCardModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
-    MatOptionModule,
-    MatSelectModule,
-    TranslateModule,
-    ReactiveFormsModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './expense.component.html',
-  styleUrl: './expense.component.scss'
+  styleUrl: './expense.component.scss',
 })
-export class ExpenseComponent implements OnInit {
-  dataSource = new MatTableDataSource<IExpenseHead>([]);
-  displayedColumns: string[] = ['expense', 'status', 'actions'];
+export class ExpenseComponent implements OnInit, AfterViewInit {
+  private expenseService = inject(ExpenseService);
+  private toast = inject(ToastrService);
+  private dialog = inject(MatDialog);
 
-  private _expenseService = inject(ExpenseService);
+  dataSource = new MatTableDataSource<IExpenseHead>([]);
+  displayedColumns: string[] = ['index', 'expenseHead', 'status', 'actions'];
+  newExpense: IExpenseForm = { id: 0, expenseHead: '', activeStatus: true };
+  isLoading = false;
+  isSaving = false;
+  isUpdating = false;
+  deletingIds = new Set<number>();
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
+  @ViewChild('addDialog') addDialog!: TemplateRef<void>;
+  @ViewChild('editDialog') editDialog!: TemplateRef<IExpenseForm>;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
-  expenseForm!: FormGroup;
-  expenseList: IExpenseHead[] = [];
-  expenseName: string = '';
   ngOnInit(): void {
-    this.expenseForm = this.fb.group({
-      id: [0],
-      expenseHead: [null, [Validators.required, Validators.minLength(2)]],
-      activeStatus: [false]
-    })
-
-    this.GetExpenseList();
+    this.dataSource.filterPredicate = (row, filter) =>
+      row.expenseHead?.toLowerCase().includes(filter) ?? false;
+    this.loadExpenseList();
   }
 
-  GetExpenseList() {
-    this._expenseService.listExpense().subscribe({
-      next: (res) => {
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  statusLabel(activeStatus: unknown): string {
+    return this.isActive(activeStatus) ? 'Active' : 'Inactive';
+  }
+
+  private toApiBody(form: IExpenseForm): IExpenseHead {
+    return {
+      id: form.id,
+      expenseHead: form.expenseHead.trim(),
+      activeStatus: form.activeStatus ? 1 : 0,
+    };
+  }
+
+  private toExpenseForm(row: IExpenseHead): IExpenseForm {
+    return {
+      id: row.id,
+      expenseHead: row.expenseHead,
+      activeStatus: this.isActive(row.activeStatus),
+    };
+  }
+
+  private isActive(activeStatus: unknown): boolean {
+    return activeStatus === true || Number(activeStatus) === 1;
+  }
+
+  private toRows(data: IExpenseHead | IExpenseHead[] | null | undefined): IExpenseHead[] {
+    return (Array.isArray(data) ? data : data ? [data] : []).filter(row => !!row);
+  }
+
+  private errorMessage(error: unknown, fallback: string): string {
+    const err = error as { error?: { message?: string; title?: string; error?: string }; message?: string; status?: number };
+    return err?.error?.message || err?.error?.title || err?.error?.error || err?.message || fallback;
+  }
+
+  openAddDialog(): void {
+    this.newExpense = { id: 0, expenseHead: '', activeStatus: true };
+    this.dialog.open(this.addDialog, { width: 'min(440px, 92vw)', maxWidth: '95vw' });
+  }
+
+  addExpense(): void {
+    const name = this.newExpense.expenseHead?.trim() ?? '';
+    if (!name) {
+      this.toast.warning('Please enter expense head.');
+      return;
+    }
+    this.isSaving = true;
+    this.expenseService.addExpense(this.toApiBody(this.newExpense)).subscribe({
+      next: (res: IApiResponse<IExpenseHead>) => {
+        this.isSaving = false;
         if (res.success) {
-          this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
+          this.toast.success(res.message || 'Expense added successfully');
+          this.dialog.closeAll();
+          this.loadExpenseList();
+        } else {
+          this.toast.error(res.message || 'Failed to add expense');
         }
       },
-      error: (err) => {
-        console.log("error to fetch expense list", err);
-      }
-
+      error: () => {
+        this.isSaving = false;
+        this.toast.error('Failed to add expense');
+      },
     });
-  };
+  }
 
-  addExpense() {
-    debugger;
-    if (this.expenseForm.valid) {
-      const formValue = this.expenseForm.value;
-      formValue.activeStatus = formValue.activeStatus ? 1 : 0;
-      this._expenseService.addExpense(formValue).subscribe({
-        next: (res) => {
+  loadExpenseList(): void {
+    this.isLoading = true;
+    this.expenseService.listExpense().subscribe({
+      next: res => {
+        this.isLoading = false;
+        if (res.success) {
+          this.dataSource.data = this.toRows(res.data);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        } else {
+          this.toast.error(res.message || 'Failed to load expenses');
+        }
+      },
+      error: error => {
+        this.isLoading = false;
+        this.toast.error(this.errorMessage(error, 'Failed to load expenses'));
+      },
+    });
+  }
+
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.paginator?.firstPage();
+  }
+
+  rowIndex(i: number): number {
+    return this.paginator ? this.paginator.pageIndex * this.paginator.pageSize + i + 1 : i + 1;
+  }
+
+  openEditDialog(row: IExpenseHead): void {
+    const dialogRef = this.dialog.open(this.editDialog, {
+      width: 'min(440px, 92vw)',
+      maxWidth: '95vw',
+      data: this.toExpenseForm(row),
+    });
+    dialogRef.afterClosed().subscribe((result: IExpenseForm | undefined) => {
+      const name = result?.expenseHead?.trim();
+      if (!name || !result?.id) {
+        return;
+      }
+      this.isUpdating = true;
+      this.expenseService.updateExpense(this.toApiBody(result)).subscribe({
+        next: res => {
+          this.isUpdating = false;
           if (res.success) {
-            alert(res.message);
-            this.GetExpenseList();
-          }
-          else {
-            alert(res.message);
+            this.toast.success(res.message || 'Expense updated successfully');
+            this.loadExpenseList();
+          } else {
+            this.toast.error(res.message || 'Failed to update expense');
           }
         },
-        error: (err) => {
-          console.log("add expense error", err);
-          alert("Something went wrong.");
-        }
+        error: error => {
+          this.isUpdating = false;
+          this.toast.error(this.errorMessage(error, 'Failed to update expense'));
+        },
       });
-    }
-
-  }
-
-
-
-  // listing
-  openEditDialog(expense: IExpenseHead) {
-    const dialogRef = this.dialog.open(this.editDialog, {
-      width: '400px',
-      data: { ...expense }
-    });
-    debugger;
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        debugger;
-        // Handle the result from the dialog (e.g., save changes)
-        console.log('Dialog result:', result);
-        result.activeStatus = result.activeStatus ? 1 : 0;
-        this._expenseService.updateExpense(result).subscribe({
-          next: (res) => {
-            if (res.success) {
-              alert(res.message);
-              this.GetExpenseList(); // Refresh the list
-            }
-          },
-          error: (err) => {
-            console.error('Error updating session:', err);
-            alert('Failed to update session');
-          }
-        })
-      }
     });
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  /** Checkbox Selection Logic */
-  toggleSelection(row: IExpenseHead) {
-    if (this.expenseList.includes(row)) {
-      this.expenseList = this.expenseList.filter(r => r !== row);
-    } else {
-      this.expenseList.push(row);
+  deleteExpense(row: IExpenseHead): void {
+    if (row.id <= 0) {
+      return;
     }
-  }
-
-  isAllSelected() {
-    return this.expenseList.length === this.dataSource.data.length;
-  }
-
-  isPartialSelected() {
-    return this.expenseList.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.expenseList = [];
-    } else {
-      this.expenseList = [...this.dataSource.data];
+    if (!confirm('Delete this expense head?')) {
+      return;
     }
-  }
-
-  DeleteExpense(expense: IExpenseHead) {
-    debugger;
-    const id = expense.id;
-    if (id > 0) {
-      this._expenseService.deleteExpense(id).subscribe({
-        next: (res) => {
-          if (res.success) {
-            alert(res.message);
-
-            this.GetExpenseList();
-          }
+    this.deletingIds.add(row.id);
+    this.expenseService.deleteExpense(row.id).subscribe({
+      next: res => {
+        this.deletingIds.delete(row.id);
+        if (res.success) {
+          this.toast.success(res.message || 'Expense deleted successfully');
+          this.loadExpenseList();
+        } else {
+          this.toast.error(res.message || 'Failed to delete expense');
         }
-      });
-    }
-
+      },
+      error: error => {
+        this.deletingIds.delete(row.id);
+        this.toast.error(this.errorMessage(error, 'Failed to delete expense'));
+      },
+    });
   }
-
 }

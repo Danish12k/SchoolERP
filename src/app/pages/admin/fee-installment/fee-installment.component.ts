@@ -1,192 +1,236 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { MatCard, MatCardModule } from '@angular/material/card';
-import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { IFeeInstallment } from '../../../interfaces/IFeeMaster';
-import { MatTableDataSource } from '@angular/material/table';
-import { FeeMasterService } from '../../../services/fee-master.service';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatDialog } from '@angular/material/dialog';
+import { FeeMasterService } from '../../../services/feeservice/fee-master.service';
+import { SessionService } from '../../../services/masterservice/session.service';
+import { CollegeService } from '../../../services/masterservice/college.service';
 import { ISession } from '../../../interfaces/isession';
 import { ICollege } from '../../../interfaces/ICollege';
-import { SessionService } from '../../../services/session.service';
-import { CollegeService } from '../../../services/college.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { PageHeaderComponent } from '@shared';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-fee-installment',
+  host: { class: 'admin-page-host' },
   imports: [
-    MatCard,
-    MaterialModule,
     FormsModule,
-    MatButtonModule,
+    PageHeaderComponent,
     MatCardModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
-    MatOptionModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
     MatSelectModule,
-    TranslateModule,
-    ReactiveFormsModule,
+    MatDatepickerModule,
+    DatePipe,
   ],
   templateUrl: './fee-installment.component.html',
-  styleUrl: './fee-installment.component.scss'
+  styleUrl: './fee-installment.component.scss',
 })
-export class FeeInstallmentComponent implements OnInit {
+export class FeeInstallmentComponent implements OnInit, AfterViewInit {
+  @Input() embedded = false;
 
-  dataSource = new MatTableDataSource<IFeeInstallment>([]);
-  displayedColumns: string[] = ['session', 'school', 'installment', 'installmentDate','actions'];
-
-  private _feeMstService = inject(FeeMasterService);
+  private feeService = inject(FeeMasterService);
   private sessionService = inject(SessionService);
   private collegeService = inject(CollegeService);
+  private toast = inject(ToastrService);
+  private dialog = inject(MatDialog);
+
+  dataSource = new MatTableDataSource<IFeeInstallment>([]);
+  displayedColumns: string[] = ['index', 'installment', 'installmentDate', 'actions'];
+  sessions: ISession[] = [];
+  schools: ICollege[] = [];
+  filterSessionId = 0;
+  filterCollegeId = 0;
+  newInstallment: Partial<IFeeInstallment> = {
+    installmentId: 0,
+    installmentName: '',
+    installMentDate: undefined,
+  };
+  isLoading = false;
+  isSaving = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
+  @ViewChild('addDialog') addDialog!: TemplateRef<void>;
+  @ViewChild('editDialog') editDialog!: TemplateRef<IFeeInstallment>;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
-  feeInstallmentForm!: FormGroup;
-  feeHeadList: IFeeInstallment[] = [];
-  sessions!: ISession[];
-  schools!: ICollege[];
   ngOnInit(): void {
-    this.feeInstallmentForm = this.fb.group({
-      installmentId: [0],
-      sessionId: [0],
-      collegeId: [0],
-      installmentName: [null],
-      installMentDate: [null],
-
-    })
-
-    this.loadSession();
-    this.loadCollege();
+    this.dataSource.filterPredicate = (row, filter) =>
+      `${row.installmentName} ${row.installMentDate}`.toLowerCase().includes(filter);
+    this.loadSessions();
+    this.loadColleges();
   }
 
-  loadSession() {
-    this.sessionService.getSessionList().subscribe(res => {
-      this.sessions = Array.isArray(res.data) ? res.data : [res.data];
-    })
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
-  loadCollege() {
-    this.collegeService.getCollegeList().subscribe(res => {
-      this.schools = Array.isArray(res.data) ? res.data : [res.data];
-    })
-  };
 
-
-  GetFeeInsallmentList() {
-    debugger;
-    const CollegeId = this.feeInstallmentForm.get('collegeId')?.value;
-    const sessionId = this.feeInstallmentForm.get('sessionId')?.value;
-    if (CollegeId > 0 && sessionId > 0) {
-      this._feeMstService.listFeeInstallment(CollegeId, sessionId).subscribe({
-        next: (res) => {
-          if (res.success) {
-            this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];
-            this.dataSource.paginator = this.paginator;
-            this.dataSource.sort = this.sort;
-          }
-        },
-        error: (err) => {
-          console.log("error to fetch expense list", err);
+  loadSessions(): void {
+    this.sessionService.getSessionList().subscribe({
+      next: res => {
+        if (res.success) {
+          this.sessions = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
         }
+      },
+      error: () => this.toast.error('Failed to load sessions'),
+    });
+  }
 
-      });
-    }
-  };
-
-  addFeeInstallment() {
-    debugger;
-    if (this.feeInstallmentForm.valid) {
-      const formValue = this.feeInstallmentForm.value;
-      this._feeMstService.addFeeInstallment(formValue).subscribe({
-        next: (res) => {
-          if (res.success) {
-            alert(res.message);
-            this.GetFeeInsallmentList();
-          }
-          else {
-            alert(res.message);
-          }
-        },
-        error: (err) => {
-          console.log("add expense error", err);
-          alert("Something went wrong.");
+  loadColleges(): void {
+    this.collegeService.getCollegeList().subscribe({
+      next: res => {
+        if (res.success) {
+          this.schools = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
         }
-      });
+      },
+      error: () => this.toast.error('Failed to load schools'),
+    });
+  }
+
+  onFiltersChange(): void {
+    if (this.filterCollegeId > 0 && this.filterSessionId > 0) {
+      this.loadList();
+    } else {
+      this.dataSource.data = [];
     }
   }
 
+  loadList(): void {
+    if (this.filterCollegeId <= 0 || this.filterSessionId <= 0) {
+      this.toast.warning('Select session and school to load installments.');
+      return;
+    }
+    this.isLoading = true;
+    this.feeService.listFeeInstallment(this.filterCollegeId, this.filterSessionId).subscribe({
+      next: res => {
+        this.isLoading = false;
+        if (res.success) {
+          const rows = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
+          this.dataSource.data = rows;
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        } else {
+          this.toast.error(res.message || 'Failed to load installments');
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toast.error('Failed to load installments');
+      },
+    });
+  }
 
-  // listing
-  openEditDialog(feeInstallment: IFeeInstallment) {
+  openAddDialog(): void {
+    if (this.filterCollegeId <= 0 || this.filterSessionId <= 0) {
+      this.toast.warning('Select session and school first.');
+      return;
+    }
+    this.newInstallment = {
+      installmentId: 0,
+      sessionId: this.filterSessionId,
+      collegeId: this.filterCollegeId,
+      installmentName: '',
+      installMentDate: undefined,
+    };
+    this.dialog.open(this.addDialog, { width: 'min(480px, 92vw)', maxWidth: '95vw' });
+  }
+
+  addFeeInstallment(): void {
+    const name = this.newInstallment.installmentName?.trim() ?? '';
+    if (!name) {
+      this.toast.warning('Please enter installment name.');
+      return;
+    }
+    if (!this.newInstallment.installMentDate) {
+      this.toast.warning('Please select installment date.');
+      return;
+    }
+    this.isSaving = true;
+    const body = {
+      ...this.newInstallment,
+      installmentName: name,
+      sessionId: this.filterSessionId,
+      collegeId: this.filterCollegeId,
+    } as IFeeInstallment;
+    this.feeService.addFeeInstallment(body).subscribe({
+      next: res => {
+        this.isSaving = false;
+        if (res.success) {
+          this.toast.success(res.message || 'Installment added successfully');
+          this.dialog.closeAll();
+          this.loadList();
+        } else {
+          this.toast.error(res.message || 'Failed to add installment');
+        }
+      },
+      error: () => {
+        this.isSaving = false;
+        this.toast.error('Failed to add installment');
+      },
+    });
+  }
+
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.paginator?.firstPage();
+  }
+
+  rowIndex(i: number): number {
+    return this.paginator ? this.paginator.pageIndex * this.paginator.pageSize + i + 1 : i + 1;
+  }
+
+  openEditDialog(row: IFeeInstallment): void {
     const dialogRef = this.dialog.open(this.editDialog, {
-      width: '400px',
-      data: { ...feeInstallment }
+      width: 'min(480px, 92vw)',
+      maxWidth: '95vw',
+      data: { ...row },
     });
-    debugger;
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        debugger;
-        // Handle the result from the dialog (e.g., save changes)
-        console.log('Dialog result:', result);
-
-        this._feeMstService.updateFeeInstallment(result).subscribe({
-          next: (res) => {
-            if (res.success) {
-              this.GetFeeInsallmentList();
-              alert(res.message);
-              // Refresh the list
-            }
-          },
-          error: (err) => {
-            console.error('Error updating session:', err);
-            alert('Failed to update session');
-          }
-        })
+    dialogRef.afterClosed().subscribe((result: IFeeInstallment | undefined) => {
+      if (!result?.installmentName?.trim()) {
+        return;
       }
+      this.feeService.updateFeeInstallment(result).subscribe({
+        next: res => {
+          if (res.success) {
+            this.toast.success(res.message || 'Installment updated successfully');
+            this.loadList();
+          } else {
+            this.toast.error(res.message || 'Failed to update installment');
+          }
+        },
+        error: () => this.toast.error('Failed to update installment'),
+      });
     });
   }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  /** Checkbox Selection Logic */
-  toggleSelection(row: IFeeInstallment) {
-    if (this.feeHeadList.includes(row)) {
-      this.feeHeadList = this.feeHeadList.filter(r => r !== row);
-    } else {
-      this.feeHeadList.push(row);
-    }
-  }
-
-  isAllSelected() {
-    return this.feeHeadList.length === this.dataSource.data.length;
-  }
-
-  isPartialSelected() {
-    return this.feeHeadList.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.feeHeadList = [];
-    } else {
-      this.feeHeadList = [...this.dataSource.data];
-    }
-  }
-
-
-
 }

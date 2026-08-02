@@ -1,0 +1,154 @@
+<div class="admin-layout">
+  <page-header
+    class="admin-layout__header"
+    title="Menu Access Permission"
+    [nav]="['home', 'Admin', 'Menu Access Permission']"
+  />
+
+  <section class="admin-page menuaccess" aria-label="Menu access permission">
+    <mat-card class="admin-page__card menuaccess__filters">
+      <mat-card-header>
+        <mat-card-title>Select Faculty</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="menuaccess__filter-form">
+          <mat-form-field appearance="outline" class="menuaccess__field">
+            <mat-label>College</mat-label>
+            <mat-select
+              name="college"
+              [(ngModel)]="selectedCollegeId"
+              (selectionChange)="onCollegeChange()"
+            >
+              @for (college of colleges; track college.collegeId) {
+                <mat-option [value]="college.collegeId">
+                  {{ college.collegeAbreviation || college.collegeName }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="menuaccess__field">
+            <mat-label>Designation</mat-label>
+            <mat-select
+              name="designation"
+              [(ngModel)]="selectedDesignation"
+              (selectionChange)="onDesignationChange()"
+              [disabled]="!selectedCollegeId"
+            >
+              @for (designation of designations; track designation.id) {
+                <mat-option [value]="designation.designation">
+                  {{ designation.designation }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="menuaccess__field">
+            <mat-label>Faculty</mat-label>
+            <mat-select
+              name="faculty"
+              [(ngModel)]="selectedFacultyId"
+              (selectionChange)="onFacultyChange()"
+              [disabled]="!selectedCollegeId || isLoadingFaculties"
+            >
+              @for (faculty of faculties; track faculty.facultyId) {
+                <mat-option [value]="faculty.facultyId">
+                  {{ facultyLabel(faculty) }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="admin-page__card menuaccess__grid">
+      <mat-card-header>
+        <mat-card-title>Menu Allocation</mat-card-title>
+      </mat-card-header>
+      @if (isLoadingMenus) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+      <mat-card-content>
+        @if (selectedFacultyId && menuList.length) {
+          @for (menu of menuList; track menu.menuId) {
+            <div class="menuaccess__menu-block">
+              <table class="admin-table menuaccess__main-table">
+                <thead>
+                  <tr>
+                    <th class="menuaccess__select-col">Select</th>
+                    <th>Menu Name</th>
+                    <th>Menu Url</th>
+                    <th>Menu Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="admin-table__row">
+                    <td class="menuaccess__select-col">
+                      <mat-checkbox
+                        [checked]="menu.checked"
+                        (change)="toggleMenu(menu, $event.checked)"
+                      />
+                    </td>
+                    <td>{{ menu.menuName }}</td>
+                    <td>{{ menu.menuUrl }}</td>
+                    <td>{{ menu.menuDescription }}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              @if (menu.subMenus.length) {
+                <table class="admin-table menuaccess__sub-table">
+                  <thead>
+                    <tr>
+                      <th class="menuaccess__sl-col">S.N</th>
+                      <th>Sub Menu</th>
+                      <th>Url</th>
+                      <th>Menu Description</th>
+                      <th class="menuaccess__select-col">Select</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (sub of menu.subMenus; track sub.subMenuId; let i = $index) {
+                      <tr class="admin-table__row" [class.admin-table__row--alt]="i % 2 === 1">
+                        <td class="menuaccess__sl-col">{{ i + 1 }}</td>
+                        <td>{{ sub.subMenuName }}</td>
+                        <td>{{ sub.url }}</td>
+                        <td>{{ sub.menuDescription }}</td>
+                        <td class="menuaccess__select-col">
+                          <mat-checkbox
+                            [checked]="sub.checked"
+                            (change)="toggleSubMenu(menu, sub, $event.checked)"
+                          />
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </div>
+          }
+
+          <div class="menuaccess__actions">
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              [disabled]="isSaving"
+              (click)="savePermissions()"
+            >
+              <mat-icon>save</mat-icon>
+              Save
+            </button>
+          </div>
+        } @else if (selectedFacultyId && !isLoadingMenus) {
+          <p class="menuaccess__empty">No menus available.</p>
+        } @else {
+          <p class="menuaccess__empty">
+            Select a college, designation and faculty to allocate menu access.
+          </p>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

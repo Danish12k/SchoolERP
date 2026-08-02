@@ -1,5 +1,5 @@
 <div class="col-sm-12">
-    <mat-card>
+    <mat-card class="classmaster-add-card">
         <mat-card-header>
             <mat-card-title>Add Class</mat-card-title>
         </mat-card-header>
@@ -30,7 +30,7 @@
                             </mat-select>
                         </mat-form-field>
 
-                        <mat-form-field class="w-100">
+                        <mat-form-field appearance="outline" class="w-100">
                             <mat-label>Class Name</mat-label>
                             <input matInput formControlName="courseName" placeholder="Enter class name" />
 
@@ -45,7 +45,7 @@
                             }
                         </mat-form-field>
 
-                        <mat-form-field class="w-100">
+                        <mat-form-field appearance="outline" class="w-100">
                             <mat-label>Sequence No.</mat-label>
                             <input matInput type="number" formControlName="seqNumber" placeholder="Enter sequence no." />
                             @if(classForm.get('seqNumber')?.hasError('required') && classForm.get('seqNumber')?.touched){
@@ -67,17 +67,25 @@
     </mat-card>
 </div>
 
-
-
 <div class="col-sm-12">
-    <mat-card>
-        <mat-card-content>
-            <mat-form-field appearance="outline">
-                <mat-label>Search</mat-label>
-                <input matInput (keyup)="applyFilter($event)" placeholder="Filter class">
-            </mat-form-field>
-            <div class="classmaster-table__wrap">
-                <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 classmaster-table">
+    <mat-card class="admin-page__card classmaster-table-card">
+        <mat-card-content class="admin-page__content">
+            <div class="classmaster-table-toolbar">
+                <mat-form-field appearance="outline" class="admin-toolbar__search classmaster-table-toolbar__search">
+                    <mat-label>Search</mat-label>
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="Filter class" />
+                </mat-form-field>
+            </div>
+
+            <div class="admin-table__wrap classmaster-table__wrap">
+                <table mat-table [dataSource]="dataSource" matSort class="admin-table mat-elevation-z0 classmaster-table">
+                    <ng-container matColumnDef="index">
+                        <th mat-header-cell *matHeaderCellDef class="admin-table__index-col">#</th>
+                        <td mat-cell *matCellDef="let row; let i = index" class="admin-table__index-col">
+                            {{ rowIndex(i) }}
+                        </td>
+                    </ng-container>
                     <ng-container matColumnDef="className">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Class Name</th>
                         <td mat-cell *matCellDef="let element">{{ element.courseName }}</td>
@@ -87,69 +95,76 @@
                         <td mat-cell *matCellDef="let element">{{ element.seqNumber }}</td>
                     </ng-container>
                     <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef>Actions</th>
+                        <th mat-header-cell *matHeaderCellDef class="admin-table__actions-col">Actions</th>
                         <td mat-cell *matCellDef="let row">
-                            <button mat-icon-button color="primary" (click)="openEditDialog(row)">
-                                <mat-icon>drive_file_rename_outline</mat-icon>
+                            <button mat-icon-button color="primary" type="button" (click)="openEditDialog(row)" matTooltip="Edit class">
+                                <mat-icon>edit</mat-icon>
                             </button>
-                            <button mat-icon-button color="primary" (click)="classDelete(row)">
+                            <button mat-icon-button color="warn" type="button" (click)="classDelete(row)" matTooltip="Delete class">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </td>
                     </ng-container>
-                    <!-- Header & Rows -->
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="admin-table__row"></tr>
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell admin-table__empty" [attr.colspan]="displayedColumns.length">
+                            @if (isLoading) {
+                                Loading…
+                            } @else if (dataSource.filter) {
+                                No classes match your search.
+                            } @else if (!classForm.get('sessionId')?.value || !classForm.get('collegeId')?.value) {
+                                Select a session and school to view classes.
+                            } @else {
+                                No classes found for the selected session and school.
+                            }
+                        </td>
+                    </tr>
                 </table>
             </div>
-            <!-- Paginator -->
-            <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
 
+            <mat-paginator
+                class="admin-page__paginator"
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 50]"
+                showFirstLastButtons
+            />
         </mat-card-content>
     </mat-card>
 </div>
 
-
-<!-- ============================= -->
-<!-- Edit Class Popup Template -->
-<!-- ============================= -->
 <ng-template #editDialog let-data>
   <h2 mat-dialog-title>Edit Class</h2>
 
   <mat-dialog-content>
     <form #editClassForm="ngForm" class="w-100">
-    <mat-form-field appearance="fill" style="width:100%">
+      <mat-form-field appearance="fill" style="width:100%">
         <mat-label>Select Session</mat-label>
         <mat-select [(ngModel)]="data.sessionId" name="sessionId" required>
           @for (session of sessions; track session.sessionId) {
-          <mat-option [value]="session.sessionId">
-            {{ session.sessionName }}
-          </mat-option>
+            <mat-option [value]="session.sessionId">{{ session.sessionName }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
 
-   <mat-form-field appearance="fill" style="width:100%">
+      <mat-form-field appearance="fill" style="width:100%">
         <mat-label>Select School</mat-label>
         <mat-select [(ngModel)]="data.collegeId" name="collegeId" required>
           @for (college of colleges; track college.collegeId) {
-          <mat-option [value]="college.collegeId">
-            {{ college.collegeAbreviation }}
-          </mat-option>
+            <mat-option [value]="college.collegeId">{{ college.collegeAbreviation }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
 
-     <mat-form-field appearance="fill" style="width:100%">
+      <mat-form-field appearance="fill" style="width:100%">
         <mat-label>Class Name</mat-label>
         <input matInput [(ngModel)]="data.courseName" name="courseName" required minlength="3" maxlength="50" />
       </mat-form-field>
 
-  <mat-form-field appearance="fill" style="width:100%">
+      <mat-form-field appearance="fill" style="width:100%">
         <mat-label>Sequence Number</mat-label>
         <input matInput type="number" [(ngModel)]="data.seqNumber" name="seqNumber" required min="1" />
       </mat-form-field>
-
     </form>
   </mat-dialog-content>
 

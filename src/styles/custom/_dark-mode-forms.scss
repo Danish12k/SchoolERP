@@ -1,0 +1,275 @@
+/**
+ * Dark mode: force readable black text in inputs/selects on light panels
+ * (main content + dialogs). Sidebar is excluded.
+ */
+.theme-dark {
+  .matero-page-content .admin-page,
+  .matero-page-content .admin-layout,
+  .matero-page-content,
+  .mat-mdc-dialog-container {
+    input:not([type='checkbox']):not([type='radio']):not([type='button']):not([type='submit']):not([type='reset']):not([type='image']),
+    select,
+    textarea {
+      color: #000 !important;
+      caret-color: #000;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(0, 0, 0, 0.45) !important;
+    }
+
+    .mat-mdc-form-field {
+      --mat-form-field-input-text-color: #000;
+      --mat-form-field-input-text-placeholder-color: rgba(0, 0, 0, 0.45);
+      --mat-form-field-focused-label-text-color: rgba(0, 0, 0, 0.87);
+      --mat-form-field-label-text-color: rgba(0, 0, 0, 0.6);
+      --mdc-outlined-text-field-input-text-color: #000;
+      --mdc-outlined-text-field-label-text-color: rgba(0, 0, 0, 0.6);
+      --mdc-outlined-text-field-focus-label-text-color: rgba(0, 0, 0, 0.87);
+      --mdc-outlined-text-field-placeholder-text-color: rgba(0, 0, 0, 0.45);
+      --mdc-filled-text-field-input-text-color: #000;
+      --mdc-filled-text-field-label-text-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .mat-mdc-input-element,
+    .mdc-text-field__input,
+    textarea.mat-mdc-input-element {
+      color: #000 !important;
+      caret-color: #000;
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .mat-mdc-form-field.mat-focused .mat-mdc-floating-label,
+    .mat-mdc-form-field.mat-focused .mdc-floating-label {
+      color: rgba(0, 0, 0, 0.87);
+    }
+
+    .mat-mdc-select {
+      --mat-select-enabled-trigger-text-color: #000;
+      --mat-select-disabled-trigger-text-color: rgba(0, 0, 0, 0.38);
+    }
+
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text,
+    .mat-mdc-select-min-line {
+      color: #000 !important;
+    }
+
+    .mat-mdc-select-arrow {
+      color: rgba(0, 0, 0, 0.54) !important;
+    }
+
+    .mat-mdc-form-field-icon-prefix,
+    .mat-mdc-form-field-icon-suffix,
+    .mat-mdc-form-field .mat-icon {
+      color: rgba(0, 0, 0, 0.54);
+    }
+  }
+
+  .mat-mdc-paginator {
+    background-color: #fff !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    --mat-paginator-container-text-color: rgba(0, 0, 0, 0.87);
+    --mat-paginator-enabled-icon-color: rgba(0, 0, 0, 0.54);
+    --mat-paginator-disabled-icon-color: rgba(0, 0, 0, 0.26);
+    --mat-select-enabled-trigger-text-color: #000;
+    --mat-select-disabled-trigger-text-color: rgba(0, 0, 0, 0.38);
+
+    .mat-mdc-paginator-page-size-label,
+    .mat-mdc-paginator-range-label,
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text,
+    .mat-mdc-select-min-line {
+      color: rgba(0, 0, 0, 0.87) !important;
+    }
+
+    .mat-mdc-text-field-wrapper,
+    .mdc-text-field,
+    .mat-mdc-form-field-flex {
+      background-color: #fff !important;
+      color: #000 !important;
+    }
+
+    .mat-mdc-select-arrow,
+    .mat-mdc-icon-button,
+    .mat-mdc-icon-button .mat-icon {
+      color: rgba(0, 0, 0, 0.54) !important;
+    }
+  }
+
+}
+
+/* Material select panels render in the global overlay, which may sit outside `.theme-dark`. */
+.cdk-overlay-container .mat-mdc-select-panel {
+  background-color: #fff !important;
+  color-scheme: light;
+  --mat-option-label-text-color: rgba(0, 0, 0, 0.87);
+  --mat-option-selected-state-label-text-color: #000;
+  --mdc-list-list-item-label-text-color: rgba(0, 0, 0, 0.87);
+  --mdc-list-list-item-selected-label-text-color: #000;
+  --mdc-list-list-item-hover-label-text-color: #000;
+  --mdc-list-list-item-focus-label-text-color: #000;
+
+  .mat-mdc-option,
+  .mat-mdc-option .mdc-list-item__primary-text,
+  .mat-mdc-option .mat-pseudo-checkbox + span {
+    color: rgba(0, 0, 0, 0.87) !important;
+  }
+
+  .mat-mdc-option.mdc-list-item--selected,
+  .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text,
+  .mat-mdc-option.mat-mdc-option-active,
+  .mat-mdc-option.mat-mdc-option-active .mdc-list-item__primary-text,
+  .mat-mdc-option:hover,
+  .mat-mdc-option:hover .mdc-list-item__primary-text {
+    color: #000 !important;
+  }
+
+  .mat-mdc-option-pseudo-checkbox,
+  .mat-pseudo-checkbox {
+    color: rgba(0, 0, 0, 0.74) !important;
+  }
+}
+
+/* Popups / dialogs / overlays in dark mode */
+.theme-dark .cdk-overlay-container {
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    min-height: 300px;
+    color-scheme: light;
+    background-color: #fff !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    --mdc-dialog-container-color: #fff;
+    --mat-dialog-container-color: #fff;
+  }
+
+  .mat-mdc-dialog-title,
+  .mat-mdc-dialog-content,
+  .mat-mdc-dialog-actions {
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  /* Required fields: dark orange indicator instead of default error pink/red */
+  $dialog-required-orange: #e65100;
+  $dialog-label-color: #000;
+
+  .mat-mdc-form-field:has([required]) {
+    --mat-form-field-required-marker-color: #{$dialog-required-orange};
+    --mdc-outlined-text-field-error-outline-color: #{$dialog-required-orange};
+    --mdc-outlined-text-field-error-label-text-color: #{$dialog-required-orange};
+    --mdc-outlined-text-field-error-focus-outline-color: #{$dialog-required-orange};
+    --mdc-outlined-text-field-error-hover-outline-color: #{$dialog-required-orange};
+    --mat-form-field-error-text-color: #{$dialog-required-orange};
+
+    .mat-mdc-form-field-required-marker {
+      color: $dialog-required-orange;
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      opacity: 1 !important;
+      visibility: visible !important;
+      color: $dialog-label-color !important;
+    }
+
+    &:not(.mat-focused) {
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: $dialog-required-orange;
+        }
+      }
+    }
+
+    &.mat-focused {
+      .mat-mdc-floating-label,
+      .mdc-floating-label,
+      .mdc-floating-label--float-above {
+        opacity: 1 !important;
+        visibility: visible !important;
+        color: $dialog-label-color !important;
+      }
+
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: $dialog-required-orange;
+        }
+      }
+    }
+
+    &.mat-form-field-invalid,
+    &.mat-mdc-form-field.mat-form-field-invalid {
+      .mat-mdc-floating-label,
+      .mdc-floating-label {
+        color: $dialog-label-color;
+      }
+
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: $dialog-required-orange;
+        }
+      }
+    }
+  }
+
+  .mat-mdc-select-panel {
+    background-color: #fff !important;
+    color-scheme: light;
+    --mat-option-label-text-color: rgba(0, 0, 0, 0.87);
+    --mat-option-selected-state-label-text-color: #000;
+    --mdc-list-list-item-label-text-color: rgba(0, 0, 0, 0.87);
+    --mdc-list-list-item-selected-label-text-color: #000;
+
+    .mat-mdc-option,
+    .mat-mdc-option .mdc-list-item__primary-text {
+      color: rgba(0, 0, 0, 0.87) !important;
+    }
+
+    .mat-mdc-option.mdc-list-item--selected,
+    .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text,
+    .mat-mdc-option.mat-mdc-option-active,
+    .mat-mdc-option.mat-mdc-option-active .mdc-list-item__primary-text {
+      color: #000 !important;
+    }
+
+    .mat-mdc-option-pseudo-checkbox {
+      color: rgba(0, 0, 0, 0.74) !important;
+    }
+  }
+
+  /* Admin popup fields: black values and labels. */
+  .admin-dialog__content {
+    .admin-dialog__field,
+    .admin-toolbar__search,
+    .admin-toolbar__filter-field {
+      --mat-form-field-input-text-color: #000;
+      --mdc-outlined-text-field-input-text-color: #000;
+      --mat-select-enabled-trigger-text-color: #000;
+    }
+
+    .admin-dialog__field {
+      input.mat-mdc-input-element,
+      .mdc-text-field__input,
+      textarea.mat-mdc-input-element {
+        color: #000 !important;
+        caret-color: #000;
+      }
+
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text,
+      .mat-mdc-select-min-line {
+        color: #000 !important;
+      }
+    }
+  }
+}

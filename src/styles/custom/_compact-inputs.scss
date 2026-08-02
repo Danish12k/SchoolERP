@@ -1,0 +1,331 @@
+/** Required fields in dialogs — dark orange indicator */
+$dialog-required-orange: #e65100;
+$dialog-label-color: #000;
+
+/** App-wide control height (inputs + dropdowns) */
+$erp-control-max-height: 35px;
+$erp-control-inner-height: 33px;
+
+:root {
+  --erp-control-max-height: #{$erp-control-max-height};
+  --erp-control-inner-height: #{$erp-control-inner-height};
+  --mat-form-field-container-height: #{$erp-control-max-height};
+  --mat-form-field-container-vertical-padding: 0;
+}
+
+@mixin erp-compact-mat-select {
+  --mat-select-trigger-text-line-height: #{$erp-control-inner-height};
+
+  .mat-mdc-select {
+    max-height: $erp-control-max-height !important;
+    font-size: 12px;
+  }
+
+  .mat-mdc-select-trigger {
+    height: $erp-control-inner-height !important;
+    max-height: $erp-control-max-height !important;
+    min-height: $erp-control-inner-height !important;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .mat-mdc-select-value,
+  .mat-mdc-select-value-text {
+    max-height: $erp-control-max-height !important;
+    line-height: $erp-control-inner-height !important;
+    font-size: 12px;
+  }
+
+  .mat-mdc-select-arrow-wrapper {
+    height: $erp-control-inner-height !important;
+    max-height: $erp-control-max-height !important;
+    display: flex;
+    align-items: center;
+  }
+}
+
+@mixin erp-compact-form-field {
+  --mat-form-field-container-height: #{$erp-control-max-height};
+  --mat-form-field-container-vertical-padding: 0;
+
+  @include erp-compact-mat-select;
+
+  .mat-mdc-text-field-wrapper {
+    height: $erp-control-max-height !important;
+    max-height: $erp-control-max-height !important;
+    min-height: $erp-control-max-height !important;
+    padding-top: 0;
+    padding-bottom: 0;
+    box-sizing: border-box;
+  }
+
+  .mat-mdc-form-field-flex {
+    height: $erp-control-max-height !important;
+    max-height: $erp-control-max-height !important;
+    min-height: $erp-control-max-height !important;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .mat-mdc-form-field-infix {
+    min-height: $erp-control-max-height !important;
+    max-height: $erp-control-max-height !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    box-sizing: border-box;
+  }
+
+  input.mat-mdc-input-element:not(textarea) {
+    height: $erp-control-inner-height !important;
+    max-height: $erp-control-max-height !important;
+    line-height: $erp-control-inner-height !important;
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 12px;
+    box-sizing: border-box;
+  }
+
+  .mdc-notched-outline .mdc-notched-outline__leading,
+  .mdc-notched-outline .mdc-notched-outline__notch,
+  .mdc-notched-outline .mdc-notched-outline__trailing {
+    border-width: 1px;
+  }
+}
+
+@mixin erp-compact-controls-global {
+  input:not([type='checkbox']):not([type='radio']):not([type='button']):not([type='submit']):not(
+      [type='reset']
+    ):not([type='file']):not([type='image']):not([type='hidden']):not([type='range']):not(
+      [type='color']
+    ) {
+    max-height: $erp-control-max-height;
+    box-sizing: border-box;
+  }
+
+  select {
+    max-height: $erp-control-max-height;
+    height: $erp-control-max-height;
+    box-sizing: border-box;
+    font-size: 12px;
+  }
+
+  .mat-mdc-form-field:not(:has(textarea)):not(:has(.ql-container)):not(:has(.ql-editor)):not(
+      :has(.cert-quill)
+    ):not(:has(quill-editor)):not(.admin-dialog__field) {
+    @include erp-compact-form-field;
+  }
+
+  /* --- Excluded: textarea --- */
+  textarea,
+  textarea.mat-mdc-input-element {
+    max-height: none !important;
+    height: auto !important;
+    min-height: 4rem;
+    line-height: 1.4 !important;
+    box-sizing: border-box;
+  }
+
+  .mat-mdc-form-field:has(textarea) {
+    --mat-form-field-container-height: auto;
+
+    .mat-mdc-text-field-wrapper,
+    .mat-mdc-form-field-flex {
+      height: auto !important;
+      max-height: none !important;
+      min-height: auto !important;
+    }
+
+    .mat-mdc-form-field-infix {
+      max-height: none !important;
+      min-height: auto !important;
+    }
+  }
+
+  /* --- Excluded: Quill / rich text --- */
+  quill-editor,
+  .cert-quill,
+  .cert-rich-field,
+  .ql-toolbar,
+  .ql-container,
+  .ql-editor {
+    max-height: none !important;
+    height: auto !important;
+  }
+
+  quill-editor,
+  .cert-quill {
+    display: block;
+    width: 100%;
+
+    .ql-container,
+    .ql-editor {
+      max-height: none !important;
+      height: auto !important;
+      min-height: 140px;
+    }
+
+    .ql-toolbar {
+      max-height: none !important;
+      height: auto !important;
+    }
+
+    input,
+    select {
+      max-height: none;
+      height: auto;
+    }
+  }
+
+  .mat-mdc-form-field:has(.ql-container),
+  .mat-mdc-form-field:has(.cert-quill),
+  .mat-mdc-form-field:has(quill-editor) {
+    --mat-form-field-container-height: auto;
+
+    .mat-mdc-text-field-wrapper,
+    .mat-mdc-form-field-flex,
+    .mat-mdc-form-field-infix {
+      height: auto !important;
+      max-height: none !important;
+      min-height: auto !important;
+    }
+  }
+}
+
+.cdk-overlay-container .mat-mdc-dialog-container,
+.cdk-overlay-container .mat-mdc-dialog-container .mdc-dialog__surface {
+  min-height: 300px;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.cdk-overlay-container .mat-mdc-dialog-container {
+  .mat-mdc-dialog-content {
+    overflow: visible;
+  }
+
+  .mat-mdc-form-field:has([required]) {
+    --mat-form-field-required-marker-color: #{$dialog-required-orange};
+    --mdc-outlined-text-field-error-outline-color: #{$dialog-required-orange};
+    --mdc-outlined-text-field-error-label-text-color: #{$dialog-required-orange};
+    --mdc-outlined-text-field-error-focus-outline-color: #{$dialog-required-orange};
+    --mdc-outlined-text-field-error-hover-outline-color: #{$dialog-required-orange};
+    --mat-form-field-error-text-color: #{$dialog-required-orange};
+
+    .mat-mdc-form-field-required-marker {
+      color: $dialog-required-orange;
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      opacity: 1 !important;
+      visibility: visible !important;
+      color: $dialog-label-color !important;
+    }
+
+    &:not(.mat-focused) {
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: $dialog-required-orange;
+        }
+      }
+    }
+
+    &.mat-focused {
+      .mat-mdc-floating-label,
+      .mdc-floating-label,
+      .mdc-floating-label--float-above {
+        opacity: 1 !important;
+        visibility: visible !important;
+        color: $dialog-label-color !important;
+      }
+
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: $dialog-required-orange;
+        }
+      }
+    }
+
+    &.mat-form-field-invalid,
+    &.mat-mdc-form-field.mat-form-field-invalid {
+      .mat-mdc-floating-label,
+      .mdc-floating-label {
+        color: $dialog-label-color;
+      }
+
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: $dialog-required-orange;
+        }
+      }
+    }
+  }
+}
+
+/** Global 35px controls — page content + CDK overlays (dialogs) */
+body,
+.cdk-overlay-container {
+  @include erp-compact-controls-global;
+}
+
+.cdk-overlay-container .mat-mdc-select-panel {
+  background-color: #fff !important;
+  color-scheme: light;
+  --mat-option-label-text-color: rgba(0, 0, 0, 0.87);
+  --mat-option-selected-state-label-text-color: #000;
+  --mdc-list-list-item-label-text-color: rgba(0, 0, 0, 0.87);
+  --mdc-list-list-item-selected-label-text-color: #000;
+  --mdc-list-list-item-hover-label-text-color: #000;
+  --mdc-list-list-item-focus-label-text-color: #000;
+
+  .mat-mdc-option,
+  .mat-mdc-option .mdc-list-item__primary-text,
+  .mat-mdc-option:hover,
+  .mat-mdc-option:hover .mdc-list-item__primary-text,
+  .mat-mdc-option.mat-mdc-option-active,
+  .mat-mdc-option.mat-mdc-option-active .mdc-list-item__primary-text,
+  .mat-mdc-option.mdc-list-item--selected,
+  .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text {
+    color: #000 !important;
+  }
+
+  .mat-mdc-option-pseudo-checkbox,
+  .mat-pseudo-checkbox {
+    color: rgba(0, 0, 0, 0.74) !important;
+  }
+}
+
+.theme-dark .cdk-overlay-container {
+  .mat-mdc-select-panel {
+    background-color: #fff !important;
+    color-scheme: light;
+    --mat-option-label-text-color: rgba(0, 0, 0, 0.87);
+    --mat-option-selected-state-label-text-color: #000;
+    --mdc-list-list-item-label-text-color: rgba(0, 0, 0, 0.87);
+    --mdc-list-list-item-selected-label-text-color: #000;
+
+    .mat-mdc-option,
+    .mat-mdc-option .mdc-list-item__primary-text {
+      color: rgba(0, 0, 0, 0.87) !important;
+    }
+
+    .mat-mdc-option.mdc-list-item--selected,
+    .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text,
+    .mat-mdc-option.mat-mdc-option-active,
+    .mat-mdc-option.mat-mdc-option-active .mdc-list-item__primary-text {
+      color: #000 !important;
+    }
+
+    .mat-mdc-option-pseudo-checkbox {
+      color: rgba(0, 0, 0, 0.74) !important;
+    }
+  }
+}

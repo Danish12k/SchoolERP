@@ -1,26 +1,63 @@
-/* Local responsive layout (avoid relying on bootstrap presence) */
-
 :host {
   display: block;
 }
 
+.col-sm-12 + .col-sm-12 {
+  margin-top: 12px;
+}
+
+.classmaster-add-card {
+  margin: 10px 0 0;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  border-radius: 0;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.1);
+
+  mat-card-header {
+    padding: 18px 18px 0;
+  }
+
+  mat-card-title {
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  mat-card-content {
+    padding: 14px 18px 18px !important;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background-color: #fff !important;
+  }
+
+  input.mat-mdc-input-element {
+    color: #000 !important;
+    caret-color: #000;
+  }
+}
+
 .classmaster-form {
   display: grid;
-  gap: 12px;
+  gap: 18px;
 }
 
 .classmaster-form__grid {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
   align-items: start;
 }
 
 .classmaster-form__actions {
-  margin-top: 8px;
+  margin-top: 4px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
+
+  button {
+    min-width: 88px;
+    min-height: 40px;
+  }
 }
 
 .w-100 {
@@ -33,42 +70,50 @@
 
 .classmaster-table__wrap {
   width: 100%;
-  overflow-x: auto;
-}
-/* Local responsive layout (avoid relying on bootstrap presence) */
-
-:host {
-  display: block;
 }
 
-.classmaster-form {
-  display: grid;
-  gap: 12px;
+.classmaster-table-card {
+  min-height: 0;
+  border-radius: 0;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14);
 }
 
-.classmaster-form__grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  align-items: start;
+.classmaster-table-card .admin-table__wrap {
+  border-radius: 0;
+  box-shadow: none;
 }
 
-.classmaster-form__actions {
-  margin-top: 8px;
+.classmaster-table-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.w-100 {
-  width: 100%;
+.classmaster-table-toolbar__search {
+  width: min(100%, 360px);
 }
 
-.classmaster-table {
-  width: 100%;
+:host-context(.theme-dark) .classmaster-add-card {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
 }
 
-.classmaster-table__wrap {
-  width: 100%;
-  overflow-x: auto;
+@media (max-width: 767px) {
+  .classmaster-form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .classmaster-table-toolbar__search {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .classmaster-form__actions {
+    button {
+      flex: 1 1 auto;
+    }
+  }
 }

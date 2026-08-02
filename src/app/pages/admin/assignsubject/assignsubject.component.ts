@@ -1,295 +1,314 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { MatCard, MatCardModule } from '@angular/material/card';
-import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
-import { ISession } from '../../../interfaces/isession';
-import { ICollege } from '../../../interfaces/ICollege';
-import { SessionService } from '../../../services/session.service';
-import { CollegeService } from '../../../services/college.service';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { IAssignSubject, IAssignSubjectList, ISubject, ISubjectType } from '../../../interfaces/ISubjectMst';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { ToastrService } from 'ngx-toastr';
+import { IAssignSectionList } from '../../../interfaces/IClassAndSection';
 import { IClass } from '../../../interfaces/IClassmaster';
-import { ISection } from '../../../interfaces/IClassAndSection';
-import { SectionService } from '../../../services/section.service';
-import { SubjectmasterService } from '../../../services/subjectmaster.service';
+import { ICollege } from '../../../interfaces/ICollege';
+import { ISession } from '../../../interfaces/isession';
+import {
+  IAssignSubject,
+  IAssignSubjectList,
+  ISubject,
+  SUBJECT_TYPE_OPTIONS,
+  subjectTypeLabel,
+} from '../../../interfaces/ISubjectMst';
+import { CollegeService } from '../../../services/masterservice/college.service';
+import { SectionService } from '../../../services/masterservice/section.service';
+import { SessionService } from '../../../services/masterservice/session.service';
+import { SubjectmasterService } from '../../../services/masterservice/subjectmaster.service';
 
 @Component({
   selector: 'app-assignsubject',
+  host: { class: 'admin-page-host' },
   imports: [
-    MatCard,
-    MaterialModule,
     FormsModule,
+    ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatOptionModule,
+    MatProgressBarModule,
     MatSelectModule,
-    TranslateModule,
-    ReactiveFormsModule
+    MatTableModule,
   ],
   templateUrl: './assignsubject.component.html',
-  styleUrl: './assignsubject.component.scss'
+  styleUrl: './assignsubject.component.scss',
 })
 export class AssignsubjectComponent implements OnInit {
-  assignSubjectForm!: FormGroup;
-  sessions!: ISession[];
-  colleges!: ICollege[];
-  classList: IClass[] = [];
-  sectionList: ISection[] = [];
-  subjectList!: ISubject[]; subjectTypeList!: ISubjectType[];
+  @Input() embedded = false;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
-  sessionService = inject(SessionService);
-  collegeService = inject(CollegeService);
-  sectionService = inject(SectionService);
-  _subjectService = inject(SubjectmasterService);
+  private readonly fb = inject(FormBuilder);
+  private readonly sessionService = inject(SessionService);
+  private readonly collegeService = inject(CollegeService);
+  private readonly sectionService = inject(SectionService);
+  private readonly subjectService = inject(SubjectmasterService);
+  private readonly toast = inject(ToastrService);
+
+  readonly subjectTypeOptions = SUBJECT_TYPE_OPTIONS;
+  readonly subjectTypeLabel = subjectTypeLabel;
+
+  assignSubjectForm!: FormGroup;
+  sessions: ISession[] = [];
+  colleges: ICollege[] = [];
+  classList: IClass[] = [];
+  sectionList: IAssignSectionList[] = [];
+  availableSubjects: ISubject[] = [];
+  selectedSubjectIds = new Set<number>();
+
+  isLoadingClasses = false;
+  isLoadingSections = false;
+  isLoadingAssigned = false;
+  isLoadingSubjects = false;
+  isSaving = false;
 
   dataSource = new MatTableDataSource<IAssignSubjectList>([]);
   displayedColumns: string[] = ['subjectCode', 'subjectName', 'subjectType', 'actions'];
-  assignSubjectList: IAssignSubjectList[] = [];
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
 
   ngOnInit(): void {
-
     this.assignSubjectForm = this.fb.group({
-      sessionId: [null, Validators.required ],
+      sessionId: [null, Validators.required],
       collegeId: [null, Validators.required],
       courseId: [null, Validators.required],
       classSectionId: [null, Validators.required],
-      subjectId: [[], Validators.required],
-      subjectType: [null, Validators.required]
-
-    })
-
+      subjectType: ['', Validators.required],
+    });
 
     this.loadSchool();
     this.loadSessions();
+  }
+
+  onSessionOrCollegeChange(): void {
+    this.assignSubjectForm.patchValue({ courseId: null, classSectionId: null, subjectType: '' });
+    this.classList = [];
+    this.sectionList = [];
+    this.availableSubjects = [];
+    this.selectedSubjectIds.clear();
+    this.dataSource.data = [];
+    this.loadClassList();
+  }
+
+  onClassChange(): void {
+    this.assignSubjectForm.patchValue({ classSectionId: null, subjectType: '' });
+    this.sectionList = [];
+    this.availableSubjects = [];
+    this.selectedSubjectIds.clear();
+    this.dataSource.data = [];
     this.loadSectionList();
-    this.loadSubjectTypeList();
   }
-  loadSubjectTypeList() {
-    this._subjectService.subjectTypeList().subscribe({
-      next: (res) => {
-        this.subjectTypeList = Array.isArray(res.data) ? res.data : [res.data];
-      },
-      error: (err) => {
-        alert("something went wrong");
-        console.log("subject type list error", err);
-      }
-    })
+
+  onSectionChange(): void {
+    this.assignSubjectForm.patchValue({ subjectType: '' });
+    this.availableSubjects = [];
+    this.selectedSubjectIds.clear();
+    this.loadAssignedSubjects();
   }
-  loadSessions() {
-    this.sessionService.getSessionList().subscribe({
-      next: (res) => {
+
+  onSubjectTypeChange(): void {
+    this.availableSubjects = [];
+    this.selectedSubjectIds.clear();
+    this.loadAvailableSubjects();
+  }
+
+  isSubjectAssigned(subjectId: number): boolean {
+    return this.dataSource.data.some(row => row.subjectId === subjectId);
+  }
+
+  isSubjectSelected(subjectId: number): boolean {
+    return this.selectedSubjectIds.has(subjectId);
+  }
+
+  toggleSubjectSelection(subjectId: number, checked: boolean): void {
+    if (checked) {
+      this.selectedSubjectIds.add(subjectId);
+    } else {
+      this.selectedSubjectIds.delete(subjectId);
+    }
+  }
+
+  assignSubjects(): void {
+    const classSectionId = this.assignSubjectForm.get('classSectionId')?.value;
+    if (!classSectionId) {
+      this.toast.warning('Please select section.');
+      return;
+    }
+    if (!this.selectedSubjectIds.size) {
+      this.toast.warning('Please select at least one subject.');
+      return;
+    }
+
+    const payload: IAssignSubject = {
+      classSectionId,
+      subjectId: Array.from(this.selectedSubjectIds),
+    };
+
+    this.isSaving = true;
+    this.subjectService.assignSubject(payload).subscribe({
+      next: res => {
+        this.isSaving = false;
         if (res.success) {
-          this.sessions = Array.isArray(res.data) ? res.data : [res.data];  // Ensure data is always an array
+          this.toast.success(res.message || 'Subjects assigned successfully.');
+          this.selectedSubjectIds.clear();
+          this.loadAssignedSubjects();
+          this.loadAvailableSubjects();
+        } else {
+          this.toast.error(res.message || 'Failed to assign subjects.');
         }
       },
-      error: (err) => {
-        console.log('Error fetching sections:', err);
-      }
-    })
-  };
+      error: () => {
+        this.isSaving = false;
+        this.toast.error('Failed to assign subjects.');
+      },
+    });
+  }
 
-  loadSchool() {
-    this.collegeService.getCollegeList().subscribe({
-      next: (res) => {
+  deleteAssignSub(row: IAssignSubjectList): void {
+    if (!row.classSectionSubjectId) {
+      return;
+    }
+
+    this.subjectService.deleteAssignSubject(row.classSectionSubjectId).subscribe({
+      next: res => {
         if (res.success) {
+          this.toast.success(res.message || 'Subject removed successfully.');
+          this.loadAssignedSubjects();
+          this.loadAvailableSubjects();
+        } else {
+          this.toast.error(res.message || 'Failed to remove subject.');
+        }
+      },
+      error: () => this.toast.error('Failed to remove subject.'),
+    });
+  }
+
+  private loadSessions(): void {
+    this.sessionService.getSessionList().subscribe({
+      next: res => {
+        if (res.success && res.data) {
+          this.sessions = Array.isArray(res.data) ? res.data : [res.data];
+        }
+      },
+      error: () => this.toast.error('Failed to load sessions.'),
+    });
+  }
+
+  private loadSchool(): void {
+    this.collegeService.getCollegeList().subscribe({
+      next: res => {
+        if (res.success && res.data) {
           this.colleges = Array.isArray(res.data) ? res.data : [res.data];
         }
       },
-      error: (err) => {
-        console.log('Error fetching sections:', err);
-      }
-    })
+      error: () => this.toast.error('Failed to load schools.'),
+    });
   }
 
-  loadClassList() {
-    debugger;
+  private loadClassList(): void {
     const sessionId = this.assignSubjectForm.get('sessionId')?.value;
-    const colleidId = this.assignSubjectForm.get('collegeId')?.value;
-    if (!sessionId || !colleidId) {
+    const collegeId = this.assignSubjectForm.get('collegeId')?.value;
+    if (!sessionId || !collegeId) {
       return;
     }
 
-    this.collegeService.getClassListBySessionAndCollege(sessionId, colleidId).subscribe({
-      next: (res) => {
-        debugger;
+    this.isLoadingClasses = true;
+    this.collegeService.getClassListBySessionAndCollege(sessionId, collegeId).subscribe({
+      next: res => {
+        this.isLoadingClasses = false;
         if (res.success && res.data) {
           this.classList = Array.isArray(res.data) ? res.data : [res.data];
-        }
-        else {
-          debugger;
-          alert(res.message);
-        }
-
-      }, error: (err) => {
-        debugger;
-        console.log("error");
-      }
-
-
-    });
-  }
-
-  loadSectionList() {
-    debugger;
-    this.sectionService.getSectionList().subscribe({
-      next: (res) => {
-        debugger;
-        if (res.success) {
-          this.sectionList = Array.isArray(res.data) ? res.data : [res.data];
+        } else {
+          this.classList = [];
         }
       },
-      error: (err) => {
-        debugger;
-        console.error('Error fetching sections:', err);
-      }
+      error: () => {
+        this.isLoadingClasses = false;
+        this.classList = [];
+        this.toast.error('Failed to load classes.');
+      },
     });
   }
 
+  private loadSectionList(): void {
+    const courseId = this.assignSubjectForm.get('courseId')?.value;
+    if (!courseId) {
+      return;
+    }
 
-  getSubjectList() {
-    debugger;
+    this.isLoadingSections = true;
+    this.sectionService.getSectionListByClass(courseId).subscribe({
+      next: res => {
+        this.isLoadingSections = false;
+        if (res.success && res.data) {
+          this.sectionList = Array.isArray(res.data) ? res.data : [res.data];
+        } else {
+          this.sectionList = [];
+        }
+      },
+      error: () => {
+        this.isLoadingSections = false;
+        this.sectionList = [];
+        this.toast.error('Failed to load sections.');
+      },
+    });
+  }
+
+  private loadAssignedSubjects(): void {
+    const classSectionId = this.assignSubjectForm.get('classSectionId')?.value;
+    if (!classSectionId) {
+      this.dataSource.data = [];
+      return;
+    }
+
+    this.isLoadingAssigned = true;
+    this.subjectService.listAssignSubject(String(classSectionId)).subscribe({
+      next: res => {
+        this.isLoadingAssigned = false;
+        if (res.success && res.data) {
+          this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];
+        } else {
+          this.dataSource.data = [];
+        }
+      },
+      error: () => {
+        this.isLoadingAssigned = false;
+        this.dataSource.data = [];
+        this.toast.error('Failed to load assigned subjects.');
+      },
+    });
+  }
+
+  private loadAvailableSubjects(): void {
     const subjectType = this.assignSubjectForm.get('subjectType')?.value;
     if (!subjectType) {
+      this.availableSubjects = [];
       return;
     }
 
-    this._subjectService.listSubject(subjectType).subscribe({
-      next: (res) => {
-        debugger;
+    this.isLoadingSubjects = true;
+    this.subjectService.listSubject(subjectType).subscribe({
+      next: res => {
+        this.isLoadingSubjects = false;
         if (res.success && res.data) {
-          this.subjectList = Array.isArray(res.data) ? res.data : [res.data];
+          this.availableSubjects = Array.isArray(res.data) ? res.data : [res.data];
+        } else {
+          this.availableSubjects = [];
         }
-        else {
-          debugger;
-          alert(res.message);
-        }
-
-      }, error: (err) => {
-        debugger;
-        console.log("error");
-      }
+      },
+      error: () => {
+        this.isLoadingSubjects = false;
+        this.availableSubjects = [];
+        this.toast.error('Failed to load subjects.');
+      },
     });
   }
-  addSubject() {
-    debugger;
-    if (!this.assignSubjectForm.valid) {
-      return;
-    }
-
-    const assignSubject: IAssignSubject = {
-      classSectionId: this.assignSubjectForm.get('classSectionId')?.value,
-      subjectId: this.assignSubjectForm.get('subjectId')?.value
-    }
-
-    this._subjectService.assignSubject(assignSubject).subscribe({
-      next: (res) => {
-        if (res.success) {
-          alert(res.message);
-          this.assignSubjectForm.reset();
-        }
-        else {
-          alert(res.message);
-        }
-      },
-      error: (err) => {
-        console.log("assign subject error", err);
-      }
-
-    })
-  };
-
-  getAssignSubjectList() {
-    debugger;
-    const sectionId = this.assignSubjectForm.get('classSectionId')?.value;
-    if (!sectionId) {
-      return;
-    }
-
-    this._subjectService.listAssignSubject(sectionId).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        }
-      }
-    })
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  /** Checkbox Selection Logic */
-  toggleSelection(row: IAssignSubjectList) {
-    if (this.subjectList.includes(row)) {
-      this.subjectList = this.subjectList.filter(r => r !== row);
-    } else {
-      this.subjectList.push(row);
-    }
-  }
-
-  isAllSelected() {
-    return this.assignSubjectList.length === this.dataSource.data.length;
-  }
-
-  isPartialSelected() {
-    return this.assignSubjectList.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.assignSubjectList = [];
-    } else {
-      this.assignSubjectList = [...this.dataSource.data];
-    }
-  }
-
-
-  deleteAssignSub(body: IAssignSubjectList) {
-    debugger;
-    const classSectionSubjectId = body.classSectionSubjectId;
-    if (!classSectionSubjectId) {
-      return;
-    }
-
-    this._subjectService.deleteAssignSubject(classSectionSubjectId).subscribe({
-      next: (res) => {
-        if (res.success) {
-          alert(res.message);
-          this.getAssignSubjectList();
-        } else {
-          alert(res.message);
-        }
-      },
-      error: (err) => {
-        console.log("delete error ", err);
-      }
-    })
-
-  }
-
-   onCancel() {
-    this.assignSubjectForm.reset();
-  }
-
 }

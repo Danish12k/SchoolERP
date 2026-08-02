@@ -31,7 +31,7 @@ export abstract class BaseToken {
   }
 
   needRefresh(): boolean {
-    return this.exp !== undefined && this.exp >= 0;
+    return !!this.refresh_token && this.exp !== undefined && this.exp >= 0;
   }
 
   getRefreshTime(): number {
@@ -67,6 +67,10 @@ export class JwtToken extends SimpleToken {
     return this.payload?.exp;
   }
 
+  valid(): boolean {
+    return !!this.access_token && JwtToken.is(this.access_token);
+  }
+
   private get payload(): { exp?: number | void } {
     if (!this.access_token) {
       return {};
@@ -76,12 +80,15 @@ export class JwtToken extends SimpleToken {
       return this._payload;
     }
 
-    const [, payload] = this.access_token.split('.');
-    const data = JSON.parse(base64.decode(payload));
-    if (!data.exp) {
-      data.exp = this.attributes.exp;
+    try {
+      const [, payload] = this.access_token.split('.');
+      const data = JSON.parse(base64.decode(payload));
+      if (!data.exp) {
+        data.exp = this.attributes.exp;
+      }
+      return (this._payload = data);
+    } catch {
+      return (this._payload = { exp: this.attributes.exp });
     }
-
-    return (this._payload = data);
   }
 }

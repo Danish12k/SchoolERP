@@ -1,0 +1,104 @@
+<mat-card class="fee-report-filter-card">
+  <mat-card-header>
+    <mat-card-title>Fee Report Filter</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="feeFilterForm" class="fee-report-filter-form">
+      <div class="fee-report-filter-form__grid">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Session</mat-label>
+          <mat-select formControlName="sessionId" (selectionChange)="onSessionOrSchoolChange()">
+            @for (session of sessions; track session.sessionId) {
+              <mat-option [value]="session.sessionId">
+                {{ session.sessionName }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select School</mat-label>
+          <mat-select formControlName="collegeId" (selectionChange)="onSessionOrSchoolChange()">
+            @for (school of schools; track school.collegeId) {
+              <mat-option [value]="school.collegeId">
+                {{ school.collegeAbreviation || school.collegeName }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Class</mat-label>
+          <mat-select
+            formControlName="courseId"
+            (selectionChange)="onClassChange()"
+            [disabled]="loadingClasses || !classs.length"
+          >
+            @for (class of classs; track class.courseId) {
+              <mat-option [value]="class.courseId">
+                {{ class.courseName }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Section</mat-label>
+          <mat-select
+            formControlName="classSectionIds"
+            multiple
+            [disabled]="loadingSections || !sections.length"
+            (selectionChange)="onSectionSelectionChange($event.value)"
+          >
+            <mat-select-trigger>
+              {{ sectionTriggerLabel }}
+            </mat-select-trigger>
+            <mat-option [value]="selectAllValue">All</mat-option>
+            @for (section of sections; track section.classSectionId) {
+              <mat-option [value]="section.classSectionId">
+                {{ section.displayName || section.sectionName || section.section }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Installment</mat-label>
+          <mat-select
+            formControlName="installmentIds"
+            multiple
+            [disabled]="loadingInstallments || !installments.length"
+            (selectionChange)="onInstallmentSelectionChange($event.value)"
+          >
+            <mat-select-trigger>
+              {{ installmentTriggerLabel }}
+            </mat-select-trigger>
+            <mat-option [value]="selectAllValue">Select all</mat-option>
+            @for (item of installments; track item.installmentId) {
+              <mat-option [value]="item.installmentId">
+                {{ item.installmentName }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="fee-report-filter-form__footer">
+        <div class="fee-report-filter-form__status">
+          @if (loadingClasses) {
+            <span>Loading assigned classes...</span>
+          } @else if (loadingSections) {
+            <span>Loading assigned sections...</span>
+          } @else if (loadingInstallments) {
+            <span>Loading installments...</span>
+          } @else if (errorMessage) {
+            <span class="fee-report-filter-form__error">{{ errorMessage }}</span>
+          }
+        </div>
+
+        <button mat-button type="button" (click)="clearFilter()">Clear</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

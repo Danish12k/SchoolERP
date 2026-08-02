@@ -1,31 +1,41 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Class & Section</mat-card-title>
-  </mat-card-header>
+<div class="admin-layout">
+  <page-header class="admin-layout__header" title="Fee Master" [nav]="['home', 'Admin', 'Fee Master']" />
 
-  <mat-card-content>
-    <mat-tab-group mat-stretch-tabs dynamicHeight>
-      <mat-tab label="Fee Group">
-        <app-fee-group></app-fee-group>
-      </mat-tab>
+  <section class="admin-page" aria-label="Fee master">
+    <mat-card class="admin-page__card admin-page__card--tabs">
+      <mat-card-content class="admin-page__content admin-page__content--tabs">
+        <div class="fee-master-tabs" role="tablist" aria-label="Fee master sections">
+          @for (tab of tabs; track tab.key) {
+            <button
+              type="button"
+              class="fee-master-tabs__button"
+              [class.fee-master-tabs__button--active]="selectedTab === tab.key"
+              role="tab"
+              [attr.aria-selected]="selectedTab === tab.key"
+              (click)="selectedTab = tab.key"
+            >
+              {{ tab.label }}
+            </button>
+          }
+        </div>
 
-      <mat-tab label="Fee Head">
-        <app-fee-head></app-fee-head>
-      </mat-tab>
-      <mat-tab label="Fee Installment">
-        <app-fee-installment></app-fee-installment>
-      </mat-tab>
-      <mat-tab label="Allocate Fee to Class">
-        <app-allocate-fee></app-allocate-fee>
-      </mat-tab>
-
-      <!-- <mat-tab label="College">
-        <app-college></app-college>
-      </mat-tab>
-
-      <mat-tab label="Designation">
-        <app-designation></app-designation>
-      </mat-tab> -->
-    </mat-tab-group>
-  </mat-card-content>
-</mat-card>
+        <div class="fee-master-content">
+          @switch (selectedTab) {
+            @case ('feeGroup') {
+              <app-fee-group [embedded]="true" />
+            }
+            @case ('feeHead') {
+              <app-fee-head [embedded]="true" />
+            }
+            @case ('feeInstallment') {
+              <app-fee-installment [embedded]="true" />
+            }
+            @case ('allocateFee') {
+              <app-allocate-fee />
+            }
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

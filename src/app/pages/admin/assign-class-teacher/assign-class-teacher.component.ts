@@ -1,9 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { SessionService } from '../../../services/session.service';
-import { SectionService } from '../../../services/section.service';
-import { CollegeService } from '../../../services/college.service';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { SessionService } from '../../../services/masterservice/session.service';
+import { SectionService } from '../../../services/masterservice/section.service';
+import { CollegeService } from '../../../services/masterservice/college.service';
 import { ISession } from '../../../interfaces/isession';
 import { ISection } from '../../../interfaces/IClassAndSection';
 import { ICollege } from '../../../interfaces/ICollege';
@@ -24,8 +23,10 @@ import { MatColumnResizeCommonModule } from '@ng-matero/extensions/grid';
   templateUrl: './assign-class-teacher.component.html',
   styleUrl: './assign-class-teacher.component.scss'
 })
-export class AssignClassTeacherComponent  implements OnInit{
-  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
+export class AssignClassTeacherComponent implements OnInit {
+  @Input() embedded = false;
+
+  constructor(private fb: FormBuilder) { }
   //private fb = Inject(FormBuilder);
   sessionService = inject(SessionService);
   sectionService = inject(SectionService);
@@ -40,12 +41,12 @@ export class AssignClassTeacherComponent  implements OnInit{
 
   ngOnInit(): void {
     debugger;
-   /*  this.assignSectionForm = this.fb.group({
+    this.assignSectionForm = this.fb.group({
       sessionId: [null, [Validators.required, Validators.min(1)]],
       collegeId: [null, [Validators.required, Validators.min(1)]],
       courseId: [null, [Validators.required, Validators.min(1)]],
       sectionId: [null, [Validators.required, Validators.min(1)]],
-    }); */
+    });
     debugger;
     this.loadSession();
     this.loadCollege();

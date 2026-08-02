@@ -11,42 +11,35 @@ import { BASE_URL, BaseUrlInterceptor } from './base-url-interceptor';
 describe('BaseUrlInterceptor', () => {
   let httpMock: HttpTestingController;
   let http: HttpClient;
-  const baseUrl = 'https://foo.bar';
-
-  const setBaseUrl = (url: string | null) => {
-    TestBed.overrideProvider(BASE_URL, { useValue: url });
-    httpMock = TestBed.inject(HttpTestingController);
-    http = TestBed.inject(HttpClient);
-  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: BASE_URL, useValue: null },
+        { provide: BASE_URL, useValue: 'https://api.asterinfotech.in/master/api' },
         { provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     });
+    httpMock = TestBed.inject(HttpTestingController);
+    http = TestBed.inject(HttpClient);
   });
 
   afterEach(() => httpMock.verify());
 
-  it('should not prepend base url when base url is empty', () => {
-    setBaseUrl(null);
-
+  it('should pass through relative API paths unchanged', () => {
     http.get('/me').subscribe(data => expect(data).toEqual({ success: true }));
-
     httpMock.expectOne('/me').flush({ success: true });
   });
 
-  it('should prepend base url when request url does not has http scheme', () => {
-    setBaseUrl(baseUrl);
+  it('should pass through absolute module API URLs unchanged', () => {
+    const url = 'https://api.asterinfotech.in/master/api/User/ValidateUser';
+    http.post(url, {}).subscribe(data => expect(data).toEqual({ success: true }));
+    httpMock.expectOne(url).flush({ success: true });
+  });
 
-    http.get('./me').subscribe(data => expect(data).toEqual({ success: true }));
-    httpMock.expectOne(baseUrl + '/me').flush({ success: true });
-
-    http.get('').subscribe(data => expect(data).toEqual({ success: true }));
-    httpMock.expectOne(baseUrl).flush({ success: true });
+  it('should not rewrite i18n asset paths', () => {
+    http.get('/i18n/en-US.json').subscribe(data => expect(data).toEqual({}));
+    httpMock.expectOne('/i18n/en-US.json').flush({});
   });
 });

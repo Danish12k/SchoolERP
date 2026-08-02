@@ -1,0 +1,163 @@
+<div class="exam-master">
+  <mat-card class="admin-page__card">
+    <mat-card-header>
+      <mat-card-title>Add Exam</mat-card-title>
+    </mat-card-header>
+
+    <form [formGroup]="examForm" (ngSubmit)="saveExam()">
+      <mat-card-content>
+        <div class="exam-master__grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Session</mat-label>
+            <mat-select formControlName="sessionId" (selectionChange)="onFiltersChange()">
+              @for (session of sessions; track session.sessionId) {
+                <mat-option [value]="session.sessionId">{{ session.sessionName }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>College</mat-label>
+            <mat-select formControlName="collegeId" (selectionChange)="onFiltersChange()">
+              @for (college of colleges; track college.collegeId) {
+                <mat-option [value]="college.collegeId">{{ college.collegeAbreviation }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Group</mat-label>
+            <mat-select formControlName="groupName" (selectionChange)="onFiltersChange()">
+              @for (group of groupOptions; track group) {
+                <mat-option [value]="group">{{ group }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Term</mat-label>
+            <mat-select formControlName="term" (selectionChange)="onFiltersChange()">
+              @for (term of termOptions; track term.value) {
+                <mat-option [value]="term.value">{{ term.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Assessment</mat-label>
+            <mat-select formControlName="assessment">
+              @for (assessment of assessmentOptions; track assessment) {
+                <mat-option [value]="assessment">{{ assessment }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Exam Name</mat-label>
+            <input matInput formControlName="examName" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Exam Weightage (%)</mat-label>
+            <input matInput type="number" formControlName="weightage" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Exam Max Marks</mat-label>
+            <input matInput type="number" formControlName="maxMarks" />
+          </mat-form-field>
+        </div>
+
+        <div class="exam-master__actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+            Add Exam
+          </button>
+        </div>
+      </mat-card-content>
+    </form>
+  </mat-card>
+
+  <mat-card class="admin-page__card exam-master__table-card">
+    <mat-card-content>
+      <table mat-table [dataSource]="dataSource" matSort class="exam-master__table">
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let row; let i = index">{{ rowIndex(i) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="examName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Exam Name</th>
+          <td mat-cell *matCellDef="let row">{{ row.examName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="weightage">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Weightage</th>
+          <td mat-cell *matCellDef="let row">{{ row.weightage }}%</td>
+        </ng-container>
+
+        <ng-container matColumnDef="maxMarks">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Max Marks</th>
+          <td mat-cell *matCellDef="let row">{{ row.maxMarks }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="assessment">
+          <th mat-header-cell *matHeaderCellDef>Assessment</th>
+          <td mat-cell *matCellDef="let row">{{ row.assessment }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-icon-button type="button" matTooltip="Edit" (click)="openEditDialog(row)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button type="button" matTooltip="Delete" (click)="deleteExam(row)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons />
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<ng-template #editDialog let-data="data">
+  <h2 mat-dialog-title>Edit Exam</h2>
+  <mat-dialog-content>
+    <div class="exam-master__edit-grid">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Exam Name</mat-label>
+        <input matInput [(ngModel)]="data.exam.examName" name="examName" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Weightage (%)</mat-label>
+        <input matInput type="number" [(ngModel)]="data.exam.weightage" name="weightage" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Max Marks</mat-label>
+        <input matInput type="number" [(ngModel)]="data.exam.maxMarks" name="maxMarks" />
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [mat-dialog-close]="{
+        examId: data.exam.examId,
+        examName: data.exam.examName,
+        weightage: data.exam.weightage,
+        maxMarks: data.exam.maxMarks
+      }"
+    >
+      Update
+    </button>
+  </mat-dialog-actions>
+</ng-template>

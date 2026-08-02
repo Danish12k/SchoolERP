@@ -1,0 +1,154 @@
+<section class="tc-list-page">
+  <div class="tc-list-page__filter">
+    <app-filterstudent (classSectionChange)="onClassSectionChange($event)"></app-filterstudent>
+  </div>
+
+  <mat-card class="tc-list-page__card">
+    <mat-card-content>
+      <div class="tc-list-page__toolbar">
+        <mat-form-field appearance="outline" class="tc-list-page__search">
+          <mat-label>Search</mat-label>
+          <input
+            matInput
+            (keyup)="applyFilter($event)"
+            placeholder="Filter by name, admission no., class…"
+          />
+        </mat-form-field>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="loadTcList()"
+          [disabled]="loading || !selectedClassSectionId"
+        >
+          Refresh
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="exportExcel()"
+          [disabled]="!dataSource.data.length"
+        >
+          <mat-icon>download</mat-icon>
+          Excel
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="exportPdf()"
+          [disabled]="!dataSource.data.length"
+        >
+          <mat-icon>picture_as_pdf</mat-icon>
+          PDF
+        </button>
+      </div>
+
+      @if (!hasSelectedSection && !loading) {
+        <p class="tc-list-page__empty-state">
+          Select session, school, class and section to load the TC list.
+        </p>
+      }
+
+      @if (loadError && !loading) {
+        <p class="tc-list-page__error" role="alert">{{ loadError }}</p>
+      }
+
+      @if (hasSelectedSection && !loading && !loadError && dataSource.data.length === 0) {
+        <p class="tc-list-page__empty-state">
+          No transfer certificates found for selected section.
+        </p>
+      }
+
+      <div class="tc-list-page__table-wrap">
+        <table mat-table [dataSource]="dataSource" matSort class="tc-list-table mat-elevation-z0">
+          <ng-container matColumnDef="seqNo">
+            <th mat-header-cell *matHeaderCellDef>S.No.</th>
+            <td mat-cell *matCellDef="let row; let i = index">{{ rowNumber(i) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="dateOfIssue">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Issue Date</th>
+            <td mat-cell *matCellDef="let row">{{ displayValue(row.dateOfIssue) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="classStudies">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Class</th>
+            <td mat-cell *matCellDef="let row">{{ displayValue(row.classStudies) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="admissionNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Admission No.</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="tc-list-table__strong">{{ displayValue(row.admissionNo) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="studentName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Student Name.</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="tc-list-table__strong">{{ displayValue(row.studentName) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="fatherName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Father Name.</th>
+            <td mat-cell *matCellDef="let row">{{ displayValue(row.fatherName) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="options">
+            <th mat-header-cell *matHeaderCellDef>Options</th>
+            <td mat-cell *matCellDef="let row">
+              <button
+                mat-stroked-button
+                type="button"
+                class="tc-list-table__action-button"
+                [matMenuTriggerFor]="tcActionsMenu"
+              >
+                <mat-icon>menu</mat-icon>
+                <mat-icon>arrow_drop_down</mat-icon>
+              </button>
+
+              <mat-menu #tcActionsMenu="matMenu" class="tc-action-menu">
+                <button mat-menu-item type="button" (click)="onTcAction('viewTc', row)">
+                  <mat-icon>person</mat-icon>
+                  <span>View TC</span>
+                </button>
+                <button mat-menu-item type="button" (click)="onTcAction('printTc', row)">
+                  <mat-icon>description</mat-icon>
+                  <span>Print TC</span>
+                </button>
+                <button mat-menu-item type="button" (click)="onTcAction('printTcHindiEng', row)">
+                  <mat-icon>description</mat-icon>
+                  <span>TC Hindi/Eng</span>
+                </button>
+                <button mat-menu-item type="button" (click)="onTcAction('printTcAps', row)">
+                  <mat-icon>description</mat-icon>
+                  <span>TC (APS)</span>
+                </button>
+                <button mat-menu-item type="button" (click)="onTcAction('printTcIcse', row)">
+                  <mat-icon>description</mat-icon>
+                  <span>TC ICSE</span>
+                </button>
+                <button mat-menu-item type="button" (click)="onTcAction('undo', row)">
+                  <mat-icon>delete</mat-icon>
+                  <span>Undo</span>
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</section>

@@ -1,0 +1,233 @@
+<div class="admin-layout">
+  <page-header
+    class="admin-layout__header"
+    title="Online Exam List"
+    [nav]="['home', 'Online Exam', 'Online Exam List']"
+  />
+
+  <section class="admin-page online-exam-list" aria-label="Online exam list scheduling">
+    <mat-card class="admin-page__card online-exam-list__filters">
+        <mat-card-header>
+          <mat-card-title>Filters</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="online-exam-list__filter-form">
+            <mat-form-field appearance="outline" class="online-exam-list__field">
+              <mat-label>Session</mat-label>
+              <mat-select
+                name="session"
+                [(ngModel)]="selectedSessionId"
+                (selectionChange)="onSessionOrCollegeChange()"
+                required
+              >
+                @for (session of sessions; track session.sessionId) {
+                  <mat-option [value]="+session.sessionId">{{ session.sessionName }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="online-exam-list__field">
+              <mat-label>College</mat-label>
+              <mat-select
+                name="college"
+                [(ngModel)]="selectedCollegeId"
+                (selectionChange)="onSessionOrCollegeChange()"
+                required
+              >
+                @for (college of colleges; track college.collegeId) {
+                  <mat-option [value]="+college.collegeId">{{ college.collegeAbreviation }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="online-exam-list__field">
+              <mat-label>Class</mat-label>
+              <mat-select
+                name="class"
+                [(ngModel)]="selectedCourseId"
+                (selectionChange)="onClassChange($event.value)"
+                [disabled]="loadingClasses || selectedSessionId == null || selectedCollegeId == null"
+                required
+              >
+                @for (classItem of classes; track classItem.courseId) {
+                  <mat-option [value]="+classItem.courseId">{{ classItem.courseName }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="online-exam-list__field">
+              <mat-label>Exam Name</mat-label>
+              <mat-select
+                name="examId"
+                [(ngModel)]="selectedExamId"
+                (selectionChange)="onExamChange($event.value)"
+                [disabled]="loadingExams || selectedSessionId == null || selectedCollegeId == null"
+                required
+              >
+                @for (exam of exams; track exam.examId) {
+                  <mat-option [value]="+exam.examId">{{ exam.examName }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+    </mat-card>
+
+    @if (showExamListEntry) {
+    <mat-card class="admin-page__card online-exam-list__entry">
+        <mat-card-header>
+          <mat-card-title>Online Exam List Entry</mat-card-title>
+        </mat-card-header>
+
+        <form #examListForm="ngForm" (ngSubmit)="submitExam()">
+          <mat-card-content>
+            @if (loadingList || loadingSubjects) {
+              <mat-progress-bar mode="indeterminate" class="online-exam-list__progress" />
+            }
+
+            <div class="online-exam-list__table-wrap">
+              <table class="admin-table online-exam-list__table mat-elevation-z0">
+                <thead>
+                  <tr>
+                    <th class="online-exam-list__index-col">SL. No.</th>
+                    <th>Subject Name</th>
+                    <th>Exam Date</th>
+                    <th>Time</th>
+                    <th>Duration</th>
+                    <th>Exam Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of scheduleRows; track row.subjectId; let i = $index) {
+                    <tr class="admin-table__row" [class.admin-table__row--alt]="i % 2 === 1">
+                      <td class="online-exam-list__index-col">{{ i + 1 }}</td>
+                      <td class="online-exam-list__subject-col">{{ row.subjectName }}</td>
+                      <td>
+                        <mat-form-field appearance="outline" class="online-exam-list__cell-field online-exam-list__date-field">
+                          <input
+                            matInput
+                            [matDatepicker]="examDatePicker"
+                            [(ngModel)]="row.examDateModel"
+                            (ngModelChange)="onExamDateModelChange(row, $event)"
+                            [name]="'examDate' + i"
+                            placeholder="Select date"
+                            readonly
+                          />
+                          <mat-datepicker-toggle matIconSuffix [for]="examDatePicker" />
+                          <mat-datepicker #examDatePicker />
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="outline" class="online-exam-list__cell-field">
+                          <mat-select
+                            [(ngModel)]="row.examTime"
+                            [name]="'examTime' + i"
+                          >
+                            @for (time of timeOptions; track time) {
+                              <mat-option [value]="time">{{ time }}</mat-option>
+                            }
+                          </mat-select>
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="outline" class="online-exam-list__cell-field">
+                          <mat-select
+                            [(ngModel)]="row.duration"
+                            [name]="'duration' + i"
+                          >
+                            @for (duration of durationOptions; track duration) {
+                              <mat-option [value]="duration">{{ duration }}</mat-option>
+                            }
+                          </mat-select>
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="outline" class="online-exam-list__cell-field">
+                          <mat-select
+                            [(ngModel)]="row.examType"
+                            [name]="'examType' + i"
+                          >
+                            @for (type of examTypeOptions; track type) {
+                              <mat-option [value]="type">{{ type }}</mat-option>
+                            }
+                          </mat-select>
+                        </mat-form-field>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td class="online-exam-list__empty" colspan="6">
+                        @if (loadingList || loadingSubjects) {
+                          Loading schedule...
+                        } @else {
+                          No subjects found for selected class.
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="online-exam-list__actions">
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="saving || !hasDatedRows"
+              >
+                {{ saving ? 'Submitting...' : 'Submit Exam' }}
+              </button>
+            </div>
+          </mat-card-content>
+        </form>
+    </mat-card>
+    }
+
+    @if (showExamListEntry) {
+    <mat-card class="admin-page__card online-exam-list__saved">
+      <mat-card-header>
+        <mat-card-title>Online Exam List</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="online-exam-list__table-wrap">
+          <table class="admin-table online-exam-list__saved-table mat-elevation-z0">
+            <thead>
+              <tr>
+                <th class="online-exam-list__index-col">SL. No.</th>
+                <th>Subject Name</th>
+                <th>Exam Date</th>
+                <th>Time</th>
+                <th>Duration</th>
+                <th>Exam Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of savedExamList; track row.onlineExamId ?? row.subjectId; let i = $index) {
+                <tr class="admin-table__row" [class.admin-table__row--alt]="i % 2 === 1">
+                  <td class="online-exam-list__index-col">{{ i + 1 }}</td>
+                  <td>{{ row.subjectName }}</td>
+                  <td>{{ row.examDate }}</td>
+                  <td>{{ row.examTime }}</td>
+                  <td>{{ row.duration }}</td>
+                  <td>{{ row.examType }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td class="online-exam-list__empty" colspan="6">
+                    @if (loadingList) {
+                      Loading online exam list...
+                    } @else {
+                      No online exam schedule found.
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    }
+  </section>
+</div>

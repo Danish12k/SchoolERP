@@ -14,7 +14,11 @@ export class ApiInterceptor implements HttpInterceptor {
   private readonly toast = inject(ToastrService);
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    if (!req.url.includes('/api/')) {
+    if (
+      !req.url.includes('/api/') ||
+      req.url.includes('ValidateUser') ||
+      req.url.includes('onlineexam/api')
+    ) {
       return next.handle(req);
     }
 
@@ -24,16 +28,16 @@ export class ApiInterceptor implements HttpInterceptor {
   private handleOkReq(event: HttpEvent<any>) {
     if (event instanceof HttpResponse) {
       const body: any = event.body;
-      // failure: { code: **, msg: 'failure' }
-      // success: { code: 0,  msg: 'success', data: {} }
-      if (body && 'code' in body && body.code !== 0) {
+      if (body && typeof body === 'object' && 'code' in body && body.code !== 0) {
+        if (body.success === true || body.Success === true) {
+          return of(event);
+        }
         if (body.msg) {
           this.toast.error(body.msg);
         }
-        return throwError(() => []);
+        return throwError(() => body);
       }
     }
-    // Pass down event if everything is OK
     return of(event);
   }
 }

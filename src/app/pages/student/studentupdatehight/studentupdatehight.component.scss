@@ -1,0 +1,112 @@
+.student-update-hight-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 8px 16px;
+}
+
+.student-update-hight-page__filter {
+  width: 100%;
+}
+
+.student-update-hight-page__card {
+  width: 100%;
+  border-radius: 0;
+  box-shadow: 0 4px 18px rgb(0 0 0 / 10%);
+}
+
+.student-update-hight-page__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.student-update-hight-page__loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.student-update-hight-page__error {
+  margin: 0 0 12px;
+  color: var(--mat-sys-error, #b3261e);
+}
+
+.student-update-hight-page__message {
+  margin: 0 0 12px;
+  color: #1b5e20;
+}
+
+.student-update-hight-page__empty-state {
+  margin: 0 0 12px;
+  padding: 14px 16px;
+  border: 1px dashed rgb(0 0 0 / 18%);
+  color: var(--mat-sys-on-surface-variant, #5f6368);
+  background: rgb(0 0 0 / 2%);
+}
+
+.student-update-hight-page__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.student-update-hight-table {
+  width: max-content;
+  min-width: 100%;
+
+  th.mat-mdc-header-cell {
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  th.mat-mdc-header-cell,
+  td.mat-mdc-cell {
+    padding-right: 14px;
+  }
+
+  td.mat-mdc-cell {
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+}
+
+.student-update-hight-table__name {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.student-update-hight-table__input {
+  width: 110px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid rgb(0 0 0 / 18%);
+  border-radius: 4px;
+  color: #000;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.student-update-hight-page__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+@media (max-width: 600px) {
+  .student-update-hight-page {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .student-update-hight-table__name {
+    max-width: 160px;
+  }
+}

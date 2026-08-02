@@ -1,65 +1,56 @@
-import { Component, inject, Inject, OnInit } from '@angular/core';
-import { MatCardModule, MatCardTitle } from "@angular/material/card";
-import { MaterialModule } from "../../../../../schematics/ng-add/files/module-files/app/material.module";
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
-
-
-import { SessionService } from '../../../services/session.service';
-import { SectionService } from '../../../services/section.service';
-import { CollegeService } from '../../../services/college.service';
+import { SessionService } from '../../../services/masterservice/session.service';
+import { SectionService } from '../../../services/masterservice/section.service';
+import { CollegeService } from '../../../services/masterservice/college.service';
 import { ISession } from '../../../interfaces/isession';
-import { IAssignSection, ISection } from '../../../interfaces/IClassAndSection';
+import { IAssignSectionList } from '../../../interfaces/IClassAndSection';
 import { ICollege } from '../../../interfaces/ICollege';
 import { IClass } from '../../../interfaces/IClassmaster';
-import { MatColumnResizeCommonModule } from "@ng-matero/extensions/grid";
-import { debug } from 'console';
-import { MatDialog } from '@angular/material/dialog';
+import { IStudentFilterSelection } from '../../../interfaces/IFeeReport';
 
 @Component({
   selector: 'app-filterstudent',
-  imports: [ MatCardTitle,
+  imports: [
     MaterialModule,
     MatCardModule,
     ReactiveFormsModule,
-    MatColumnResizeCommonModule],
+  ],
   templateUrl: './filterstudent.component.html',
   styleUrl: './filterstudent.component.scss'
 })
 export class FilterstudentComponent implements OnInit {
-  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
-  //private fb = Inject(FormBuilder);
+  @Output() classSectionChange = new EventEmitter<number | null>();
+  @Output() filterChange = new EventEmitter<IStudentFilterSelection>();
+
+  constructor(private fb: FormBuilder) { }
+
   sessionService = inject(SessionService);
   sectionService = inject(SectionService);
   collegeService = inject(CollegeService);
 
-  assignSectionForm!: FormGroup;
-  sessions!: ISession[];
-  sections!: ISection[];
-  schools!: ICollege[];
-  classs!: IClass[];
+  studentFilterForm!: FormGroup;
+  sessions: ISession[] = [];
+  sections: IAssignSectionList[] = [];
+  schools: ICollege[] = [];
+  classs: IClass[] = [];
+  loadingClasses = false;
+  loadingSections = false;
+  errorMessage: string | null = null;
 
   ngOnInit(): void {
-    debugger;
-    this.assignSectionForm = this.fb.group({
+    this.studentFilterForm = this.fb.group({
       sessionId: [null, [Validators.required, Validators.min(1)]],
       collegeId: [null, [Validators.required, Validators.min(1)]],
       courseId: [null, [Validators.required, Validators.min(1)]],
-      sectionId: [null, [Validators.required, Validators.min(1)]],
+      classSectionId: [null, [Validators.required, Validators.min(1)]],
     });
-    debugger;
+
     this.loadSession();
     this.loadCollege();
-    this.loadSection();
   };
-
-
-  loadSection() {
-    debugger;
-    this.sectionService.getSectionList().subscribe(res => {
-      this.sections = Array.isArray(res.data) ? res.data : [res.data];
-    });
-  }
 
   loadSession() {
     this.sessionService.getSessionList().subscribe(res => {
@@ -73,63 +64,94 @@ export class FilterstudentComponent implements OnInit {
     })
   };
 
-  getSchoolListById() {
-    const sessionIdControl = this.assignSectionForm.get('sessionId');
-    const collegeIdControl = this.assignSectionForm.get('collegeId');
+  onSessionOrSchoolChange() {
+    this.studentFilterForm.patchValue({ courseId: null, classSectionId: null });
+    this.classs = [];
+    this.sections = [];
+    this.errorMessage = null;
+    this.emitFilterChange();
+
+    const sessionIdControl = this.studentFilterForm.get('sessionId');
+    const collegeIdControl = this.studentFilterForm.get('collegeId');
 
     const sessionId = sessionIdControl?.value;
     const collegeId = collegeIdControl?.value;
 
-    if (sessionId == null || collegeId == null) {
+    if (!sessionId || !collegeId) {
       return;
     }
 
+    this.loadingClasses = true;
     this.collegeService.getClassListBySessionAndCollege(sessionId, collegeId).subscribe({
       next: (res) => {
-        debugger;
+        this.loadingClasses = false;
         if (res.success && res.data) {
           this.classs = Array.isArray(res.data) ? res.data : [res.data];
         } else {
-          debugger;
-          alert(res.message);
+          this.errorMessage = res.message || 'No assigned classes found.';
         }
       },
-      error: (err) => {
-        debugger;
-        console.log("error");
+      error: () => {
+        this.loadingClasses = false;
+        this.errorMessage = 'Could not load assigned classes.';
       }
     });
   }
 
-  submitForm() {
-    debugger;
-    if (this.assignSectionForm.valid) {
-      const courseId = this.assignSectionForm.get('courseId')?.value;
-      const sectionId = this.assignSectionForm.get('sectionId')?.value;
+  onClassChange() {
+    this.studentFilterForm.patchValue({ classSectionId: null });
+    this.sections = [];
+    this.errorMessage = null;
+    this.emitFilterChange();
 
-      const body: IAssignSection[] = [
-        {
-          courseId: 1,
-          sectionId: 1
-        }
-      ];
-
-      // const body: IAssignSection = { courseId: courseId, sectionId: sectionId }
-
-      this.sectionService.assignSection(body).subscribe({
-        next: (res) => {
-          if (res.success && res.data) {
-            alert(res.message);
-          }
-        }
-      })
+    const courseId = this.studentFilterForm.get('courseId')?.value;
+    if (!courseId) {
+      return;
     }
+
+    this.loadingSections = true;
+    this.sectionService.getSectionListByClass(courseId).subscribe({
+      next: (res) => {
+        this.loadingSections = false;
+        if (res.success && res.data) {
+          this.sections = Array.isArray(res.data) ? res.data : [res.data];
+        } else {
+          this.errorMessage = res.message || 'No assigned sections found.';
+        }
+      },
+      error: () => {
+        this.loadingSections = false;
+        this.errorMessage = 'Could not load assigned sections.';
+      }
+    });
   }
 
-  onCancel() {
-    this.assignSectionForm.reset();
+  onSectionChange() {
+    this.emitFilterChange();
   }
 
+  clearFilter() {
+    this.studentFilterForm.reset();
+    this.classs = [];
+    this.sections = [];
+    this.errorMessage = null;
+    this.emitFilterChange();
+  }
 
+  private emitFilterChange(): void {
+    const selection = this.currentSelection();
+    this.filterChange.emit(selection);
+    this.classSectionChange.emit(selection.classSectionId);
+  }
+
+  private currentSelection(): IStudentFilterSelection {
+    const value = this.studentFilterForm?.value ?? {};
+    return {
+      sessionId: value.sessionId ?? null,
+      collegeId: value.collegeId ?? null,
+      courseId: value.courseId ?? null,
+      classSectionId: value.classSectionId ?? null,
+    };
+  }
 }
 

@@ -31,7 +31,7 @@ export class SettingsService {
 
   options: AppSettings = Object.assign(defaults, this.storedOptions);
 
-  languages = ['en-US', 'zh-CN', 'zh-TW'];
+  languages = ['en-US', 'hi-IN'];
 
   constructor() {
     this.translate.addLangs(this.languages);

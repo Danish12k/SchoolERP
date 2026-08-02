@@ -1,179 +1,216 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { MatCard, MatCardModule } from '@angular/material/card';
-import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IFeeGroup, IFeeHead } from '../../../interfaces/IFeeMaster';
+import { FeeMasterService } from '../../../services/feeservice/fee-master.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
-import { IFeeGroup, IFeeHead } from '../../../interfaces/IFeeMaster';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { FeeMasterService } from '../../../services/fee-master.service';
-import { MatSort } from '@angular/material/sort';
-import { MatDialog } from '@angular/material/dialog';
+import { PageHeaderComponent } from '@shared';
+import { IApiResponse } from '../../../interfaces/ICommon';
+import { ToastrService } from 'ngx-toastr';
+
+type IFeeHeadRow = IFeeHead & { streamName?: string };
+
+interface IFeeHeadForm {
+  feeHeadId: number;
+  feeHeadName: string;
+  streamId: number;
+}
 
 @Component({
   selector: 'app-fee-head',
-   imports: [
-    MatCard,
-    MaterialModule,
+  host: { class: 'admin-page-host' },
+  imports: [
     FormsModule,
-    MatButtonModule,
+    PageHeaderComponent,
     MatCardModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
-    MatOptionModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
     MatSelectModule,
-    TranslateModule,
-    ReactiveFormsModule,
   ],
   templateUrl: './fee-head.component.html',
-  styleUrl: './fee-head.component.scss'
+  styleUrl: './fee-head.component.scss',
 })
-export class FeeHeadComponent implements OnInit{
+export class FeeHeadComponent implements OnInit, AfterViewInit {
+  @Input() embedded = false;
 
-  dataSource = new MatTableDataSource<IFeeHead>([]);
-  displayedColumns: string[] = ['headName', 'feeFor', 'actions'];
+  private feeService = inject(FeeMasterService);
+  private toast = inject(ToastrService);
+  private dialog = inject(MatDialog);
 
-  private _feeHeadService = inject(FeeMasterService);
+  dataSource = new MatTableDataSource<IFeeHeadRow>([]);
+  displayedColumns: string[] = ['index', 'headName', 'feeFor', 'actions'];
+  feeGroupList: IFeeGroup[] = [];
+  newFeeHead: IFeeHeadForm = { feeHeadId: 0, feeHeadName: '', streamId: 0 };
+  isLoading = false;
+  isSaving = false;
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
+  @ViewChild('addDialog') addDialog!: TemplateRef<void>;
+  @ViewChild('editDialog') editDialog!: TemplateRef<IFeeHeadForm>;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
-  feeHeadForm!: FormGroup;
-  feeHeadList: IFeeHead[] = [];
-  feeGroupList!: IFeeGroup[];
   ngOnInit(): void {
-    this.feeHeadForm = this.fb.group({
-      feeHeadId: [0],
-      feeHeadName: [null, [Validators.required, Validators.minLength(2)]],
-      stream: [0]
-    })
-
-    this.GetFeeHeadList();
-   this.getFeeGroupLlist();
+    this.dataSource.filterPredicate = (row, filter) => {
+      const hay = `${row.feeHeadName} ${row.streamName ?? ''}`.toLowerCase();
+      return hay.includes(filter);
+    };
+    this.loadFeeGroups();
+    this.loadList();
   }
 
-  getFeeGroupLlist(){
-    this._feeHeadService.listFeeGroup().subscribe({
-      next:(res)=>{
-        if(res.success){
-          this.feeGroupList =Array.isArray(res.data)?  res.data : [res.data]; 
-        }
-      }
-    });
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
+  feeGroupLabel(streamId: number): string {
+    return this.feeGroupList.find(g => g.streamId === streamId)?.streamName ?? String(streamId);
+  }
 
-  GetFeeHeadList() {
-    this._feeHeadService.listFeeHead().subscribe({
-      next: (res) => {
+  private toApiBody(form: IFeeHeadForm): IFeeHead {
+    return {
+      feeHeadId: form.feeHeadId,
+      feeHeadName: form.feeHeadName.trim(),
+      stream: form.streamId,
+    };
+  }
+
+  private toForm(row: IFeeHeadRow): IFeeHeadForm {
+    return {
+      feeHeadId: row.feeHeadId,
+      feeHeadName: row.feeHeadName,
+      streamId: row.stream,
+    };
+  }
+
+  loadFeeGroups(): void {
+    this.feeService.listFeeGroup().subscribe({
+      next: res => {
         if (res.success) {
-          this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
+          this.feeGroupList = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
         }
       },
-      error: (err) => {
-        console.log("error to fetch expense list", err);
-      }
-
+      error: () => this.toast.error('Failed to load fee groups'),
     });
-  };
+  }
 
-  addFeeHead() {
-    debugger;
-    if (this.feeHeadForm.valid) {
-      const formValue = this.feeHeadForm.value;
-      this._feeHeadService.addFeeHead(formValue).subscribe({
-        next: (res) => {
+  openAddDialog(): void {
+    this.newFeeHead = {
+      feeHeadId: 0,
+      feeHeadName: '',
+      streamId: this.feeGroupList[0]?.streamId ?? 0,
+    };
+    this.dialog.open(this.addDialog, { width: 'min(440px, 92vw)', maxWidth: '95vw' });
+  }
+
+  addFeeHead(): void {
+    const name = this.newFeeHead.feeHeadName?.trim() ?? '';
+    if (!name) {
+      this.toast.warning('Please enter fee head name.');
+      return;
+    }
+    if (!this.newFeeHead.streamId) {
+      this.toast.warning('Please select a fee group.');
+      return;
+    }
+    this.isSaving = true;
+    this.feeService.addFeeHead(this.toApiBody(this.newFeeHead)).subscribe({
+      next: (res: IApiResponse<IFeeHead>) => {
+        this.isSaving = false;
+        if (res.success) {
+          this.toast.success(res.message || 'Fee head added successfully');
+          this.dialog.closeAll();
+          this.loadList();
+        } else {
+          this.toast.error(res.message || 'Failed to add fee head');
+        }
+      },
+      error: () => {
+        this.isSaving = false;
+        this.toast.error('Failed to add fee head');
+      },
+    });
+  }
+
+  loadList(): void {
+    this.isLoading = true;
+    this.feeService.listFeeHead().subscribe({
+      next: res => {
+        this.isLoading = false;
+        if (res.success) {
+          const rows = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
+          this.dataSource.data = rows;
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        } else {
+          this.toast.error(res.message || 'Failed to load fee heads');
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toast.error('Failed to load fee heads');
+      },
+    });
+  }
+
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.paginator?.firstPage();
+  }
+
+  rowIndex(i: number): number {
+    return this.paginator ? this.paginator.pageIndex * this.paginator.pageSize + i + 1 : i + 1;
+  }
+
+  openEditDialog(row: IFeeHeadRow): void {
+    const dialogRef = this.dialog.open(this.editDialog, {
+      width: 'min(440px, 92vw)',
+      maxWidth: '95vw',
+      data: this.toForm(row),
+    });
+    dialogRef.afterClosed().subscribe((result: IFeeHeadForm | undefined) => {
+      const name = result?.feeHeadName?.trim();
+      if (!name || !result?.feeHeadId || !result.streamId) {
+        return;
+      }
+      this.feeService.updateFeeHead(this.toApiBody(result)).subscribe({
+        next: res => {
           if (res.success) {
-            alert(res.message);
-            this.GetFeeHeadList();
-          }
-          else {
-            alert(res.message);
+            this.toast.success(res.message || 'Fee head updated successfully');
+            this.loadList();
+          } else {
+            this.toast.error(res.message || 'Failed to update fee head');
           }
         },
-        error: (err) => {
-          console.log("add expense error", err);
-          alert("Something went wrong.");
-        }
+        error: () => this.toast.error('Failed to update fee head'),
       });
-    }
-  }
-
-
-  // listing
-  openEditDialog(feeHead: IFeeHead) {
-    const dialogRef = this.dialog.open(this.editDialog, {
-      width: '400px',
-      data: { ...feeHead }
-    });
-    debugger;
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        debugger;
-        // Handle the result from the dialog (e.g., save changes)
-        console.log('Dialog result:', result);
-    const feeHeadNew: IFeeHead = {
-  feeHeadId: result.feeHeadId,
-  feeHeadName: result.feeHeadName,
-  stream: result.streamId   // ensure property name matches your API
-};
-        this._feeHeadService.updateFeeHead(feeHeadNew ).subscribe({
-          next: (res) => {
-            if (res.success) {
-              this.GetFeeHeadList(); 
-              alert(res.message);
-              // Refresh the list
-            }
-          },
-          error: (err) => {
-            console.error('Error updating session:', err);
-            alert('Failed to update session');
-          }
-        })
-      }
     });
   }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  /** Checkbox Selection Logic */
-  toggleSelection(row: IFeeHead) {
-    if (this.feeHeadList.includes(row)) {
-      this.feeHeadList = this.feeHeadList.filter(r => r !== row);
-    } else {
-      this.feeHeadList.push(row);
-    }
-  }
-
-  isAllSelected() {
-    return this.feeHeadList.length === this.dataSource.data.length;
-  }
-
-  isPartialSelected() {
-    return this.feeHeadList.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.feeHeadList = [];
-    } else {
-      this.feeHeadList = [...this.dataSource.data];
-    }
-  }
-
-  
-
 }

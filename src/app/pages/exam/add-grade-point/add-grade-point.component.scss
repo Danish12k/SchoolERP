@@ -1,0 +1,32 @@
+.add-grade-point {
+  display: grid;
+  gap: 1rem;
+}
+
+.add-grade-point__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.add-grade-point__session {
+  min-width: 220px;
+}
+
+.add-grade-point__table {
+  width: 100%;
+}
+
+.add-grade-point__dialog-form {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 280px;
+  padding-top: 0.25rem;
+}
+
+.w-100 {
+  width: 100%;
+}

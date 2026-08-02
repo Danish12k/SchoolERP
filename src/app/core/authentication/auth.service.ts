@@ -1,9 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, catchError, iif, map, merge, of, share, switchMap, tap, throwError } from 'rxjs';
-import { filterObject, isEmptyObject } from './helpers';
+import { HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, catchError, iif, map, of, share, switchMap, tap, throwError } from 'rxjs';
+import { filterObject, isEmptyObject, readJwtExp } from './helpers';
 import { User } from './interface';
 import { LoginService } from './login.service';
 import { TokenService } from './token.service';
+import { JwtToken } from './token';
 
 @Injectable({
   providedIn: 'root',
@@ -13,10 +15,7 @@ export class AuthService {
   private readonly tokenService = inject(TokenService);
 
   private user$ = new BehaviorSubject<User>({});
-  private change$ = merge(
-    this.tokenService.change(),
-    this.tokenService.refresh().pipe(switchMap(() => this.refresh()))
-  ).pipe(
+  private change$ = this.tokenService.change().pipe(
     switchMap(() => this.assignUser()),
     share()
   );
@@ -42,36 +41,60 @@ export class AuthService {
   //}
   login(username: string, password: string, rememberMe = false) {
     return this.loginService.login(username, password, rememberMe).pipe(
-      tap(res => {
-        if (!res?.token) {
-          throw new Error(res?.message || 'Login failed: token not returned by API.');
+      switchMap(res => {
+        const apiError = res?.errorMessage?.trim();
+        if (apiError) {
+          return throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 401,
+                statusText: 'Unauthorized',
+                error: { message: apiError },
+              })
+          );
         }
 
-        // Map API response to expected Token interface
-        const tokenObj = {
-          access_token: res.token,  // <--- important
-          refresh_token: undefined, // if API returns it later, map here
-          exp: this.parseJwtExp(res.token), // optional: extract exp from JWT
-          token_type: 'bearer',
-        };
-        this.tokenService.set(tokenObj);
-      }),
-      map(() => this.check())
-    );
-  }
+        const token = res?.token ?? res?.access_token;
+        if (!token?.trim()) {
+          return throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 401,
+                statusText: 'Unauthorized',
+                error: { message: res?.message || 'Login failed: token not returned by API.' },
+              })
+          );
+        }
 
-  // Utility to extract exp from JWT
-  private parseJwtExp(token: string): number | undefined {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp;
-    } catch (e) {
-      return undefined;
-    }
+        if (!JwtToken.is(token)) {
+          return throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 401,
+                statusText: 'Unauthorized',
+                error: { message: 'Login failed: API did not return a valid JWT token.' },
+              })
+          );
+        }
+
+        this.tokenService.set({
+          access_token: token,
+          refresh_token: undefined,
+          exp: readJwtExp(token),
+          token_type: 'bearer',
+        });
+
+        return of(true);
+      })
+    );
   }
 
 
   refresh() {
+    if (!this.tokenService.getRefreshToken()) {
+      return of(this.check());
+    }
+
     return this.loginService
       .refresh(filterObject({ refresh_token: this.tokenService.getRefreshToken() }))
       .pipe(
@@ -82,10 +105,8 @@ export class AuthService {
   }
 
   logout() {
-    return this.loginService.logout().pipe(
-      tap(() => this.tokenService.clear()),
-      map(() => !this.check())
-    );
+    this.clearAuthState();
+    return of(!this.check());
   }
 
   user() {
@@ -98,6 +119,13 @@ export class AuthService {
 
   setUser(user: User) {
     this.user$.next(user);
+  }
+
+  private clearAuthState() {
+    this.tokenService.clear();
+    this.user$.next({});
+    sessionStorage.clear();
+    localStorage.removeItem('schoolCode');
   }
 
   /*  private assignUser() {

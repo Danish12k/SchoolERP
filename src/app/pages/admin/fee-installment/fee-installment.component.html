@@ -1,160 +1,154 @@
-<div class="col-sm-12">
-    <mat-card>
-        <mat-card-header>
-            <mat-card-title>Add Fee Installment</mat-card-title>
-        </mat-card-header>
-        <form [formGroup]="feeInstallmentForm" (ngSubmit)="addFeeInstallment()">
-            <mat-card-content>
-                <div class="fee-installment-form">
-                    <div class="fee-installment-form__grid">
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Select Session</mat-label>
-                            <mat-select formControlName="sessionId" (selectionChange)="GetFeeInsallmentList()">
-                                @for (session of sessions; track session.sessionId) {
-                                <mat-option [value]="session.sessionId">
-                                    {{ session.sessionName }}
-                                </mat-option>
-                                }
-                            </mat-select>
-                        </mat-form-field>
+<div class="admin-layout" [class.admin-layout--embedded]="embedded">
+  @if (!embedded) {
+    <page-header class="admin-layout__header" />
+  }
 
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Select School</mat-label>
-                            <mat-select formControlName="collegeId" (selectionChange)="GetFeeInsallmentList()">
-                                @for (school of schools; track school.collegeId) {
-                                <mat-option [value]="school.collegeId">
-                                    {{ school.collegeAbreviation }}
-                                </mat-option>
-                                }
-                            </mat-select>
-                        </mat-form-field>
+  <section class="admin-page" aria-label="Fee installment management">
+    <mat-card class="admin-page__card">
+      <div class="admin-page__list-title">Fee Installment List</div>
 
-                        <mat-form-field class="w-100">
-                            <mat-label>Installment</mat-label>
-                            <input matInput formControlName="installmentName" placeholder="Please enter installment name" />
-                            @if (feeInstallmentForm.get('installmentName')?.hasError('required') &&
-                            feeInstallmentForm.get('installmentName')?.touched) {
-                            <mat-error>Installment name is required</mat-error>
-                            }
-                        </mat-form-field>
-
-                        <mat-form-field class="w-100">
-                            <mat-label>Installment Date</mat-label>
-                            <input
-                                matInput
-                                formControlName="installMentDate"
-                                placeholder="Please enter installment date"
-                                [matDatepicker]="picker2"
-                            />
-                            <mat-datepicker-toggle matSuffix [for]="picker2" />
-                            <mat-datepicker #picker2 />
-                            @if (feeInstallmentForm.get('installMentDate')?.hasError('required') &&
-                            feeInstallmentForm.get('installMentDate')?.touched) {
-                            <mat-error>Installment date is required</mat-error>
-                            }
-                        </mat-form-field>
-                    </div>
-
-                    <div class="fee-installment-form__actions">
-                        <button mat-flat-button color="primary" type="submit">Save</button>
-                    </div>
-                </div>
-            </mat-card-content>
-        </form>
-    </mat-card>
-</div>
-
-<div class="col-sm-12">
-    <mat-card>
-        <mat-card-content>
-            <mat-form-field appearance="outline">
-                <mat-label>Search</mat-label>
-                <input matInput (keyup)="applyFilter($event)" placeholder="Filter fee head">
-            </mat-form-field>
-            <div class="fee-installment-table__wrap">
-                <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 fee-installment-table">
-                    <ng-container matColumnDef="session">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Session</th>
-                        <td mat-cell *matCellDef="let element">{{ element.sessionId }}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="school">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>School</th>
-                        <td mat-cell *matCellDef="let element">{{ element.collegeId }}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="installment">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment</th>
-                        <td mat-cell *matCellDef="let element">{{ element.installmentName }}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="installmentDate">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment Date</th>
-                        <td mat-cell *matCellDef="let element">{{ element.installMentDate }}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef>Actions</th>
-                        <td mat-cell *matCellDef="let row">
-                            <button mat-icon-button color="primary" (click)="openEditDialog(row)">
-                                <mat-icon>drive_file_rename_outline</mat-icon>
-                            </button>
-                        </td>
-                    </ng-container>
-                    <!-- Header & Rows -->
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                </table>
+      <mat-card-content class="admin-page__content">
+        <div class="admin-toolbar">
+          <div class="admin-toolbar__start">
+            <div class="admin-toolbar__filters">
+              <mat-form-field appearance="outline" class="admin-toolbar__filter-field">
+                <mat-label>Session</mat-label>
+                <mat-select [(ngModel)]="filterSessionId" name="filterSession" (selectionChange)="onFiltersChange()">
+                  <mat-option [value]="0">Select</mat-option>
+                  @for (s of sessions; track s.sessionId) {
+                    <mat-option [value]="s.sessionId">{{ s.sessionName }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="admin-toolbar__filter-field">
+                <mat-label>School</mat-label>
+                <mat-select [(ngModel)]="filterCollegeId" name="filterCollege" (selectionChange)="onFiltersChange()">
+                  <mat-option [value]="0">Select</mat-option>
+                  @for (school of schools; track school.collegeId) {
+                    <mat-option [value]="school.collegeId">{{ school.collegeAbreviation }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
-            <!-- Paginator -->
-            <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+            <button mat-flat-button color="primary" type="button" (click)="openAddDialog()">
+              <mat-icon>add</mat-icon>
+              Add Installment
+            </button>
+          </div>
+          <div class="admin-toolbar__end">
+            <mat-form-field appearance="outline" class="admin-toolbar__search">
+              <mat-label>Search</mat-label>
+              <mat-icon matPrefix>search</mat-icon>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Filter installments" />
+            </mat-form-field>
+          </div>
+        </div>
 
-        </mat-card-content>
+        <div class="admin-table__wrap">
+          <table mat-table [dataSource]="dataSource" matSort class="admin-table mat-elevation-z0">
+            <ng-container matColumnDef="index">
+              <th mat-header-cell *matHeaderCellDef class="admin-table__index-col">#</th>
+              <td mat-cell *matCellDef="let row; let i = index" class="admin-table__index-col">
+                {{ rowIndex(i) }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="installment">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment</th>
+              <td mat-cell *matCellDef="let row">{{ row.installmentName }}</td>
+            </ng-container>
+            <ng-container matColumnDef="installmentDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+              <td mat-cell *matCellDef="let row">{{ row.installMentDate | date: 'mediumDate' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="admin-table__actions-col">Actions</th>
+              <td mat-cell *matCellDef="let row">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  type="button"
+                  (click)="openEditDialog(row)"
+                  matTooltip="Edit installment"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns" class="admin-table__row"></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell admin-table__empty" [attr.colspan]="displayedColumns.length">
+                @if (isLoading) {
+                  Loading…
+                } @else if (!filterSessionId || !filterCollegeId) {
+                  Select session and school to view installments.
+                } @else if (dataSource.filter) {
+                  No installments match your search.
+                } @else {
+                  No installments for this session and school.
+                }
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <mat-paginator
+          class="admin-page__paginator"
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10, 25, 50]"
+          showFirstLastButtons
+        />
+      </mat-card-content>
     </mat-card>
+  </section>
 </div>
 
+<ng-template #addDialog>
+  <h2 mat-dialog-title>Add Fee Installment</h2>
+  <mat-dialog-content class="admin-dialog__content">
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Installment name</mat-label>
+      <input matInput [(ngModel)]="newInstallment.installmentName" name="installmentName" required />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Installment date</mat-label>
+      <input matInput [matDatepicker]="addPicker" [(ngModel)]="newInstallment.installMentDate" name="installMentDate" />
+      <mat-datepicker-toggle matSuffix [for]="addPicker" />
+      <mat-datepicker #addPicker />
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button" [disabled]="isSaving">Cancel</button>
+    <button mat-flat-button color="primary" type="button" [disabled]="isSaving" (click)="addFeeInstallment()">
+      @if (isSaving) { Saving… } @else { Save }
+    </button>
+  </mat-dialog-actions>
+</ng-template>
 
-<!-- Edit Expense Popup Template -->
-<!-- ============================= -->
 <ng-template #editDialog let-data>
-    <h2 mat-dialog-title>Edit Fee Installment</h2>
-    <mat-dialog-content>
-        <form #editClassForm="ngForm" class="w-100">
-           
-            <mat-form-field appearance="fill" class="w-100">
-                <mat-label>Select Session</mat-label>
-                <mat-select [(ngModel)]="data.sessionId" name="sessionId" required>
-                    @for (feeGrp of sessions; track feeGrp.sessionId) {
-                    <mat-option [value]="feeGrp.sessionId">
-                        {{ feeGrp.sessionName }}
-                    </mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-             <mat-form-field appearance="fill" class="w-100">
-                <mat-label>Select Session</mat-label>
-                <mat-select [(ngModel)]="data.collegeId" name="collegeId" required>
-                    @for (feeGrp of schools; track feeGrp.collegeId) {
-                    <mat-option [value]="feeGrp.collegeId">
-                        {{ feeGrp.collegeAbreviation }}
-                    </mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-
-             <mat-form-field appearance="fill" style="width:100%">
-                <mat-label>Fee installMent Name</mat-label>
-                <input matInput [(ngModel)]="data.installmentName" name="installmentName" required minlength="1" />
-            </mat-form-field>
- <mat-form-field appearance="fill" style="width:100%">
-                <mat-label>Fee installMent Date</mat-label>
-                <input matInput [(ngModel)]="data.installMentDate" name="installMentDate" required minlength="1" />
-            </mat-form-field>
-
-        </form>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button color="primary" [mat-dialog-close]="data">Update</button>
-    </mat-dialog-actions>
+  <h2 mat-dialog-title>Edit Fee Installment</h2>
+  <mat-dialog-content class="admin-dialog__content">
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Installment name</mat-label>
+      <input matInput [(ngModel)]="data.installmentName" name="editInstallmentName" required />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="admin-dialog__field">
+      <mat-label>Installment date</mat-label>
+      <input matInput [matDatepicker]="editPicker" [(ngModel)]="data.installMentDate" name="editInstallMentDate" />
+      <mat-datepicker-toggle matSuffix [for]="editPicker" />
+      <mat-datepicker #editPicker />
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [mat-dialog-close]="data"
+      [disabled]="!data.installmentName?.trim()"
+    >
+      Update
+    </button>
+  </mat-dialog-actions>
 </ng-template>

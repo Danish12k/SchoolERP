@@ -55,3 +55,22 @@ export function filterObject<T extends Record<string, unknown>>(obj: T) {
 export function isEmptyObject(obj: Record<string, any>) {
   return Object.keys(obj).length === 0;
 }
+
+/** Parse JWT payload (base64url-safe) from ValidateUser access token. */
+export function parseJwtPayload(token: string): Record<string, unknown> | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) {
+      return null;
+    }
+    return JSON.parse(base64.decode(parts[1])) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+export function readJwtExp(token: string): number | undefined {
+  const payload = parseJwtPayload(token);
+  const exp = payload?.['exp'];
+  return typeof exp === 'number' && Number.isFinite(exp) ? exp : undefined;
+}

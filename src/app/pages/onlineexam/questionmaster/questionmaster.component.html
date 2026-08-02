@@ -1,0 +1,213 @@
+<div class="admin-layout">
+  <page-header class="admin-layout__header" title="Question Master" [nav]="['home', 'Online Exam', 'Question Master']" />
+
+  <section class="admin-page question-master" aria-label="Question master management">
+    <mat-card class="admin-page__card">
+      <mat-card-header>
+        <mat-card-title>Question Master Entry</mat-card-title>
+      </mat-card-header>
+
+      <form #questionForm="ngForm" (ngSubmit)="submit()">
+        <mat-card-content>
+          <div class="question-master__grid">
+            <mat-form-field appearance="outline" class="question-master__field">
+              <mat-label>Session</mat-label>
+              <mat-select
+                name="session"
+                [(ngModel)]="selectedSessionId"
+                (selectionChange)="onSessionOrCollegeChange()"
+                required
+              >
+                @for (session of sessions; track session.sessionId) {
+                  <mat-option [value]="session.sessionId">{{ session.sessionName }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="question-master__field">
+              <mat-label>College</mat-label>
+              <mat-select
+                name="college"
+                [(ngModel)]="selectedCollegeId"
+                (selectionChange)="onSessionOrCollegeChange()"
+                required
+              >
+                @for (college of colleges; track college.collegeId) {
+                  <mat-option [value]="college.collegeId">{{ college.collegeAbreviation }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="question-master__field">
+              <mat-label>Class</mat-label>
+              <mat-select
+                name="className"
+                [(ngModel)]="selectedCourseId"
+                (selectionChange)="onClassChange($event.value)"
+                [disabled]="loadingClasses || selectedSessionId == null || selectedCollegeId == null"
+                required
+              >
+                @for (class of classes; track class.courseId) {
+                  <mat-option [value]="class.courseId">{{ class.courseName }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="question-master__field">
+              <mat-label>Exam Name</mat-label>
+              <mat-select
+                name="examName"
+                [(ngModel)]="examName"
+                (selectionChange)="onExamChange()"
+                [disabled]="loadingExams || selectedSessionId == null || selectedCollegeId == null"
+                required
+              >
+                @for (exam of exams; track exam.examId) {
+                  <mat-option [value]="exam.examName">{{ exam.examName }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="question-master__field">
+              <mat-label>Subject Name</mat-label>
+              <mat-select
+                name="subjectName"
+                [(ngModel)]="selectedSubjectName"
+                (selectionChange)="onSubjectChange()"
+                [disabled]="loadingSubjects || selectedCourseId == null"
+                required
+              >
+                @for (subject of subjects; track subject.subjectId) {
+                  <mat-option [value]="subject.subjectName">{{ subject.subjectName }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="question-master__field">
+              <mat-label>Seq No.</mat-label>
+              <input matInput type="number" name="seqNo" [(ngModel)]="seqNo" min="0" />
+            </mat-form-field>
+
+            <div class="question-master__rich-field">
+              <label class="question-master__rich-label" for="question-editor">
+                Type Question<span class="question-master__required">*</span>
+              </label>
+              <span class="question-master__rich-hint">
+                Rich text — supports Hindi, symbols, paste, and math formulas (∑ toolbar).
+              </span>
+              <quill-editor
+                #questionEditor
+                id="question-editor"
+                name="question"
+                [(ngModel)]="question"
+                [modules]="questionEditorModules"
+                [format]="'html'"
+                [theme]="'snow'"
+                [placeholder]="'Type or paste question here…'"
+                class="question-master__quill"
+              />
+            </div>
+
+            <div class="question-master__answers">
+              <div class="question-master__answers-label">Ans</div>
+              <div class="question-master__answers-table-wrap">
+                <table class="admin-table question-master__answers-table mat-elevation-z0">
+                  <thead>
+                    <tr>
+                      <th class="question-master__answers-index-col">SL. No.</th>
+                      <th class="question-master__answers-opt-col">Opt.</th>
+                      <th>Option Description</th>
+                      <th class="question-master__answers-true-col">True Option</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (option of answerOptions; track option.opt; let i = $index) {
+                      <tr class="admin-table__row" [class.admin-table__row--alt]="i % 2 === 1">
+                        <td class="question-master__answers-index-col">{{ option.slNo }}</td>
+                        <td class="question-master__answers-opt-col">{{ option.opt }}</td>
+                        <td>
+                          <mat-form-field appearance="outline" class="question-master__answers-field">
+                            <input
+                              matInput
+                              [(ngModel)]="option.optionDescription"
+                              [name]="'optionDescription' + i"
+                              placeholder="Enter option"
+                            />
+                          </mat-form-field>
+                        </td>
+                        <td class="question-master__answers-true-col">
+                          <mat-checkbox
+                            [name]="'trueOption' + i"
+                            [checked]="option.trueOption"
+                            (change)="onTrueOptionChange(i, $event.checked)"
+                          />
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="question-master__actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="saving">
+              {{ saving ? 'Submitting...' : 'Submit' }}
+            </button>
+          </div>
+        </mat-card-content>
+      </form>
+    </mat-card>
+
+    <mat-card class="admin-page__card">
+      <mat-card-header>
+        <mat-card-title>Question List</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (loadingQuestions) {
+          <p class="question-master__loading">Loading questions…</p>
+        }
+        <div class="question-master__table-wrap">
+          <table class="admin-table question-master__table mat-elevation-z0">
+            <thead>
+              <tr>
+                <th>Seq</th>
+                <th>Question</th>
+                <th>A</th>
+                <th>B</th>
+                <th>C</th>
+                <th>D</th>
+                <th>Correct Ans</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (questionList.length) {
+                @for (row of questionList; track row.questionId ?? row.seqNo; let i = $index) {
+                  <tr class="admin-table__row" [class.admin-table__row--alt]="i % 2 === 1">
+                    <td>{{ row.seqNo }}</td>
+                    <td class="question-master__question-cell" [innerHTML]="questionHtml(row.question)"></td>
+                    <td>{{ optionText(row, 'A') }}</td>
+                    <td>{{ optionText(row, 'B') }}</td>
+                    <td>{{ optionText(row, 'C') }}</td>
+                    <td>{{ optionText(row, 'D') }}</td>
+                    <td>{{ row.correctAns || '—' }}</td>
+                  </tr>
+                }
+              } @else {
+                <tr>
+                  <td class="question-master__empty" colspan="7">
+                    @if (canLoadQuestionList()) {
+                      No questions found for the selected class, exam, and subject.
+                    } @else {
+                      Select class, exam, and subject to view questions.
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

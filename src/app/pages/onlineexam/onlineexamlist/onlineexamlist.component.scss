@@ -1,0 +1,156 @@
+.online-exam-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.online-exam-list__filters {
+  width: 100%;
+}
+
+.online-exam-list__entry {
+  margin-top: 5px;
+  width: 100%;
+
+  .mat-mdc-card-header {
+    justify-content: center;
+  }
+
+  .mat-mdc-card-title {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+.online-exam-list__saved {
+  width: 100%;
+}
+
+.online-exam-list__filter-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+$filter-outline-color: rgba(0, 0, 0, 0.38);
+$filter-outline-hover-color: rgba(0, 0, 0, 0.87);
+$filter-outline-focus-color: rgba(0, 0, 0, 0.87);
+
+.online-exam-list__field {
+  width: 100%;
+  --mat-form-field-required-marker-color: #{$filter-outline-color};
+  --mdc-outlined-text-field-outline-color: #{$filter-outline-color};
+  --mdc-outlined-text-field-hover-outline-color: #{$filter-outline-hover-color};
+  --mdc-outlined-text-field-focus-outline-color: #{$filter-outline-focus-color};
+  --mdc-outlined-text-field-disabled-outline-color: #{$filter-outline-color};
+  --mdc-outlined-text-field-disabled-label-text-color: rgba(0, 0, 0, 0.6);
+  --mdc-outlined-text-field-disabled-input-text-color: rgba(0, 0, 0, 0.38);
+}
+
+// Class / Exam Name stay disabled until Session + College are selected.
+// Material hides disabled outline borders — restore them via ::ng-deep.
+:host ::ng-deep .online-exam-list__field {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: #{$filter-outline-color} !important;
+    border-width: 1px !important;
+    opacity: 1 !important;
+  }
+
+  &:hover:not(.mat-form-field-disabled):not(.mat-mdc-form-field-disabled) {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #{$filter-outline-hover-color} !important;
+    }
+  }
+
+  &.mat-form-field-disabled,
+  &.mat-mdc-form-field-disabled {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #{$filter-outline-color} !important;
+      border-width: 1px !important;
+      opacity: 1 !important;
+    }
+
+    .mat-mdc-select-arrow {
+      opacity: 0.7;
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      opacity: 1 !important;
+      color: rgba(0, 0, 0, 0.6) !important;
+    }
+  }
+
+  &.mat-focused .mdc-notched-outline {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #{$filter-outline-focus-color} !important;
+      border-width: 2px !important;
+    }
+  }
+}
+
+.online-exam-list__progress {
+  margin-bottom: 0.75rem;
+}
+
+.online-exam-list__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.online-exam-list__table {
+  width: 100%;
+  min-width: 720px;
+
+  th,
+  td {
+    vertical-align: middle;
+  }
+}
+
+.online-exam-list__saved-table {
+  width: 100%;
+}
+
+.online-exam-list__index-col {
+  width: 72px;
+  text-align: center;
+}
+
+.online-exam-list__subject-col {
+  min-width: 140px;
+  font-weight: 500;
+}
+
+.online-exam-list__cell-field {
+  width: 100%;
+  min-width: 120px;
+  margin: 0;
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+.online-exam-list__date-field {
+  min-width: 160px;
+}
+
+.online-exam-list__empty {
+  text-align: center;
+  padding: 1rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.online-exam-list__actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}

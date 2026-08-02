@@ -1,0 +1,253 @@
+.question-master {
+  display: grid;
+  gap: 1rem;
+}
+
+.question-master__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+$filter-outline-color: rgba(0, 0, 0, 0.38);
+$filter-outline-hover-color: rgba(0, 0, 0, 0.87);
+$filter-outline-focus-color: rgba(0, 0, 0, 0.87);
+
+.question-master__field {
+  width: 100%;
+  --mat-form-field-required-marker-color: #{$filter-outline-color};
+  --mdc-outlined-text-field-outline-color: #{$filter-outline-color};
+  --mdc-outlined-text-field-hover-outline-color: #{$filter-outline-hover-color};
+  --mdc-outlined-text-field-focus-outline-color: #{$filter-outline-focus-color};
+  --mdc-outlined-text-field-disabled-outline-color: #{$filter-outline-color};
+  --mdc-outlined-text-field-disabled-label-text-color: rgba(0, 0, 0, 0.6);
+  --mdc-outlined-text-field-disabled-input-text-color: rgba(0, 0, 0, 0.38);
+}
+
+// Class / Exam / Subject stay disabled until prerequisites are selected.
+// Material hides disabled outline borders — restore gray borders via ::ng-deep.
+:host ::ng-deep .question-master__field {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: #{$filter-outline-color} !important;
+    border-width: 1px !important;
+    opacity: 1 !important;
+  }
+
+  &:hover:not(.mat-form-field-disabled):not(.mat-mdc-form-field-disabled) {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #{$filter-outline-hover-color} !important;
+    }
+  }
+
+  &.mat-form-field-disabled,
+  &.mat-mdc-form-field-disabled {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #{$filter-outline-color} !important;
+      border-width: 1px !important;
+      opacity: 1 !important;
+    }
+
+    .mat-mdc-select-arrow {
+      opacity: 0.7;
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      opacity: 1 !important;
+      color: rgba(0, 0, 0, 0.6) !important;
+    }
+  }
+
+  &.mat-focused .mdc-notched-outline {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #{$filter-outline-focus-color} !important;
+      border-width: 2px !important;
+    }
+  }
+}
+
+.question-master__question-field {
+  grid-column: 1 / -1;
+}
+
+.question-master__rich-field {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.question-master__rich-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03125em;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.question-master__required {
+  color: #d32f2f;
+  margin-left: 0.125rem;
+}
+
+.question-master__rich-hint {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  margin-top: -2px;
+}
+
+.question-master__quill {
+  display: block;
+  width: 100%;
+
+  ::ng-deep .ql-toolbar {
+    border-radius: 4px 4px 0 0;
+    border-color: rgba(0, 0, 0, 0.38);
+    background: #fafafa;
+  }
+
+  ::ng-deep .ql-container {
+    min-height: 180px;
+    font-size: 14px;
+    border-radius: 0 0 4px 4px;
+    border-color: rgba(0, 0, 0, 0.38);
+  }
+
+  ::ng-deep .ql-editor {
+    min-height: 160px;
+    font-family: 'Segoe UI', 'Noto Sans Devanagari', 'Mangal', sans-serif;
+    line-height: 1.5;
+    unicode-bidi: plaintext;
+  }
+
+  ::ng-deep .ql-toolbar.ql-snow,
+  ::ng-deep .ql-container.ql-snow {
+    border-color: rgba(0, 0, 0, 0.38);
+  }
+
+  ::ng-deep .ql-snow .ql-toolbar button.ql-formula::before {
+    content: '∑';
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  ::ng-deep .ql-formula {
+    display: inline-block;
+    margin: 0 2px;
+    vertical-align: middle;
+  }
+}
+
+.question-master__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.question-master__answers {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.question-master__answers-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.question-master__answers-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.question-master__answers-table {
+  width: 100%;
+  min-width: 560px;
+
+  th,
+  td {
+    vertical-align: middle;
+  }
+}
+
+.question-master__answers-index-col {
+  width: 72px;
+  text-align: center;
+}
+
+.question-master__answers-opt-col {
+  width: 56px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.question-master__answers-true-col {
+  width: 96px;
+  text-align: center;
+}
+
+.question-master__answers-field {
+  width: 100%;
+  min-width: 180px;
+  margin: 0;
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+.question-master__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.question-master__table {
+  width: 100%;
+}
+
+.question-master__question-cell {
+  min-width: 220px;
+  max-width: 480px;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.4;
+  vertical-align: top;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  font-family: 'Segoe UI', 'Noto Sans Devanagari', 'Mangal', sans-serif;
+
+  ::ng-deep p {
+    margin: 0 0 0.35rem;
+  }
+
+  ::ng-deep p:last-child {
+    margin-bottom: 0;
+  }
+
+  ::ng-deep .ql-formula {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+.question-master__loading {
+  margin: 0 0 0.75rem;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.question-master__empty {
+  padding: 1rem;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}

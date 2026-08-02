@@ -1,0 +1,105 @@
+<section class="student-attendance-page">
+  <div class="student-attendance-page__filter">
+    <app-filterstudent (classSectionChange)="onClassSectionChange($event)"></app-filterstudent>
+  </div>
+
+  <mat-card class="student-attendance-page__card">
+    <mat-card-header>
+      <mat-card-title>Student Attendance</mat-card-title>
+      <mat-card-subtitle>Select section, mark attendance, then review before final submit.</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="student-attendance-page__toolbar">
+        <mat-form-field appearance="outline" class="student-attendance-page__date">
+          <mat-label>Attendance Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="attendanceDatePicker"
+            [(ngModel)]="attendanceDate"
+            [max]="maxDate"
+            [matDatepickerFilter]="blockFutureDates"
+            readonly
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="attendanceDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #attendanceDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="loadStudents()"
+          [disabled]="loading || !selectedClassSectionId"
+        >
+          Refresh
+        </button>
+
+        <button
+          mat-flat-button
+          type="button"
+          color="primary"
+          (click)="viewAttendance()"
+          [disabled]="!canViewAttendance()"
+        >
+          View Attendance
+        </button>
+      </div>
+
+      @if (!selectedClassSectionId && !loading) {
+        <p class="student-attendance-page__empty-state">
+          Select session, school, class and section to load students for attendance.
+        </p>
+      }
+
+      @if (loadError && !loading) {
+        <p class="student-attendance-page__error" role="alert">{{ loadError }}</p>
+      }
+
+      @if (submitMessage) {
+        <p class="student-attendance-page__message" role="status">{{ submitMessage }}</p>
+      }
+
+      @if (selectedClassSectionId && !loading && !loadError && dataSource.data.length === 0) {
+        <p class="student-attendance-page__empty-state">
+          No students found for selected section.
+        </p>
+      }
+
+      <div class="student-attendance-page__table-wrap">
+        <table mat-table [dataSource]="dataSource" class="student-attendance-table mat-elevation-z0">
+          <ng-container matColumnDef="rollNumber">
+            <th mat-header-cell *matHeaderCellDef>Roll Number</th>
+            <td mat-cell *matCellDef="let row">{{ displayRollNumber(row) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="studentName">
+            <th mat-header-cell *matHeaderCellDef>Student Name</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="student-attendance-table__name">{{ displayStudentName(row) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="fatherName">
+            <th mat-header-cell *matHeaderCellDef>Father Name</th>
+            <td mat-cell *matCellDef="let row">{{ row.fatherName || row.gaurdianName || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="attendance">
+            <th mat-header-cell *matHeaderCellDef>Attendance</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-radio-group class="student-attendance-table__radio-group" [(ngModel)]="row.attendanceStatus">
+                <mat-radio-button value="P">P</mat-radio-button>
+                <mat-radio-button value="A">A</mat-radio-button>
+                <mat-radio-button value="M">M</mat-radio-button>
+              </mat-radio-group>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>

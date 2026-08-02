@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { apiEndpoint } from '@core/constants/apiendpoint';
-import { IFaculty } from 'app/pages/admin/interfaces/IClassAndSection';
-import { IApiResponse } from 'app/pages/admin/interfaces/ICommon';
+import { studentApiEndpoint } from '@core/constants/student_api_endpoint';
+import { IFaculty } from '../../../interfaces/IClassAndSection';
+import { IApiResponse } from '../../../interfaces/ICommon';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class FacultyService {
   private http = inject(HttpClient);
-  private endPoints = apiEndpoint;
+  private endPoints = studentApiEndpoint;
 
 
 getListByCollegeId(collegeId: number): Observable<IApiResponse<IFaculty[]>> {

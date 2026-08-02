@@ -1,148 +1,161 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { MatCard, MatCardModule } from '@angular/material/card';
-import { MaterialModule } from '../../../../../schematics/ng-add/files/module-files/app/material.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IHouse } from '../../../interfaces/IAdmintMst';
+import { HouseService } from '../../../services/masterservice/house.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
-import { IHouse } from '../../../interfaces/IAdmintMst';
-import { MatTableDataSource } from '@angular/material/table';
-import { HouseService } from '../../../services/house.service';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { PageHeaderComponent } from '@shared';
 import { IApiResponse } from '../../../interfaces/ICommon';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-house',
-   imports: [
-    MatCard,
-    MaterialModule,
+  host: { class: 'admin-page-host' },
+  imports: [
     FormsModule,
-    MatButtonModule,
+    PageHeaderComponent,
     MatCardModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     MatInputModule,
-    MatOptionModule,
-    MatSelectModule,
-    TranslateModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
   ],
   templateUrl: './house.component.html',
-  styleUrl: './house.component.scss'
+  styleUrl: './house.component.scss',
 })
-export class HouseComponent implements OnInit{
- private _houseService = inject(HouseService);
+export class HouseComponent implements OnInit, AfterViewInit {
+  private houseService = inject(HouseService);
+  private toast = inject(ToastrService);
+  private dialog = inject(MatDialog);
 
- dataSource = new MatTableDataSource<IHouse>([]);
-   selection: IHouse[] = [];
-  displayedColumns: string[] = ['select', 'houseName', 'actions'];
-  houseName: string = '';
-  
-    constructor(private dialog: MatDialog) { }
+  dataSource = new MatTableDataSource<IHouse>([]);
+  displayedColumns: string[] = ['index', 'houseName', 'actions'];
+  newHouse: IHouse = { houseId: 0, houseName: '' };
+  isLoading = false;
+  isSaving = false;
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('editDialog') editDialog: any;
+  @ViewChild('addDialog') addDialog!: TemplateRef<void>;
+  @ViewChild('editDialog') editDialog!: TemplateRef<IHouse>;
+
   ngOnInit(): void {
-     this.getHouseList();
+    this.dataSource.filterPredicate = (row, filter) =>
+      row.houseName?.toLowerCase().includes(filter) ?? false;
+    this.loadList();
   }
 
-addHouse() {
-    const name = this.houseName.trim();
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  openAddDialog(): void {
+    this.newHouse = { houseId: 0, houseName: '' };
+    this.dialog.open(this.addDialog, { width: 'min(440px, 92vw)', maxWidth: '95vw' });
+  }
+
+  addHouse(): void {
+    const name = this.newHouse.houseName?.trim() ?? '';
     if (!name) {
-      alert("Please enter house name.")
+      this.toast.warning('Please enter house name.');
       return;
     }
- const newHouse: IHouse = {
-  houseId: 0,
-  houseName: this.houseName
-};
-
-    debugger;
-    this._houseService.add(newHouse).subscribe({
+    this.isSaving = true;
+    this.houseService.add({ houseId: 0, houseName: name }).subscribe({
       next: (res: IApiResponse<IHouse>) => {
-        debugger;
+        this.isSaving = false;
         if (res.success) {
-          alert(res.message);
-          this.getHouseList(); // trigger table update
-          this.houseName = '';
-        }
-      }
-    })
-  }
-
-  getHouseList() {
-    debugger;
-    this._houseService.list().subscribe({
-      next: (res) => {
-        debugger;
-        if (res.success) {
-          this.dataSource.data = Array.isArray(res.data) ? res.data : [res.data];  // Ensure data is always an array
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
+          this.toast.success(res.message || 'House added successfully');
+          this.dialog.closeAll();
+          this.loadList();
+        } else {
+          this.toast.error(res.message || 'Failed to add house');
         }
       },
-      error: (err) => {
-        debugger;
-        console.error('Error fetching sections:', err);
-      }
+      error: () => {
+        this.isSaving = false;
+        this.toast.error('Failed to add house');
+      },
     });
   }
 
-  // for common table code 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  loadList(): void {
+    this.isLoading = true;
+    this.houseService.list().subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res.success) {
+          const rows = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
+          this.dataSource.data = rows;
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        } else {
+          this.toast.error(res.message || 'Failed to load houses');
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toast.error('Failed to load houses');
+      },
+    });
   }
 
-  /** Checkbox Selection Logic */
-  toggleSelection(row: IHouse) {
-    if (this.selection.includes(row)) {
-      this.selection = this.selection.filter(r => r !== row);
-    } else {
-      this.selection.push(row);
-    }
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    this.paginator?.firstPage();
   }
 
-  isAllSelected() {
-    return this.selection.length === this.dataSource.data.length;
+  rowIndex(i: number): number {
+    return this.paginator ? this.paginator.pageIndex * this.paginator.pageSize + i + 1 : i + 1;
   }
 
-  isPartialSelected() {
-    return this.selection.length > 0 && !this.isAllSelected();
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection = [];
-    } else {
-      this.selection = [...this.dataSource.data];
-    }
-  }
-  // end here
-
-  openEditDialog(house: IHouse) {
+  openEditDialog(row: IHouse): void {
     const dialogRef = this.dialog.open(this.editDialog, {
-      width: '400px',
-      data: { ...house } // Pass a copy of the section data
+      width: 'min(440px, 92vw)',
+      maxWidth: '95vw',
+      data: { ...row },
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        debugger;
-        this._houseService.update(result).subscribe({
-          next: (res) => {
-            alert(res.message);
-           this.getHouseList();
-          }
-        })
+    dialogRef.afterClosed().subscribe((result: IHouse | undefined) => {
+      if (!result?.houseName?.trim()) {
+        return;
       }
+      this.houseService
+        .update({ houseId: result.houseId, houseName: result.houseName.trim() })
+        .subscribe({
+          next: (res) => {
+            if (res.success) {
+              this.toast.success(res.message || 'House updated successfully');
+              this.loadList();
+            } else {
+              this.toast.error(res.message || 'Failed to update house');
+            }
+          },
+          error: () => this.toast.error('Failed to update house'),
+        });
     });
-
-
   }
-
 }
