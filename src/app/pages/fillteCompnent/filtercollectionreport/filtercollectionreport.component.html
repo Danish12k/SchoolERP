@@ -1,0 +1,75 @@
+<mat-card class="fee-report-filter-card">
+  <mat-card-header>
+    <mat-card-title>Fee Report Filter</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form class="fee-report-filter-form" (ngSubmit)="search()">
+      <div class="fee-report-filter-form__grid fee-report-filter-form__grid--collection">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select School</mat-label>
+          <mat-select
+            [(ngModel)]="selectedCollegeId"
+            name="collegeId"
+            (selectionChange)="onCollegeChange()"
+            required
+          >
+            @for (college of colleges; track college.collegeId) {
+              <mat-option [value]="college.collegeId">
+                {{ college.collegeAbreviation || college.collegeName }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Faculty</mat-label>
+          <mat-select
+            [(ngModel)]="selectedFacultyId"
+            name="facultyId"
+            [disabled]="!selectedCollegeId"
+          >
+            <mat-option [value]="0">All</mat-option>
+            @for (faculty of faculties; track faculty.facultyId) {
+              <mat-option [value]="faculty.facultyId">{{ facultyLabel(faculty) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Start Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="startPicker"
+            [(ngModel)]="startDate"
+            name="startDate"
+            required
+          />
+          <mat-datepicker-toggle matSuffix [for]="startPicker" />
+          <mat-datepicker #startPicker />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>End Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="endPicker"
+            [(ngModel)]="endDate"
+            name="endDate"
+            required
+          />
+          <mat-datepicker-toggle matSuffix [for]="endPicker" />
+          <mat-datepicker #endPicker />
+        </mat-form-field>
+      </div>
+
+      <div class="fee-report-filter-form__footer">
+        <div class="fee-report-filter-form__status"></div>
+        <div class="fee-report-filter-form__actions">
+          <button mat-button type="button" (click)="clearFilter()">Clear</button>
+          <button mat-stroked-button color="primary" type="submit">Search</button>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

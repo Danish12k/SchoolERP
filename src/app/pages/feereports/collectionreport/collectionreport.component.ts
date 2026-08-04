@@ -1,9 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AfterViewInit, Component, DestroyRef, inject, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -12,26 +11,44 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import moment, { Moment } from 'moment';
 import { ToastrService } from 'ngx-toastr';
-import { ICollege } from '../../../interfaces/ICollege';
-import { IFaculty } from '../../../interfaces/IClassAndSection';
-import { IFeeCollection } from '../../../interfaces/IFeeReport';
-import { CollegeService } from '../../../services/masterservice/college.service';
+import {
+  FEE_COLLECTION_REPORT_COLUMNS,
+  IFeeCollection,
+  IFeeCollectionFilterSelection,
+} from '../../../interfaces/IFeeReport';
 import { FeeReportService } from '../../../services/feeservice/fee-report.service';
-import { FacultyService } from '../../faculty/services/faculty.service';
+import { FiltercollectionreportComponent } from '../../fillteCompnent/filtercollectionreport/filtercollectionreport.component';
+
+const COLUMN_LABELS: Record<string, string> = {
+  index: '#',
+  className: 'Class',
+  name: 'Name',
+  pname: 'Father',
+  mobile: 'Mobile',
+  depositDate: 'Deposit Date',
+  installmentName: 'Installment',
+  headAmount: 'Head Amt',
+  lateFee: 'Late Fee',
+  consession: 'Concession',
+  totalFee: 'Total Fee',
+  paidAmount: 'Paid',
+  balance: 'Balance',
+  feeFrom: 'Fee From',
+  prvDue: 'Prev Due',
+  balancePaid: 'Balance Paid',
+};
 
 @Component({
   selector: 'app-collectionreport',
   host: { class: 'admin-page-host' },
   imports: [
-    FormsModule,
     DatePipe,
+    FiltercollectionreportComponent,
     MatCardModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatDatepickerModule,
     MatButtonModule,
     MatIconModule,
     MatTableModule,
@@ -42,54 +59,34 @@ import { FacultyService } from '../../faculty/services/faculty.service';
   templateUrl: './collectionreport.component.html',
   styleUrl: './collectionreport.component.scss',
 })
-export class CollectionreportComponent implements OnInit, AfterViewInit {
-  private collegeService = inject(CollegeService);
-  private facultyService = inject(FacultyService);
+export class CollectionreportComponent implements AfterViewInit {
   private feeReportService = inject(FeeReportService);
   private toast = inject(ToastrService);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  colleges: ICollege[] = [];
-  faculties: IFaculty[] = [];
-  filterOptions: string[] = ['All'];
-
-  selectedCollegeId: number | null = null;
-  selectedFacultyId: number | null = 0; // 0 = All
-  startDate: Moment | null = moment();
-  endDate: Moment | null = moment();
-  selectedFilter = 'All';
-
   dataSource = new MatTableDataSource<IFeeCollection>([]);
-  private allRows: IFeeCollection[] = [];
+  private lastFilterSelection: IFeeCollectionFilterSelection | null = null;
 
-  displayedColumns: string[] = [
-    'index',
-    'className',
-    'stuId',
-    'name',
-    'pname',
-    'mobile',
-    'depositId',
-    'depositDate',
-    'installmentName',
-    'headAmount',
-    'lateFee',
-    'consession',
-    'totalFee',
-    'paidAmount',
-    'balance',
-    'feeFrom',
-    'prvDue',
-    'balancePaid',
-  ];
+  readonly columnOptions = FEE_COLLECTION_REPORT_COLUMNS.map(id => ({
+    id,
+    label: COLUMN_LABELS[id] ?? id,
+  }));
+
+  selectedColumns: string[] = [...FEE_COLLECTION_REPORT_COLUMNS];
 
   loading = false;
   searched = false;
 
-  ngOnInit(): void {
-    this.loadColleges();
+  get displayedColumns(): string[] {
+    const allowed = new Set<string>(this.columnOptions.map(col => col.id));
+    return this.selectedColumns.filter(id => allowed.has(id));
+  }
+
+  get canRefresh(): boolean {
+    return this.lastFilterSelection != null;
   }
 
   ngAfterViewInit(): void {
@@ -98,11 +95,9 @@ export class CollectionreportComponent implements OnInit, AfterViewInit {
     this.dataSource.filterPredicate = (row, filter) =>
       [
         row.className,
-        row.stuId,
         row.name,
         row.pname,
         row.mobile,
-        row.depositId,
         row.depositDate,
         row.installmentName,
         row.feeFrom,
@@ -113,126 +108,70 @@ export class CollectionreportComponent implements OnInit, AfterViewInit {
         .includes(filter);
   }
 
-  facultyLabel(faculty: IFaculty): string {
-    return [faculty.name, faculty.middleName, faculty.lastName]
-      .filter(part => !!part && String(part).trim())
-      .join(' ')
-      .trim();
+  onFilterSearch(selection: IFeeCollectionFilterSelection): void {
+    this.lastFilterSelection = selection;
+    this.loadReport(selection);
   }
 
-  onCollegeChange(): void {
-    this.selectedFacultyId = 0;
-    this.faculties = [];
-    this.resetResults();
-
-    if (!this.selectedCollegeId) {
-      return;
-    }
-
-    this.facultyService.getListByCollegeId(Number(this.selectedCollegeId)).subscribe({
-      next: res => {
-        this.faculties = res.success && Array.isArray(res.data) ? res.data : [];
-      },
-      error: () => {
-        this.faculties = [];
-        this.toast.error('Failed to load faculty list.');
-      },
-    });
+  onFilterClear(): void {
+    this.lastFilterSelection = null;
+    this.searched = false;
+    this.loading = false;
+    this.dataSource.data = [];
+    this.dataSource.filter = '';
   }
 
-  onFilterChange(): void {
-    this.applyClientFilter();
+  refresh(): void {
+    if (!this.lastFilterSelection) {
+      this.toast.warning('Select school, dates, and click Search first.');
+      return;
+    }
+    this.loadReport(this.lastFilterSelection);
   }
 
-  search(): void {
-    if (!this.selectedCollegeId) {
-      this.toast.warning('Please select a school.');
-      return;
+  applyFilter(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
-    if (!this.startDate || !this.endDate) {
-      this.toast.warning('Please select start and end dates.');
-      return;
-    }
-
-    const start = moment(this.startDate);
-    const end = moment(this.endDate);
-    if (!start.isValid() || !end.isValid()) {
-      this.toast.warning('Please enter valid start and end dates.');
-      return;
-    }
-    if (end.isBefore(start, 'day')) {
-      this.toast.warning('End date cannot be before start date.');
-      return;
-    }
-
-    this.loading = true;
-    this.searched = true;
-
-    this.feeReportService
-      .getFeeCollectionReport({
-        startDate: start.format('D-MMMM-YYYY').toUpperCase(),
-        endDate: end.format('D-MMMM-YYYY').toUpperCase(),
-        collegeId: Number(this.selectedCollegeId),
-        userId: Number(this.selectedFacultyId ?? 0),
-      })
-      .subscribe({
-        next: res => {
-          this.loading = false;
-          if (res.success && res.data != null) {
-            this.allRows = Array.isArray(res.data) ? res.data : [res.data];
-            this.buildFilterOptions();
-            this.applyClientFilter();
-          } else {
-            this.allRows = [];
-            this.filterOptions = ['All'];
-            this.selectedFilter = 'All';
-            this.dataSource.data = [];
-            this.toast.info(res.message || 'No fee collection found for selected filters.');
-          }
-        },
-        error: () => {
-          this.loading = false;
-          this.allRows = [];
-          this.dataSource.data = [];
-          this.toast.error('Failed to load fee collection report.');
-        },
-      });
   }
 
-  print(): void {
+  exportExcel(): void {
+    const rows = this.dataSource.filteredData.length
+      ? this.dataSource.filteredData
+      : this.dataSource.data;
+    if (!rows.length) {
+      this.toast.warning('No data to export.');
+      return;
+    }
+    const csv = this.toCsv(rows);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    this.downloadFile(blob, `fee-collection-${Date.now()}.csv`);
+  }
+
+  exportPdf(): void {
     const rows = this.dataSource.filteredData.length
       ? this.dataSource.filteredData
       : this.dataSource.data;
 
     if (!rows.length) {
-      this.toast.warning('No data to print. Search first.');
+      this.toast.warning('No data to export. Search first.');
       return;
     }
 
+    const visibleColumns = this.displayedColumns.filter(id => id !== 'index');
+    const headerCells = ['#', ...visibleColumns.map(id => COLUMN_LABELS[id] ?? id)]
+      .map(label => `<th>${this.escapeHtml(label)}</th>`)
+      .join('');
+
     const tableRows = rows
-      .map(
-        (row, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${this.escapeHtml(row.className)}</td>
-          <td>${this.escapeHtml(row.stuId)}</td>
-          <td>${this.escapeHtml(row.name)}</td>
-          <td>${this.escapeHtml(row.pname)}</td>
-          <td>${this.escapeHtml(row.mobile)}</td>
-          <td>${this.escapeHtml(row.depositId)}</td>
-          <td>${this.escapeHtml(row.depositDate)}</td>
-          <td>${this.escapeHtml(row.installmentName)}</td>
-          <td>${this.escapeHtml(row.headAmount)}</td>
-          <td>${this.escapeHtml(row.lateFee)}</td>
-          <td>${this.escapeHtml(row.consession)}</td>
-          <td>${this.escapeHtml(row.totalFee)}</td>
-          <td>${this.escapeHtml(row.paidAmount)}</td>
-          <td>${this.escapeHtml(row.balance)}</td>
-          <td>${this.escapeHtml(row.feeFrom)}</td>
-          <td>${this.escapeHtml(row.prvDue)}</td>
-          <td>${this.escapeHtml(row.balancePaid)}</td>
-        </tr>`
-      )
+      .map((row, i) => {
+        const cells = visibleColumns
+          .map(id => `<td>${this.escapeHtml(this.cellValue(row, id))}</td>`)
+          .join('');
+        return `<tr><td>${i + 1}</td>${cells}</tr>`;
+      })
       .join('');
 
     const printWindow = window.open('', '_blank', 'width=1400,height=800');
@@ -249,33 +188,14 @@ export class CollectionreportComponent implements OnInit, AfterViewInit {
             h2 { margin: 0 0 12px; text-align: center; }
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #ccc; padding: 4px; text-align: left; }
-            th { background: #1976d2; color: #fff; }
+            th { background: #f1f1f1; }
           </style>
         </head>
         <body>
           <h2>Student Fee Collection Report</h2>
           <table>
             <thead>
-              <tr>
-                <th>#</th>
-                <th>Class</th>
-                <th>Stu Id</th>
-                <th>Name</th>
-                <th>Father</th>
-                <th>Mobile</th>
-                <th>Deposit Id</th>
-                <th>Deposit Date</th>
-                <th>Installment</th>
-                <th>Head Amt</th>
-                <th>Late Fee</th>
-                <th>Concession</th>
-                <th>Total Fee</th>
-                <th>Paid</th>
-                <th>Balance</th>
-                <th>Fee From</th>
-                <th>Prev Due</th>
-                <th>Balance Paid</th>
-              </tr>
+              <tr>${headerCells}</tr>
             </thead>
             <tbody>${tableRows}</tbody>
           </table>
@@ -287,51 +207,74 @@ export class CollectionreportComponent implements OnInit, AfterViewInit {
     printWindow.print();
   }
 
-  private loadColleges(): void {
-    this.collegeService.getCollegeList().subscribe({
-      next: res => {
-        if (res.success) {
-          this.colleges = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
-        }
-      },
-      error: () => this.toast.error('Failed to load schools.'),
-    });
+  private loadReport(selection: IFeeCollectionFilterSelection): void {
+    this.loading = true;
+    this.searched = true;
+
+    this.feeReportService
+      .getFeeCollectionReport({
+        startDate: selection.startDate,
+        endDate: selection.endDate,
+        collegeId: selection.collegeId,
+        userId: selection.userId,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: res => {
+          this.loading = false;
+          if (res.success && res.data != null) {
+            const rows = Array.isArray(res.data) ? res.data : [res.data];
+            this.dataSource.data = [...rows];
+            queueMicrotask(() => {
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            });
+          } else {
+            this.dataSource.data = [];
+            this.toast.info(res.message || 'No fee collection found for selected filters.');
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.dataSource.data = [];
+          this.toast.error('Failed to load fee collection report.');
+        },
+      });
   }
 
-  private buildFilterOptions(): void {
-    const classes = new Set<string>();
-    for (const row of this.allRows) {
-      const className = String(row.className ?? '').trim();
-      if (className) {
-        classes.add(className);
+  private cellValue(row: IFeeCollection, columnId: string): unknown {
+    if (columnId === 'depositDate' && row.depositDate) {
+      const date = new Date(row.depositDate);
+      if (!Number.isNaN(date.getTime())) {
+        return date.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        });
       }
     }
-    this.filterOptions = ['All', ...[...classes].sort((a, b) => a.localeCompare(b))];
-    if (!this.filterOptions.includes(this.selectedFilter)) {
-      this.selectedFilter = 'All';
-    }
+    return row[columnId as keyof IFeeCollection];
   }
 
-  private applyClientFilter(): void {
-    const filtered =
-      this.selectedFilter === 'All'
-        ? [...this.allRows]
-        : this.allRows.filter(
-            row => String(row.className ?? '').trim() === this.selectedFilter
-          );
-    this.dataSource.data = filtered;
-    queueMicrotask(() => {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
+  private toCsv(rows: IFeeCollection[]): string {
+    const headers = this.displayedColumns.filter(id => id !== 'index');
+    const headerLabels = headers.map(id => COLUMN_LABELS[id] ?? id);
+    const body = rows.map(row =>
+      headers.map(id => String(this.cellValue(row, id) ?? ''))
+    );
+
+    return [headerLabels, ...body]
+      .map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
   }
 
-  private resetResults(): void {
-    this.allRows = [];
-    this.dataSource.data = [];
-    this.filterOptions = ['All'];
-    this.selectedFilter = 'All';
-    this.searched = false;
+  private downloadFile(blob: Blob, fileName: string): void {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   private escapeHtml(value: unknown): string {

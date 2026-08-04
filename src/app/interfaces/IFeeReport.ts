@@ -136,6 +136,34 @@ export interface IFeeCollectionReportParams {
   userId: number;
 }
 
+/** Filter payload from collection report filter (school/faculty/dates). */
+export interface IFeeCollectionFilterSelection {
+  collegeId: number;
+  userId: number;
+  startDate: string;
+  endDate: string;
+}
+
+/** Visible columns for fee collection report (excludes stuId). */
+export const FEE_COLLECTION_REPORT_COLUMNS = [
+  'index',
+  'className',
+  'name',
+  'pname',
+  'mobile',
+  'depositDate',
+  'installmentName',
+  'headAmount',
+  'lateFee',
+  'consession',
+  'totalFee',
+  'paidAmount',
+  'balance',
+  'feeFrom',
+  'prvDue',
+  'balancePaid',
+] as const;
+
 /** Filter payload from student filter (session/school/class/section). */
 export interface IStudentFilterSelection {
   sessionId: number | null;
